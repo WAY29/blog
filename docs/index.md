@@ -1,13 +1,13 @@
-# Longlone's Blog
+# Index
 
 Hello world
 
-This's my blog
-
-[学习](学习/学习.md)
+This is Longlone's blog
 
 
-
-
-
-*powerd by Obisidian and Jackiexiao/foam-mkdocs-template and github page*
+<!--start-->
+### Latest articles:
+[学习 - 概率论 - 一维随机变量](学习/概率论/一维随机变量.md)
+[学习 - 概率论 - 条件概率，全概率，贝叶斯公式](学习/概率论/条件概率，全概率，贝叶斯公式.md)
+[学习 - 概率论 - 事件运算及概率](学习/概率论/事件运算及概率.md)
+<!--end-->
