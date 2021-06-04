@@ -13,5 +13,6 @@ jobs:
           python-version: 3.x
       - run: pip install mkdocs-windmill-dark
       - run: pip install mkdocs-exclude
+      - run: pip install pymdown-extensions
       - run: pip install mkdocs-roamlinks-plugin
       - run: mkdocs gh-deploy --force
