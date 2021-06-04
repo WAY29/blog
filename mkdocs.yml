@@ -7,8 +7,8 @@ site_url: https://longlone.best
 site_description: Longlone's Blog about daily and security.
 theme:
   name: material
-  favicon: attachment/favicon.png
-  logo: attachment/logo.png
+  favicon: attachment/favicon.ico
+  logo: attachment/logo.svg
   language: zh # 中文，解决中文搜索问题
   features:
     - navigation.expand 
