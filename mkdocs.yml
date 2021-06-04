@@ -4,8 +4,8 @@
 
 site_name: Longlone's Blog
 theme:
-  name: material
-  #  favicon: attachment/portrait.png
+  name: windmill-dark
+  favicon: attachment\longlone.png
   language: zh # 中文，解决中文搜索问题
   features:
     - navigation.expand 
