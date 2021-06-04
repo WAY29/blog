@@ -6,7 +6,7 @@ This is Longlone's blog
 
 
 <!--start-->
-### Latest articles:
+### Latest articles
 | articles | mtime |
 |  ----  | ----  |
 |[学习 - 概率论 - 条件概率，全概率，贝叶斯公式](学习/概率论/条件概率，全概率，贝叶斯公式.md)|2021/06/04|
