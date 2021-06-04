@@ -11,6 +11,7 @@ theme:
     - navigation.expand 
     - tabs 
   palette:
+    scheme: slate
     primary: deep purple
     accent: indigo
   font:
