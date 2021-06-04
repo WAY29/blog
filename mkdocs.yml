@@ -4,12 +4,26 @@
 
 site_name: Longlone's Blog
 theme:
-  name: windmill-dark
+  name: material
   favicon: attachment/longlone.png
   language: zh # 中文，解决中文搜索问题
   features:
     - navigation.expand 
     - tabs 
+  palette:
+    - media: "(prefers-color-scheme: light)"
+    - scheme: default
+      toggle:
+          icon: material/weather-sunny
+          name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+    - scheme: slate
+      toggle:
+        icon: material/weather-night
+        name: Switch to light mode
+      primary: deep purple
+      accent: indigo
+
 markdown_extensions: 
   - attr_list # https://squidfunk.github.io/mkdocs-material/reference/images/
   - pymdownx.tabbed  # https://squidfunk.github.io/mkdocs-material/reference/content-tabs/
