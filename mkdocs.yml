@@ -11,6 +11,7 @@ theme:
   logo: attachment/logo.svg
   language: zh # 中文，解决中文搜索问题
   features:
+    - header.autohide
     - navigation.expand 
     - tabs 
   palette:
@@ -61,3 +62,8 @@ plugins:
         - '.*\.(tmp|bin|tar)$'
   - rss:
       image: attachment/logo.svg
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/WAY29
+  generator: false
