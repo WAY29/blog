@@ -60,4 +60,4 @@ plugins:
       regex:
         - '.*\.(tmp|bin|tar)$'
   - rss:
-      image: attachment/logo.png
+      image: attachment/logo.svg
