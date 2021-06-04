@@ -12,15 +12,18 @@ theme:
   language: zh # 中文，解决中文搜索问题
   features:
     - header.autohide
-    - navigation.expand 
-    - tabs 
+    - navigation.expand
+    - navigation.top
+    - navigation.instant
+    - toc.integrate
+    - tabs
   palette:
     scheme: slate
     primary: deep purple
     accent: indigo
   font:
     code: Roboto Mono
-markdown_extensions: 
+markdown_extensions:
   - attr_list # https://squidfunk.github.io/mkdocs-material/reference/images/
   - pymdownx.tabbed  # https://squidfunk.github.io/mkdocs-material/reference/content-tabs/
   - nl2br # newline-to-break 
