@@ -3,9 +3,12 @@
 # mkdocs: https://www.mkdocs.org/user-guide/configuration/
 
 site_name: Longlone's Blog
+site_url: https://longlone.best
+site_description: Longlone's Blog about daily and security.
 theme:
   name: material
-  favicon: attachment/longlone.png
+  favicon: attachment/favicon.png
+  logo: attachment/logo.png
   language: zh # 中文，解决中文搜索问题
   features:
     - navigation.expand 
@@ -56,3 +59,5 @@ plugins:
         - "*.gz"
       regex:
         - '.*\.(tmp|bin|tar)$'
+  - rss:
+      image: attachment/logo.png
