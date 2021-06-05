@@ -8,7 +8,12 @@
             </a>
         {% endfor %}
     {% endif %}
+    {% if page.is_homepage %}
+    <div style="float:right"><span id="busuanzi_container_page_pv"><font size="2" color="grey">本站访问量&nbsp;<span id="busuanzi_value_site_uv"></span></font></span></div>
+    {% endif %}
+    {% if not page.is_homepage %}
     <div style="float:right"><span id="busuanzi_container_page_pv"><font size="2" color="grey">本文阅读量&nbsp;<span id="busuanzi_value_page_pv"></span></font></span></div>
+    {% endif %}
   {{ super() }}
   
 {% endblock %}
