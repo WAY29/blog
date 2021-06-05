@@ -21,8 +21,7 @@ theme:
     scheme: slate
     primary: deep purple
     accent: indigo
-  font:
-    code: false
+  font: false
 markdown_extensions:
   - attr_list # https://squidfunk.github.io/mkdocs-material/reference/images/
   - pymdownx.tabbed  # https://squidfunk.github.io/mkdocs-material/reference/content-tabs/
