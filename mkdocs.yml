@@ -73,4 +73,4 @@ extra:
       link: https://longlone.best/feed_rss_created.xml
   generator: false
 extra_javascript:
-  - '//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js'
+  - '/attachment/js/count.pure.mini.js'
