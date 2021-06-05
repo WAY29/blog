@@ -10,6 +10,7 @@ theme:
   favicon: attachment/favicon.ico
   logo: attachment/logo.svg
   language: zh # 中文，解决中文搜索问题
+  custom_dir: overrides
   features:
     - header.autohide
     - navigation.expand
