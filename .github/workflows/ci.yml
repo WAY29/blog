@@ -13,6 +13,7 @@ jobs:
           python-version: 3.x
       - run: pip install mkdocs-material
       - run: pip install mkdocs-exclude
+      - run: pip install git+https://github.com/jldiaz/mkdocs-plugin-tags.g
       - run: pip install pymdown-extensions
       - run: pip install mkdocs-rss-plugin
       - run: pip install mkdocs-roamlinks-plugin
