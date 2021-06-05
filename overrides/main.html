@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block content %}
+  {{ super() }}
+  {% if not (page.is_homepage or page.meta.hide_tags) %}
+	{% for tag in page.meta.tags %}
+		<a title="{{ tag }}" class="md-tag">
+			{% include ".icons/material/tag.svg" %}
+			{{ tag }}
+		</a>
+	{% endfor %}
+{% endif %}
+  {% endif %}
+{% endblock %}
