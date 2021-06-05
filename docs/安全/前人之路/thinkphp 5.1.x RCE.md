@@ -34,4 +34,4 @@ TP5.1.0-5.1.30
 
 
 ### 分析
-![](attachment/images/thinkphp5.1_rce.png)
+![](/attachment/images/thinkphp5.1_rce.png)
