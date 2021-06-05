@@ -15,7 +15,6 @@ theme:
     - header.autohide
     - navigation.expand
     - navigation.top
-    - navigation.instant
     - toc.integrate
     - tabs
   palette:
@@ -23,7 +22,7 @@ theme:
     primary: deep purple
     accent: indigo
   font:
-    code: Roboto Mono
+    code: false
 markdown_extensions:
   - attr_list # https://squidfunk.github.io/mkdocs-material/reference/images/
   - pymdownx.tabbed  # https://squidfunk.github.io/mkdocs-material/reference/content-tabs/
