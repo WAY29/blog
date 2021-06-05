@@ -1,5 +1,10 @@
+---
+tags:
+  - php
+  - 文件包含
+  - php配置
+---
 # register_argc_argv与include限制php任意文件下载的小结
-#php #文件包含 #php配置
 
 引子是巅峰极客2020的**Meow World**,题目总结下来只有一句话:
 
