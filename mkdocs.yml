@@ -69,4 +69,6 @@ extra:
   social:
     - icon: fontawesome/brands/github
       link: https://github.com/WAY29
+    - icon: fontawesome/octions/rss-24
+      link: https://longlone.best/feed_rss_created.xml
   generator: false
