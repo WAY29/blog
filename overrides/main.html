@@ -4,7 +4,7 @@
     {% if not (page.is_homepage or page.meta.hide_tags) %}
         {% for tag in page.meta.tags %}
             <a title="{{ tag }}" class="md-tag">
-                {{ tag }}
+                #{{ tag }}&nbsp;
             </a>
         {% endfor %}
     {% endif %}
