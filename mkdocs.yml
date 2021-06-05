@@ -74,5 +74,3 @@ extra:
     - icon: octicons/rss-24
       link: https://longlone.best/feed_rss_created.xml
   generator: false
-extra_css:
-  - stylesheets/tag.css
