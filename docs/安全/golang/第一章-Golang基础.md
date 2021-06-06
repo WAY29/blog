@@ -1,6 +1,6 @@
 ---
 created: '21/06/06 08:50'
-title: golang-sec-note
+title: 第一章-Golang基础
 tags:
   - golang
 ---
