@@ -63,8 +63,6 @@ plugins:
         - "*.gz"
       regex:
         - '.*\.(tmp|bin|tar)$'
-  - rss:
-      image: attachment/logo.svg
 extra:
   social:
     - icon: fontawesome/brands/github
