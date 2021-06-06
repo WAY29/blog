@@ -69,10 +69,10 @@ extra:
   social:
     - icon: fontawesome/brands/github
       link: https://github.com/WAY29
-    - icon: octicons/rss-24
-      link: https://longlone.best/feed_rss_created.xml
     - icon: octicons/mail-24
       link: mailto:toloveu29@gmail.com
+    - icon: octicons/rss-24
+      link: https://longlone.best/feed_rss_created.xml
   generator: false
 extra_javascript:
   - '//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js'
