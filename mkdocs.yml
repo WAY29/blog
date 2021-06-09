@@ -3,7 +3,7 @@
 # mkdocs: https://www.mkdocs.org/user-guide/configuration/
 
 site_name: Longlone's Blog
-site_url: https://longlone.best
+site_url: https://longlone.top
 site_description: Longlone's Blog about daily and security.
 theme:
   name: material
@@ -70,7 +70,7 @@ extra:
     - icon: octicons/mail-24
       link: mailto:toloveu29@gmail.com
     - icon: octicons/rss-24
-      link: https://longlone.best/rss.xml
+      link: https://longlone.top/rss.xml
   generator: false
 extra_javascript:
   - '//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js'
