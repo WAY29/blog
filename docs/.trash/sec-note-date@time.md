@@ -1,5 +1,0 @@
----
-type: sec-note
-tags:
-  - 
----

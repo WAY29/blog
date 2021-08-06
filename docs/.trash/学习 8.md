@@ -1,8 +1,0 @@
-# 学习 Overview
-```ccard
-type: folder_brief_live
-noteOnly: true
-```
-<!--start-->
-[](概率论)
-<!--end-->
