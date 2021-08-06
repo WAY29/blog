@@ -39,6 +39,8 @@ public class FileStudy {
 }
 ```
 
+使用例子如上。
+
 ### FileOutputStream
 ```java
 package top.longlone;
@@ -59,7 +61,7 @@ public class FileStudy {
 }
 
 ```
-
+使用例子如上。
 
 ## JAVA NIO.2 文件系统
 Java 7提出了一个基于NIO的文件系统，这个NIO文件系统和阻塞IO文件系统两者是完全独立的。`java.nio.file.spi.FileSystemProvider`对文件的封装和`java.io.FileSystem`同理。
