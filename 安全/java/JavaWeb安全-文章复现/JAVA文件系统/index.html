@@ -941,7 +941,8 @@
 1.  并不是所有的文件操作都在<code>java.io.FileSystem</code>中定义,文件的读取最终调用的是<code>java.io.FileInputStream#read0、readBytes</code>、<code>java.io.RandomAccessFile#read0、readBytes</code>,而写文件调用的是<code>java.io.FileOutputStream#writeBytes</code>、<code>java.io.RandomAccessFile#write0</code>。<br />
 2.  Java有两类文件系统API！一个是基于<code>阻塞模式的IO</code>的文件系统，另一是JDK7+基于<code>NIO.2</code>的文件系统。</p>
 <h3 id="fileinputstream">FileInputStream<a class="headerlink" href="#fileinputstream" title="Permanent link">#</a></h3>
-<p>```java<br />
+<p>示例代码如下。<br />
+ ```java<br />
 package top.longlone;</p>
 <p>import java.io.ByteArrayOutputStream;<br />
 import java.io.File;<br />
@@ -959,9 +960,8 @@ import java.io.FileInputStream;</p>
         System.out.println(byteArrayOutputStream.toString());<br />
     }<br />
 }<br />
-<div class="highlight"><pre><span></span><code>使用例子如上。
-
-### FileOutputStream
+<div class="highlight"><pre><span></span><code>### FileOutputStream
+示例代码如下。
 ```java
 package top.longlone;
 
@@ -979,8 +979,7 @@ public class FileStudy {
         fileOutputStream.close();
     }
 }
-</code></pre></div><br />
-使用例子如上。</p>
+</code></pre></div></p>
 <h2 id="java-nio2-文件系统">JAVA NIO.2 文件系统<a class="headerlink" href="#java-nio2-文件系统" title="Permanent link">#</a></h2>
 <p>Java 7提出了一个基于NIO的文件系统，这个NIO文件系统和阻塞IO文件系统两者是完全独立的。<code>java.nio.file.spi.FileSystemProvider</code>对文件的封装和<code>java.io.FileSystem</code>同理。<br />
 NIO的文件操作在不同的系统的最终实现类也是不一样的，比如Mac的实现类是: <code>sun.nio.fs.UnixNativeDispatcher</code>,而Windows的实现类是<code>sun.nio.fs.WindowsNativeDispatcher</code>。<br />
