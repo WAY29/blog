@@ -17,6 +17,7 @@ Java抽象出了一个文件系统的对象:`java.io.FileSystem`，不同的操�
 2.  Java有两类文件系统API！一个是基于`阻塞模式的IO`的文件系统，另一是JDK7+基于`NIO.2`的文件系统。
 
 ### FileInputStream
+示例代码如下。
  ```java
 package top.longlone;
 
@@ -39,9 +40,8 @@ public class FileStudy {
 }
 ```
 
-使用例子如上。
-
 ### FileOutputStream
+示例代码如下。
 ```java
 package top.longlone;
 
@@ -61,7 +61,6 @@ public class FileStudy {
 }
 
 ```
-使用例子如上。
 
 ## JAVA NIO.2 文件系统
 Java 7提出了一个基于NIO的文件系统，这个NIO文件系统和阻塞IO文件系统两者是完全独立的。`java.nio.file.spi.FileSystemProvider`对文件的封装和`java.io.FileSystem`同理。
