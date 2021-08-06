@@ -2,7 +2,8 @@
 .script/
 .trash
 mylogo.zip
-template/#start
+template/
+#start
 安全.md
 golang.md
 java.md
