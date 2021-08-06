@@ -1,0 +1,18 @@
+{
+  "ribbonIcon": true,
+  "showRootFolder": false,
+  "showFilesFromSubFolders": true,
+  "searchFunction": true,
+  "excludedExtensions": "",
+  "excludedFolders": "template,attachment",
+  "folderCount": true,
+  "folderCountOption": "notes",
+  "openFolders": [
+    "/",
+    "学习",
+    "杂项",
+    "安全",
+    "安全/java"
+  ],
+  "pinnedFiles": []
+}

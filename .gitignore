@@ -1,15 +1,11 @@
-.obsidian/
-.script/
-.trash
-mylogo.zip
-
-docs/学习/
-template/
 
 #start
 安全.md
 golang.md
 java.md
+JavaWeb安全-文章复现.md
+spring.md
+web.md
 前人之路.md
 安全研究.md
 杂项.md

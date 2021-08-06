@@ -1,0 +1,17 @@
+{
+  "showLineNumber": true,
+  "useTab": false,
+  "foldIndent": true,
+  "readableLineLength": false,
+  "trashOption": "local",
+  "promptDelete": false,
+  "alwaysUpdateLinks": true,
+  "attachmentFolderPath": "file",
+  "useMarkdownLinks": true,
+  "newLinkFormat": "relative",
+  "showUnsupportedFiles": true,
+  "communityPluginSortOrder": "release",
+  "strictLineBreaks": true,
+  "lineWrap": true,
+  "tabSize": 4
+}
