@@ -1,0 +1,2304 @@
+
+<!doctype html>
+<html lang="zh" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Longlone's Blog about daily and security.">
+      
+      
+      
+        <link rel="canonical" href="https://longlone.top/%E5%AE%89%E5%85%A8/%E5%AE%89%E5%85%A8%E7%A0%94%E7%A9%B6/CodeQL%E4%B8%8Egolang%20sql%E6%B3%A8%E5%85%A5%E6%A3%80%E6%B5%8B/">
+      
+      <link rel="icon" href="../../../attachment/favicon.ico">
+      <meta name="generator" content="mkdocs-1.2.3, mkdocs-material-8.1.8">
+    
+    
+      
+        <title>CodeQL与golang sql注入检测 - Longlone's Blog</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.6e60f8b8.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.e6a45f82.min.css">
+        
+          
+          
+          <meta name="theme-color" content="#7e56c2">
+        
+      
+    
+    
+    
+      
+    
+    
+    <script>__md_scope=new URL("../../..",location),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="deep-purple" data-md-color-accent="indigo">
+  
+    
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#codeql与golang-sql注入检测" class="md-skip">
+          跳转至
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="页眉">
+    <a href="../../.." title="Longlone&#39;s Blog" class="md-header__button md-logo" aria-label="Longlone's Blog" data-md-component="logo">
+      
+  <img src="../../../attachment/logo.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Longlone's Blog
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              CodeQL与golang sql注入检测
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="搜索" placeholder="搜索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="查找">
+        
+        <button type="reset" class="md-search__icon md-icon" aria-label="清空当前内容" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            正在初始化搜索引擎
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--integrated" aria-label="导航栏" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="Longlone&#39;s Blog" class="md-nav__button md-logo" aria-label="Longlone's Blog" data-md-component="logo">
+      
+  <img src="../../../attachment/logo.svg" alt="logo">
+
+    </a>
+    Longlone's Blog
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        Index
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../%E5%8F%8B%E6%83%85%E9%93%BE%E6%8E%A5/" class="md-nav__link">
+        友情链接
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3" type="checkbox" id="__nav_3" checked>
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3">
+          安全
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="安全" data-md-level="1">
+        <label class="md-nav__title" for="__nav_3">
+          <span class="md-nav__icon md-icon"></span>
+          安全
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_1" data-md-state="indeterminate" type="checkbox" id="__nav_3_1" checked>
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_1">
+          Golang
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Golang" data-md-level="2">
+        <label class="md-nav__title" for="__nav_3_1">
+          <span class="md-nav__icon md-icon"></span>
+          Golang
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../golang/%E7%AC%AC%E4%B8%80%E7%AB%A0-Golang%E5%9F%BA%E7%A1%80/" class="md-nav__link">
+        第一章-Golang基础
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../golang/%E7%AC%AC%E4%B8%89%E7%AB%A0-HTTP/" class="md-nav__link">
+        第三章-HTTP
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../golang/%E7%AC%AC%E4%BA%8C%E7%AB%A0-%E7%BD%91%E7%BB%9C%E8%BF%9E%E6%8E%A5/" class="md-nav__link">
+        第二章-网络连接
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../golang/%E7%AC%AC%E4%BA%94%E7%AB%A0-DNS/" class="md-nav__link">
+        第五章-DNS
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../golang/%E7%AC%AC%E5%9B%9B%E7%AB%A0-HTTP%E6%9C%8D%E5%8A%A1%E5%99%A8/" class="md-nav__link">
+        第四章-HTTP服务器
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_2" data-md-state="indeterminate" type="checkbox" id="__nav_3_2" checked>
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_2">
+          Java
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Java" data-md-level="2">
+        <label class="md-nav__title" for="__nav_3_2">
+          <span class="md-nav__icon md-icon"></span>
+          Java
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_2_1" data-md-state="indeterminate" type="checkbox" id="__nav_3_2_1" checked>
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_2_1">
+          JavaWeb安全 文章复现
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="JavaWeb安全 文章复现" data-md-level="3">
+        <label class="md-nav__title" for="__nav_3_2_1">
+          <span class="md-nav__icon md-icon"></span>
+          JavaWeb安全 文章复现
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../java/JavaWeb%E5%AE%89%E5%85%A8-%E6%96%87%E7%AB%A0%E5%A4%8D%E7%8E%B0/ClassLoader%E7%B1%BB%E5%8A%A0%E8%BD%BD%E6%9C%BA%E5%88%B6/" class="md-nav__link">
+        ClassLoader类加载机制
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../java/JavaWeb%E5%AE%89%E5%85%A8-%E6%96%87%E7%AB%A0%E5%A4%8D%E7%8E%B0/JAVA%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/" class="md-nav__link">
+        java文件系统
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../java/JavaWeb%E5%AE%89%E5%85%A8-%E6%96%87%E7%AB%A0%E5%A4%8D%E7%8E%B0/JDBC/" class="md-nav__link">
+        JDBC
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../java/JavaWeb%E5%AE%89%E5%85%A8-%E6%96%87%E7%AB%A0%E5%A4%8D%E7%8E%B0/Unsafe/" class="md-nav__link">
+        Unsafe
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../java/JavaWeb%E5%AE%89%E5%85%A8-%E6%96%87%E7%AB%A0%E5%A4%8D%E7%8E%B0/java%20IO-NIO%E5%A4%9A%E7%A7%8D%E8%AF%BB%E5%86%99%E6%96%87%E4%BB%B6%E6%96%B9%E5%BC%8F/" class="md-nav__link">
+        java IO/NIO多种读写文件方式
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../java/JavaWeb%E5%AE%89%E5%85%A8-%E6%96%87%E7%AB%A0%E5%A4%8D%E7%8E%B0/java%20%E6%96%87%E4%BB%B6%E5%90%8D%E7%A9%BA%E5%AD%97%E8%8A%82%E6%88%AA%E6%96%AD%E6%BC%8F%E6%B4%9E/" class="md-nav__link">
+        java 文件名空字节截断漏洞
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../java/JavaWeb%E5%AE%89%E5%85%A8-%E6%96%87%E7%AB%A0%E5%A4%8D%E7%8E%B0/java%E5%8F%8D%E5%B0%84%E6%9C%BA%E5%88%B6/" class="md-nav__link">
+        java反射机制
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../java/JavaWeb%E5%AE%89%E5%85%A8-%E6%96%87%E7%AB%A0%E5%A4%8D%E7%8E%B0/java%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C/" class="md-nav__link">
+        java本地命令执行
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../java/JavaWeb%E5%AE%89%E5%85%A8-%E6%96%87%E7%AB%A0%E5%A4%8D%E7%8E%B0/%E5%BC%80%E5%A4%B4%E5%A3%B0%E6%98%8E/" class="md-nav__link">
+        开头声明
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_2_2" data-md-state="indeterminate" type="checkbox" id="__nav_3_2_2" checked>
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_2_2">
+          Java安全漫谈 文章复现
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Java安全漫谈 文章复现" data-md-level="3">
+        <label class="md-nav__title" for="__nav_3_2_2">
+          <span class="md-nav__icon md-icon"></span>
+          Java安全漫谈 文章复现
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../java/Java%E5%AE%89%E5%85%A8%E6%BC%AB%E8%B0%88-%E6%96%87%E7%AB%A0%E5%A4%8D%E7%8E%B0/RMI%E7%AF%871/" class="md-nav__link">
+        RMI篇1
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../java/Java%E5%AE%89%E5%85%A8%E6%BC%AB%E8%B0%88-%E6%96%87%E7%AB%A0%E5%A4%8D%E7%8E%B0/RMI%E7%AF%872/" class="md-nav__link">
+        RMI篇2
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../java/Java%E5%AE%89%E5%85%A8%E6%BC%AB%E8%B0%88-%E6%96%87%E7%AB%A0%E5%A4%8D%E7%8E%B0/RMI%E7%AF%873/" class="md-nav__link">
+        RMI篇3
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../java/Java%E5%AE%89%E5%85%A8%E6%BC%AB%E8%B0%88-%E6%96%87%E7%AB%A0%E5%A4%8D%E7%8E%B0/%E5%8F%8D%E5%B0%84%E7%AF%871/" class="md-nav__link">
+        反射篇1
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../java/Java%E5%AE%89%E5%85%A8%E6%BC%AB%E8%B0%88-%E6%96%87%E7%AB%A0%E5%A4%8D%E7%8E%B0/%E5%8F%8D%E5%B0%84%E7%AF%872/" class="md-nav__link">
+        反射篇2
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../java/Java%E5%AE%89%E5%85%A8%E6%BC%AB%E8%B0%88-%E6%96%87%E7%AB%A0%E5%A4%8D%E7%8E%B0/%E5%8F%8D%E5%B0%84%E7%AF%873/" class="md-nav__link">
+        反射篇3
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../java/Java%E5%AE%89%E5%85%A8%E6%BC%AB%E8%B0%88-%E6%96%87%E7%AB%A0%E5%A4%8D%E7%8E%B0/%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96CC%E7%AF%87%E6%80%BB%E7%BB%93/" class="md-nav__link">
+        反序列化CC篇总结
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../java/Java%E5%AE%89%E5%85%A8%E6%BC%AB%E8%B0%88-%E6%96%87%E7%AB%A0%E5%A4%8D%E7%8E%B0/%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96CC%E7%AF%87%E8%A1%A5%E5%85%85/" class="md-nav__link">
+        反序列化CC篇补充
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../java/Java%E5%AE%89%E5%85%A8%E6%BC%AB%E8%B0%88-%E6%96%87%E7%AB%A0%E5%A4%8D%E7%8E%B0/%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8BCommonsBeanUtils1/" class="md-nav__link">
+        反序列化之CommonsBeanUtils1
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../java/Java%E5%AE%89%E5%85%A8%E6%BC%AB%E8%B0%88-%E6%96%87%E7%AB%A0%E5%A4%8D%E7%8E%B0/%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8BRMI/" class="md-nav__link">
+        反序列化之RMI
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../java/Java%E5%AE%89%E5%85%A8%E6%BC%AB%E8%B0%88-%E6%96%87%E7%AB%A0%E5%A4%8D%E7%8E%B0/%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8Bfastjson/" class="md-nav__link">
+        反序列化之fastjson
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../java/Java%E5%AE%89%E5%85%A8%E6%BC%AB%E8%B0%88-%E6%96%87%E7%AB%A0%E5%A4%8D%E7%8E%B0/%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E7%AF%871/" class="md-nav__link">
+        反序列化篇1
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../java/Java%E5%AE%89%E5%85%A8%E6%BC%AB%E8%B0%88-%E6%96%87%E7%AB%A0%E5%A4%8D%E7%8E%B0/%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E7%AF%872/" class="md-nav__link">
+        反序列化篇2
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../java/Java%E5%AE%89%E5%85%A8%E6%BC%AB%E8%B0%88-%E6%96%87%E7%AB%A0%E5%A4%8D%E7%8E%B0/%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E7%AF%873/" class="md-nav__link">
+        反序列化篇3
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../java/Java%E5%AE%89%E5%85%A8%E6%BC%AB%E8%B0%88-%E6%96%87%E7%AB%A0%E5%A4%8D%E7%8E%B0/%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E7%AF%874/" class="md-nav__link">
+        反序列化篇4
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../java/Java%E5%AE%89%E5%85%A8%E6%BC%AB%E8%B0%88-%E6%96%87%E7%AB%A0%E5%A4%8D%E7%8E%B0/%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E7%AF%875/" class="md-nav__link">
+        反序列化篇5
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../java/Java%E5%AE%89%E5%85%A8%E6%BC%AB%E8%B0%88-%E6%96%87%E7%AB%A0%E5%A4%8D%E7%8E%B0/%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E7%AF%876/" class="md-nav__link">
+        反序列化篇6
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../java/Java%E5%AE%89%E5%85%A8%E6%BC%AB%E8%B0%88-%E6%96%87%E7%AB%A0%E5%A4%8D%E7%8E%B0/%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E7%AF%87%E4%B9%8BJDK7u21/" class="md-nav__link">
+        反序列化篇之JDK7u21
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../java/Java%E5%AE%89%E5%85%A8%E6%BC%AB%E8%B0%88-%E6%96%87%E7%AB%A0%E5%A4%8D%E7%8E%B0/%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E7%AF%87%E4%B9%8BJDK8u20/" class="md-nav__link">
+        反序列化篇之JDK8u20
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../java/Java%E5%AE%89%E5%85%A8%E6%BC%AB%E8%B0%88-%E6%96%87%E7%AB%A0%E5%A4%8D%E7%8E%B0/%E5%BC%80%E5%A4%B4%E5%A3%B0%E6%98%8E/" class="md-nav__link">
+        开头声明
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_2_3" data-md-state="indeterminate" type="checkbox" id="__nav_3_2_3" checked>
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_2_3">
+          Java安全
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Java安全" data-md-level="3">
+        <label class="md-nav__title" for="__nav_3_2_3">
+          <span class="md-nav__icon md-icon"></span>
+          Java安全
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../java/java%E5%AE%89%E5%85%A8/JNDI/" class="md-nav__link">
+        JNDI与JNDI注入
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_2_4" data-md-state="indeterminate" type="checkbox" id="__nav_3_2_4" checked>
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_2_4">
+          Spring
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Spring" data-md-level="3">
+        <label class="md-nav__title" for="__nav_3_2_4">
+          <span class="md-nav__icon md-icon"></span>
+          Spring
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../java/spring/AOP/" class="md-nav__link">
+        AOP
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../java/spring/Bean%E7%9A%84%E4%BD%9C%E7%94%A8%E5%9F%9F/" class="md-nav__link">
+        Bean的作用域
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../java/spring/Bean%E7%9A%84%E8%A3%85%E9%85%8D/" class="md-nav__link">
+        Bean的装配
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../java/spring/HelloSpring/" class="md-nav__link">
+        HelloSpring
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../java/spring/Spring%E4%B8%AD%E4%BD%BF%E7%94%A8java%E4%BB%A3%E7%A0%81%E9%85%8D%E7%BD%AE/" class="md-nav__link">
+        Spring中使用java代码配置
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../java/spring/Spring%E4%B8%AD%E4%BD%BF%E7%94%A8%E6%B3%A8%E8%A7%A3%E9%85%8D%E7%BD%AE/" class="md-nav__link">
+        Spring中使用注解配置
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../java/spring/Spring%E4%BD%BF%E7%94%A8XML%E9%85%8D%E7%BD%AE/" class="md-nav__link">
+        Spring使用XML配置
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../java/spring/Spring%E7%AE%80%E4%BB%8B/" class="md-nav__link">
+        Spring简介
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../java/spring/%E4%BB%A3%E7%90%86%E6%A8%A1%E5%BC%8F/" class="md-nav__link">
+        代理模式
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../java/spring/%E4%BE%9D%E8%B5%96%E6%B3%A8%E5%85%A5%28DI%29/" class="md-nav__link">
+        依赖注入(DI)
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../java/spring/%E6%8E%A7%E5%88%B6%E5%8F%8D%E8%BD%AC%28IOC%29/" class="md-nav__link">
+        控制反转(IOC)
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_2_5" data-md-state="indeterminate" type="checkbox" id="__nav_3_2_5" checked>
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_2_5">
+          Web
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Web" data-md-level="3">
+        <label class="md-nav__title" for="__nav_3_2_5">
+          <span class="md-nav__icon md-icon"></span>
+          Web
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../java/web/Cookie/" class="md-nav__link">
+        Cookie
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../java/web/Exercise/" class="md-nav__link">
+        Exercise
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../java/web/Filter/" class="md-nav__link">
+        Filter
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../java/web/HelloServlet/" class="md-nav__link">
+        HelloServlet
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../java/web/HttpServletRequest/" class="md-nav__link">
+        HttpServletRequest
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../java/web/HttpServletResponse/" class="md-nav__link">
+        HttpServletResponse
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../java/web/JSP/" class="md-nav__link">
+        JSP
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../java/web/JavaBean/" class="md-nav__link">
+        JavaBean
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../java/web/Listener/" class="md-nav__link">
+        Listener
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../java/web/MVC/" class="md-nav__link">
+        MVC
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../java/web/ServletContext/" class="md-nav__link">
+        ServletContext
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../java/web/Session/" class="md-nav__link">
+        Session
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../java/web/Tomcat/" class="md-nav__link">
+        Tomcat
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_3" data-md-state="indeterminate" type="checkbox" id="__nav_3_3" checked>
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_3">
+          前人之路
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="前人之路" data-md-level="2">
+        <label class="md-nav__title" for="__nav_3_3">
+          <span class="md-nav__icon md-icon"></span>
+          前人之路
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E5%89%8D%E4%BA%BA%E4%B9%8B%E8%B7%AF/thinkphp%205.1.x%20RCE/" class="md-nav__link">
+        thinkphp 5.1.x RCE
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_4" type="checkbox" id="__nav_3_4" checked>
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_4">
+          安全研究
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="安全研究" data-md-level="2">
+        <label class="md-nav__title" for="__nav_3_4">
+          <span class="md-nav__icon md-icon"></span>
+          安全研究
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          CodeQL与golang sql注入检测
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        CodeQL与golang sql注入检测
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#什么是codeql" class="md-nav__link">
+    什么是CodeQL
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#保姆级安装教程" class="md-nav__link">
+    保姆级安装教程
+  </a>
+  
+    <nav class="md-nav" aria-label="保姆级安装教程">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#codeql-cli" class="md-nav__link">
+    codeql-cli
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#codeql" class="md-nav__link">
+    codeql
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vscode-codeql" class="md-nav__link">
+    vscode-codeql
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#配置环境变量" class="md-nav__link">
+    配置环境变量
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#codeql-go" class="md-nav__link">
+    codeql-go
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#hello-world" class="md-nav__link">
+    Hello world
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#codeql语法前言" class="md-nav__link">
+    CodeQL语法前言
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#基础数据类型primitive-types" class="md-nav__link">
+    基础数据类型(Primitive types)
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#谓词predicates" class="md-nav__link">
+    谓词(Predicates)
+  </a>
+  
+    <nav class="md-nav" aria-label="谓词(Predicates)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#无结果谓词" class="md-nav__link">
+    无结果谓词
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#结果谓词" class="md-nav__link">
+    结果谓词
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#查询query" class="md-nav__link">
+    查询(Query)
+  </a>
+  
+    <nav class="md-nav" aria-label="查询(Query)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#选择子句" class="md-nav__link">
+    选择子句
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#污点分析定义" class="md-nav__link">
+    污点分析定义
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#golang-sql注入检测" class="md-nav__link">
+    golang sql注入检测
+  </a>
+  
+    <nav class="md-nav" aria-label="golang sql注入检测">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#什么是sql注入" class="md-nav__link">
+    什么是sql注入？
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#一段简单的sql注入代码" class="md-nav__link">
+    一段简单的sql注入代码
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#利用codeql检测sql注入" class="md-nav__link">
+    利用CodeQL检测sql注入
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#官方标准库检测sql注入" class="md-nav__link">
+    官方标准库检测sql注入
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../flask%E4%B8%8D%E5%87%BA%E7%BD%91%E5%9B%9E%E6%98%BE%E6%96%B9%E5%BC%8F/" class="md-nav__link">
+        flask不出网回显方式
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../python%E5%8F%97%E9%99%90%E7%9A%84%E4%BB%BB%E6%84%8F%E4%BB%A3%E7%A0%81%E6%89%A7%E8%A1%8C%E4%B8%8E%E9%BB%91%E9%AD%94%E6%B3%95/" class="md-nav__link">
+        python受限的任意代码执行与黑魔法
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../register_argc_argv%E4%B8%8Einclude%20to%20RCE%E7%9A%84%E5%B7%A7%E5%A6%99%E7%BB%84%E5%90%88/" class="md-nav__link">
+        register_argc_argv与include to RCE的巧妙组合
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../webshell%E5%85%8D%E6%9D%80%E6%80%BB%E7%BB%93/" class="md-nav__link">
+        webshell免杀总结
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E4%BB%BB%E6%84%8F%E4%BB%A3%E7%A0%81%E6%89%A7%E8%A1%8C%E4%B8%8B%E7%9A%84php%E5%8E%9F%E7%94%9F%E7%B1%BB%E5%88%A9%E7%94%A8/" class="md-nav__link">
+        任意代码执行下的php原生类利用
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_4_7" data-md-state="indeterminate" type="checkbox" id="__nav_3_4_7" checked>
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_4_7">
+          Codeql
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Codeql" data-md-level="3">
+        <label class="md-nav__title" for="__nav_3_4_7">
+          <span class="md-nav__icon md-icon"></span>
+          Codeql
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../codeql/1.CodeQL%E5%AE%89%E8%A3%85%E4%B8%8E%E4%BD%BF%E7%94%A8/" class="md-nav__link">
+        1.CodeQL安装与使用
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../codeql/2.CodeQL%E8%AF%AD%E6%B3%95/" class="md-nav__link">
+        CodeQL语法
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../codeql/codeql/" class="md-nav__link">
+        codeql Overview
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_5" data-md-state="indeterminate" type="checkbox" id="__nav_3_5" checked>
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_5">
+          静态分析
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="静态分析" data-md-level="2">
+        <label class="md-nav__title" for="__nav_3_5">
+          <span class="md-nav__icon md-icon"></span>
+          静态分析
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E9%9D%99%E6%80%81%E5%88%86%E6%9E%90/DataFlowAnalysis-Applications/" class="md-nav__link">
+        Data Flow Analysis - Applications
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E9%9D%99%E6%80%81%E5%88%86%E6%9E%90/IntermediateRepresentation%28%E4%B8%AD%E9%97%B4%E8%AF%AD%E8%A8%80%29/" class="md-nav__link">
+        Intermediate Representation(中间语言)
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4" data-md-state="indeterminate" type="checkbox" id="__nav_4" checked>
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_4">
+          杂项
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="杂项" data-md-level="1">
+        <label class="md-nav__title" for="__nav_4">
+          <span class="md-nav__icon md-icon"></span>
+          杂项
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4_1" data-md-state="indeterminate" type="checkbox" id="__nav_4_1" checked>
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_4_1">
+          配置
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="配置" data-md-level="2">
+        <label class="md-nav__title" for="__nav_4_1">
+          <span class="md-nav__icon md-icon"></span>
+          配置
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../%E6%9D%82%E9%A1%B9/%E9%85%8D%E7%BD%AE/%E5%85%B3%E4%BA%8Ewindows%E6%8F%90%E5%8D%87%E6%95%88%E7%8E%87%E9%82%A3%E4%BA%9B%E4%BA%8B/" class="md-nav__link">
+        关于windows提升效率那些事
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../tags.html" class="md-nav__link">
+        Tags
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          <div class="md-content" data-md-component="content">
+            <article class="md-content__inner md-typeset">
+              
+    
+        
+            <a href = "/tags.html#codeql" title="codeql" class="md-tag">
+                #codeql&nbsp;
+            </a>
+        
+            <a href = "/tags.html#代码审计" title="代码审计" class="md-tag">
+                #代码审计&nbsp;
+            </a>
+        
+    
+    
+    
+    <div style="float:right"><span id="busuanzi_container_page_pv"><font size="2" color="grey">本文阅读量&nbsp;<span id="busuanzi_value_page_pv"></span></font></span></div>
+    
+  
+                
+
+<h1 id="codeql与golang-sql注入检测">CodeQL与golang sql注入检测<a class="headerlink" href="#codeql与golang-sql注入检测" title="Permanent link">#</a></h1>
+<h2 id="什么是codeql">什么是CodeQL<a class="headerlink" href="#什么是codeql" title="Permanent link">#</a></h2>
+<p>CodeQL是一个可以对代码进行分析的引擎, 安全人员可以用它作为挖洞的辅助或者直接进行挖掘漏洞,节省进行重复操作的精力。</p>
+<p>在CodeQL中，代码被解析成数据，存储在数据库中。安全漏洞、错误和其他错误被建模为可以针对数据库执行的查询。我们可以运行由GitHub研究人员和社区贡献者编写的标准CodeQL查询，也可以编写自己的查询以用于自定义分析。查找潜在错误的查询直接在源文件中突出显示结果。</p>
+<h2 id="保姆级安装教程">保姆级安装教程<a class="headerlink" href="#保姆级安装教程" title="Permanent link">#</a></h2>
+<p>虽然官方提供了可以进行查询的网站，但是由于官网在国外而且执行速度不快，或者某些语言(如c/c++)需要自定义编译命令来编译，实际上在网站是完全不够使用的，所以我们只能本地搭建环境，以下步骤是一步步进行的。</p>
+<h3 id="codeql-cli">codeql-cli<a class="headerlink" href="#codeql-cli" title="Permanent link">#</a></h3>
+<p>在命令行(cli)的环境下运行codeql</p>
+<p><a href="https://github.com/github/codeql-cli-binaries">项目地址 : github/codeql-cli-binaries</a><br />
+打开项目地址之后进入Releases库，下载对应操作系统的压缩包解压到任意一个文件夹</p>
+<h3 id="codeql">codeql<a class="headerlink" href="#codeql" title="Permanent link">#</a></h3>
+<p>开源的codeql标准库和查询库</p>
+<p><a href="https://github.com/github/codeql">项目地址: github/codeql</a><br />
+进入到上面解压codeql-cli的文件夹，并把该仓库clone下来，保证codeql-cli和codeql在同一个目录下<br />
+<img alt="" src="https://gitee.com/guuest/images/raw/master/img/20211101170723.png" /></p>
+<h3 id="vscode-codeql">vscode-codeql<a class="headerlink" href="#vscode-codeql" title="Permanent link">#</a></h3>
+<p>vscode的codeql插件，直接在插件市场安装<br />
+<img alt="" src="https://gitee.com/guuest/images/raw/master/img/20211101170802.png" /></p>
+<h3 id="配置环境变量">配置环境变量<a class="headerlink" href="#配置环境变量" title="Permanent link">#</a></h3>
+<p>为了方便我们使用codeql-cli，我们需要将其路径放到PATH下，具体的方法就不多介绍了(windows下将其添加到环境变量中，linux下修改PATH变量)</p>
+<p>同时我们最好再配置下codeql插件的可执行文件路径，打开vscode的设置，搜索codeql，修改Executable Path<br />
+<img alt="" src="https://gitee.com/guuest/images/raw/master/img/20211101171106.png" /></p>
+<p>至此我们的环境算是配的差不多了。。。但是如果你需要用go的话还需要进行额外配置</p>
+<h3 id="codeql-go">codeql-go<a class="headerlink" href="#codeql-go" title="Permanent link">#</a></h3>
+<p>开源的codeql-go标准库和查询库(不太明白为什么不直接放在codeql库里)</p>
+<p><a href="https://github.com/github/codeql-go">项目地址: github/codeql-go</a></p>
+<p>这个项目了写明了安装方法，但是存在以下弊端:<br />
+1. 这是一个sh脚本，意味着windows办法使用<br />
+2. 这个项目有这么一段话</p>
+<blockquote>
+<p>If you want to use the CodeQL extension for Visual Studio Code, import this repository into your VS Code workspace.</p>
+</blockquote>
+<p>意思是说我们如果需要使用go的标准库时，还需要手动添加到vscode的workspace里，非常麻烦</p>
+<p>为了解决这个弊端，我自己捣鼓了一下，将其放在了codeql标准库里，具体步骤如下<br />
+1. clone仓库到ql文件夹里(即codeql标准库)并改其文件夹名为go<br />
+<img alt="" src="https://gitee.com/guuest/images/raw/master/img/20211101171752.png" /></p>
+<ol>
+<li>修改.codeqlmanifest.json，加入一行<code>"go/.codeqlmanifest.json",</code><br />
+<div class="highlight"><pre><span></span><code><span class="p">{</span><span class="w"> </span><span class="nt">&quot;provide&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="s2">&quot;ruby/.codeqlmanifest.json&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">                      </span><span class="s2">&quot;go/.codeqlmanifest.json&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">                </span><span class="s2">&quot;*/ql/src/qlpack.yml&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">               </span><span class="s2">&quot;*/ql/lib/qlpack.yml&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">               </span><span class="s2">&quot;*/ql/test/qlpack.yml&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">               </span><span class="s2">&quot;cpp/ql/test/query-tests/Security/CWE/CWE-190/semmle/tainted/qlpack.yml&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">               </span><span class="s2">&quot;*/ql/examples/qlpack.yml&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">               </span><span class="s2">&quot;*/upgrades/qlpack.yml&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">               </span><span class="s2">&quot;javascript/ql/experimental/adaptivethreatmodeling/lib/qlpack.yml&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">               </span><span class="s2">&quot;javascript/ql/experimental/adaptivethreatmodeling/src/qlpack.yml&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">               </span><span class="s2">&quot;misc/legacy-support/*/qlpack.yml&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">               </span><span class="s2">&quot;misc/suite-helpers/qlpack.yml&quot;</span><span class="w"> </span><span class="p">]</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+</code></pre></div><br />
+至此我们已经成功安装了包括go在内的codeql标准库以及codeql的cli程序，来写个Hello world测试一下</li>
+</ol>
+<h2 id="hello-world">Hello world<a class="headerlink" href="#hello-world" title="Permanent link">#</a></h2>
+<p>我们来创建一个我们的学习工作区并输出一个codeql的hello,world，步骤如下:</p>
+<ol>
+<li>创建一个文件夹，这里以codeql_study为例</li>
+<li>用vscode打开该文件夹，创建一个ql文件夹，并在该文件夹下创建helloworld.ql和qlpack.yml</li>
+<li>qlpack.yml的内容如下<br />
+<div class="highlight"><pre><span></span><code>name: longlone/codeql-study
+version: 0.0.1
+libraryPathDependencies: codeql-go
+extractor: go
+</code></pre></div></li>
+<li>helloworld.ql的内容如下<br />
+<div class="highlight"><pre><span></span><code>import go
+
+select &quot;hello world&quot;
+</code></pre></div></li>
+<li>创建一个codeql database，这里我们需要指定一个go项目作为分析目标<br />
+<div class="highlight"><pre><span></span><code>codeql database create ./codeql_database -s D:\Coding\golang\src\codeql_study --language=go
+</code></pre></div></li>
+<li>
+<p>从vscode中选择codeql_database作为数据库<br />
+<img alt="" src="https://gitee.com/guuest/images/raw/master/img/20211101174647.png" /><br />
+<img alt="" src="https://gitee.com/guuest/images/raw/master/img/20211101174714.png" /></p>
+</li>
+<li>
+<p>右键helloworld.ql，选择<code>CodeQL: Run Query</code><br />
+<img alt="" src="https://gitee.com/guuest/images/raw/master/img/20211101174805.png" /></p>
+</li>
+</ol>
+<p>如果显示以上画面，那么我们成功就安装好了环境。</p>
+<h2 id="codeql语法前言">CodeQL语法前言<a class="headerlink" href="#codeql语法前言" title="Permanent link">#</a></h2>
+<p>CodeQL的很多语法和现在的主流高级语言有很多相似之处，但也有许多的不同，学习的时候需要注意。<br />
+举一个简单的例子，在CodeQL中不存在<code>==</code>，只有<code>=</code>，当一个变量定义了而没有初始化的时候，<code>=</code>的意思是赋值，但当其已经被赋值了之后，<code>=</code>的意思就变成了比较。</p>
+<h2 id="基础数据类型primitive-types">基础数据类型(Primitive types)<a class="headerlink" href="#基础数据类型primitive-types" title="Permanent link">#</a></h2>
+<p>CodeQL 是一种静态类型的语言，因此每个变量都必须有一个声明的类型。类型是一组值。例如，int 类型是一组整数。注意，一个值可以属于这些集合中的多个，这意味着它可以有多个类型。<br />
+整型(int)，浮点型(float)，日期型(date)，字符型(stirng)，布尔型(boolean)。</p>
+<h2 id="谓词predicates">谓词(Predicates)<a class="headerlink" href="#谓词predicates" title="Permanent link">#</a></h2>
+<p>谓词有点类似于其他语言中的函数，但又与函数不同，谓词用于描述构成 QL 程序的逻辑关系。确切的说，谓词描述的是给定参数与元组集合的关系。<br />
+定义谓词有以下几个注意点(坑点):<br />
+1. 需要注意的是谓词的名字开头必须是小写字母。<br />
+2. 绑定行为与绑定集，这个在后面会介绍。</p>
+<h3 id="无结果谓词">无结果谓词<a class="headerlink" href="#无结果谓词" title="Permanent link">#</a></h3>
+<p>没有结果的谓词以predicate作为开头，剩下的语法结构类似于定义函数。这种谓词只能在where语句中使用<br />
+一个简单的例子如下:<br />
+<div class="highlight"><pre><span></span><code>predicate isCity(string city) {
+city = &quot;Beijing&quot;
+or
+city = &quot;ShangHai&quot;
+}
+
+from string city
+where city = &quot;Beijing&quot; and isCity(city)
+select city
+</code></pre></div></p>
+<h3 id="结果谓词">结果谓词<a class="headerlink" href="#结果谓词" title="Permanent link">#</a></h3>
+<p>有结果的谓词的定义类似于c/c++语言的函数定义，以返回类型替代predicate作为开头。这种谓词可以在where与select语句中使用<br />
+一个简单的例子如下:<br />
+<div class="highlight"><pre><span></span><code>int addOne(int i) {
+    result = i + 1 and
+    i in [1 .. 10]
+}
+
+from int v
+where v = 1
+select addOne(v)
+</code></pre></div></p>
+<h2 id="查询query">查询(Query)<a class="headerlink" href="#查询query" title="Permanent link">#</a></h2>
+<p>查询是CodeQL的输出。查询有两种类型，分别是<br />
+- 选择子句<br />
+- 查询谓词，这意味着我们可以在当前模块中定义或者从其他模块中导入</p>
+<h3 id="选择子句">选择子句<a class="headerlink" href="#选择子句" title="Permanent link">#</a></h3>
+<p>选择子句的格式如下:<br />
+<div class="highlight"><pre><span></span><code>[from] /* ... variable declarations ... */
+[where] /* ... logical formula ... */
+select /* ... expressions ... */
+</code></pre></div><br />
+其中from和where语句是可选的。我们可以在from中定义变量，在where中给变量赋值和对查询结果的过滤，最后在select中显示结果。<br />
+在select语句中我们还可以使用一些关键字:<br />
+- <code>as</code>关键字，后面跟随一个名字。作用相当于sql中的<code>as</code>，为结果列提供了一个"标签"，并允许在后续的select表达式中使用它们。<br />
+- <code>order by</code>关键字，后面跟随一个一个结果列名。作用相当于sql中的<code>order by</code>，用于排序结果，并且在结果列名后可选<code>asc</code>(升序)或<code>desc</code>(降序)关键字。</p>
+<p>一个简单的例子如下:<br />
+<div class="highlight"><pre><span></span><code>from int x, int y
+where x = 3 and y in [0 .. 2]
+select x, y, x * y as product, &quot;product: &quot; + product
+</code></pre></div></p>
+<h2 id="污点分析定义">污点分析定义<a class="headerlink" href="#污点分析定义" title="Permanent link">#</a></h2>
+<p>污点分析可以抽象成一个三元组<code>&lt;sources,sinks,processor&gt;</code>的形式，其中:<br />
+-   <strong>source 即污点源</strong>，代表直接引入不受信任的数据或者机密数据到系统中<br />
+-   <strong>sink 即污点汇聚点</strong>，代表直接产生安全敏感操作（违反数据完整性）或者泄露隐私数据到外界（违反数据保密性）<br />
+-   <strong>sanitizer 即无害处理</strong>，代表通过数据加密或者移除危害操作等手段使数据传播不再对软件系统的信息安全产生危害</p>
+<h2 id="golang-sql注入检测">golang sql注入检测<a class="headerlink" href="#golang-sql注入检测" title="Permanent link">#</a></h2>
+<h3 id="什么是sql注入">什么是sql注入？<a class="headerlink" href="#什么是sql注入" title="Permanent link">#</a></h3>
+<p>我们先看看百科上是怎么说的</p>
+<blockquote>
+<p>SQL注入即是指web应用程序对用户输入数据的合法性没有判断或过滤不严，攻击者可以在web应用程序中事先定义好的查询语句的结尾上添加额外的SQL语句，在管理员不知情的情况下实现非法操作，以此来实现欺骗数据库服务器执行非授权的任意查询，从而进一步得到相应的数据信息。<br />
+看完官方的介绍，我在来说下我理解的sql注入是什么</p>
+</blockquote>
+<p>sql注入其实就是<strong>不受信任的用户输入</strong>通过字符拼接的方式<strong>进入sql语句</strong>中从而导致sql语句的语义改变，通过这种恶意sql语句实现的一种攻击。</p>
+<p>这里有两个关键点，一个是<strong>不受信任的用户输入</strong>，一个是<strong>进入sql语句</strong>，可以看到它们就类似于上面污点分析说到的<strong>source</strong>和<strong>sink</strong></p>
+<h3 id="一段简单的sql注入代码">一段简单的sql注入代码<a class="headerlink" href="#一段简单的sql注入代码" title="Permanent link">#</a></h3>
+<div class="highlight"><pre><span></span><code><span class="kn">package</span><span class="w"> </span><span class="nx">main</span><span class="w"></span>
+
+<span class="kn">import</span><span class="w"> </span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="s">&quot;flag&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="s">&quot;fmt&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="s">&quot;log&quot;</span><span class="w"></span>
+
+<span class="w">    </span><span class="s">&quot;github.com/gin-gonic/gin&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="s">&quot;database/sql&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nx">_</span><span class="w"> </span><span class="s">&quot;github.com/go-sql-driver/mysql&quot;</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+
+<span class="kd">var</span><span class="w"> </span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="nx">Addr</span><span class="w">       </span><span class="p">=</span><span class="w"> </span><span class="s">&quot;0.0.0.0:8080&quot;</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+
+<span class="kd">func</span><span class="w"> </span><span class="nx">init</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="nx">flag</span><span class="p">.</span><span class="nx">StringVar</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">Addr</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;addr&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;0.0.0.0:8080&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Server listen address&quot;</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="nx">flag</span><span class="p">.</span><span class="nx">Parse</span><span class="p">()</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+
+<span class="kd">func</span><span class="w"> </span><span class="nx">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="nx">db</span><span class="p">,</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">sql</span><span class="p">.</span><span class="nx">Open</span><span class="p">(</span><span class="s">&quot;mysql&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="s">&quot;root:root@tcp(127.0.0.1:3306)/test&quot;</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="k">defer</span><span class="w"> </span><span class="nx">db</span><span class="p">.</span><span class="nx">Close</span><span class="p">()</span><span class="w"></span>
+
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">nil</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="nb">panic</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="nx">err</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nx">db</span><span class="p">.</span><span class="nx">Ping</span><span class="p">()</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">nil</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="nb">panic</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="nx">router</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">gin</span><span class="p">.</span><span class="nx">Default</span><span class="p">()</span><span class="w"></span>
+<span class="w">    </span><span class="nx">router</span><span class="p">.</span><span class="nx">GET</span><span class="p">(</span><span class="s">&quot;/inject&quot;</span><span class="p">,</span><span class="w"> </span><span class="kd">func</span><span class="p">(</span><span class="nx">ctx</span><span class="w"> </span><span class="o">*</span><span class="nx">gin</span><span class="p">.</span><span class="nx">Context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="kd">var</span><span class="w"> </span><span class="p">(</span><span class="w"></span>
+<span class="w">            </span><span class="nx">username</span><span class="w"> </span><span class="kt">string</span><span class="w"></span>
+<span class="w">        </span><span class="p">)</span><span class="w"></span>
+<span class="w">        </span><span class="c1">// source</span><span class="w"></span>
+<span class="w">        </span><span class="nx">id</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">ctx</span><span class="p">.</span><span class="nx">Query</span><span class="p">(</span><span class="s">&quot;id&quot;</span><span class="p">)</span><span class="w"></span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="nx">id</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">            </span><span class="nx">id</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">&quot;1&quot;</span><span class="w"></span>
+<span class="w">        </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">        </span><span class="nx">id2</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">id</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;hhhhhh&quot;</span><span class="w"></span>
+<span class="w">        </span><span class="c1">// sink</span><span class="w"></span>
+<span class="w">        </span><span class="nx">rows</span><span class="p">,</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">db</span><span class="p">.</span><span class="nx">Query</span><span class="p">(</span><span class="s">&quot;select username from users where id = &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nx">id2</span><span class="p">)</span><span class="w"></span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">nil</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">            </span><span class="nx">log</span><span class="p">.</span><span class="nx">Panic</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span><span class="w"></span>
+<span class="w">        </span><span class="p">}</span><span class="w"></span>
+<span class="w">        </span><span class="k">defer</span><span class="w"> </span><span class="nx">rows</span><span class="p">.</span><span class="nx">Close</span><span class="p">()</span><span class="w"></span>
+
+<span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="nx">rows</span><span class="p">.</span><span class="nx">Next</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">            </span><span class="nx">err</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">rows</span><span class="p">.</span><span class="nx">Scan</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">username</span><span class="p">)</span><span class="w"></span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">nil</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">                </span><span class="nx">log</span><span class="p">.</span><span class="nx">Panic</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span><span class="w"></span>
+<span class="w">            </span><span class="p">}</span><span class="w"></span>
+<span class="w">        </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">        </span><span class="nx">ctx</span><span class="p">.</span><span class="nx">String</span><span class="p">(</span><span class="mi">200</span><span class="p">,</span><span class="w"> </span><span class="nx">username</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="p">})</span><span class="w"></span>
+<span class="w">    </span><span class="nx">router</span><span class="p">.</span><span class="nx">Run</span><span class="p">(</span><span class="nx">Addr</span><span class="p">)</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</code></pre></div>
+<h3 id="利用codeql检测sql注入">利用CodeQL检测sql注入<a class="headerlink" href="#利用codeql检测sql注入" title="Permanent link">#</a></h3>
+<p>我们这先尝试自己去编写一个CodeQL来检测这段代码中存在的sql注入，这里利用了CodeQL自带的一个污点追踪功能<br />
+<div class="highlight"><pre><span></span><code>from Method GinQuery, DataFlow::CallNode GinQueryCallNode,
+     Method DBQuery, DataFlow::CallNode DBQueryCallNode,
+     DataFlow::Node sink, DataFlow::Node src
+where
+     GinQuery.hasQualifiedName(&quot;github.com/gin-gonic/gin&quot;,&quot;Context&quot;,&quot;Query&quot;)
+     and GinQueryCallNode = GinQuery.getACall() 
+     and DBQuery.hasQualifiedName(&quot;database/sql&quot;,&quot;DB&quot;,&quot;Query&quot;)
+     and DBQueryCallNode = DBQuery.getACall()
+     and src = GinQueryCallNode.getResult()
+     and sink = DataFlow::exprNode(DBQueryCallNode.getCall().getArgument(0))
+     and TaintTracking::localTaint(src, sink)
+select src, sink
+</code></pre></div><br />
+最后执行结果如下<br />
+<img alt="" src="https://gitee.com/guuest/images/raw/master/img/20211103214319.png" /></p>
+<h3 id="官方标准库检测sql注入">官方标准库检测sql注入<a class="headerlink" href="#官方标准库检测sql注入" title="Permanent link">#</a></h3>
+<p>官方标准库中也存在sql注入的检测，位于<code>codeql-go/lib/src/Security/SqlInjection.ql</code>，我们来学习一下官方代码是怎么编写的<br />
+官方源码如下:<br />
+<div class="highlight"><pre><span></span><code>/**
+ * @name Database query built from user-controlled sources
+ * @description Building a database query from user-controlled sources is vulnerable to insertion of
+ *              malicious code by the user.
+ * @kind path-problem
+ * @problem.severity error
+ * @security-severity 8.8
+ * @precision high
+ * @id go/sql-injection
+ * @tags security
+ *       external/cwe/cwe-089
+ */
+
+import go
+import semmle.go.security.SqlInjection
+import DataFlow::PathGraph
+
+from SqlInjection::Configuration cfg, DataFlow::PathNode source, DataFlow::PathNode sink
+where cfg.hasFlowPath(source, sink)
+select sink.getNode(), source, sink, &quot;This query depends on $@.&quot;, source.getNode(),
+  &quot;a user-provided value&quot;
+</code></pre></div><br />
+可以看到代码很简短，证明真实的实现并不在这里，我们按下Ctrl跟进SqlInjection::Configuration看看<br />
+<img alt="" src="https://gitee.com/guuest/images/raw/master/img/20211103204938.png" /><br />
+这里可以看到Configuration继承了<code>TaintTracking::Configuration</code>，这个是官方自带的污点追踪的配置，我们只要实现<code>isSource</code>谓词和<code>isSink</code>谓词即可，我们继续跟进<code>Source</code>类<br />
+可以看到<code>Source</code>类就是个继承了<code>DataFlow::Node</code>的抽象类，那么我们就要去找它的子类<br />
+<img alt="" src="https://gitee.com/guuest/images/raw/master/img/20211103205149.png" /><br />
+子类就在最下面，它又是"继承"于<code>UntrustedFlowSource</code><br />
+<img alt="" src="https://gitee.com/guuest/images/raw/master/img/20211103205244.png" /><br />
+继续跟进<code>UntrustedFlowSource</code>，可以看到这里有些比较抽象的代码，实际上这等价于<code>UntrustedFlowSource</code>又"继承"于<code>UntrustedFlowSource::Range</code><br />
+<code>UntrustedFlowSource::Range</code>就在下面，它又是一个继承了<code>DataFlow::Node</code>的抽象类，我们继续去找它的子类<br />
+<img alt="" src="https://gitee.com/guuest/images/raw/master/img/20211103205329.png" /><br />
+通过vscode搜索<code>extends UntrustedFlowSource::Range</code>，可以看到该类有很多子类，都是为了适配golang中比较出名的web框架(如Beego，Chi，Gin等)<br />
+<img alt="" src="https://gitee.com/guuest/images/raw/master/img/20211103205514.png" /><br />
+这里我们的代码是用Gin作为框架的，我们就以其为例，查看<code>Gin.qll</code>，里面有2个类继承了<code>extends UntrustedFlowSource::Range</code>，其中一个类的代码如下:<br />
+<img alt="" src="https://gitee.com/guuest/images/raw/master/img/20211103210118.png" /><br />
+最上面这一块的意思是去寻找一个方法调用，并且获取他的返回结果作为source<br />
+下面一块的意思是寻找类中的字段(Accepted或Params，是一个数组)，并且在其读取元素时获取他的值作为source</p>
+<p>另外一个类的代码如下:<br />
+<img alt="" src="https://gitee.com/guuest/images/raw/master/img/20211103210822.png" /><br />
+这段代码的意思是这些函数调用时获取其第一个参数作为source</p>
+<p>上面的代码可能有点复杂，我们稍微简化一下，可以得到以下代码<br />
+<div class="highlight"><pre><span></span><code>import go
+
+abstract class Source extends DataFlow::Node { }
+
+class Node1 extends Source {
+  Node1() {
+    exists(DataFlow::MethodCallNode call, string methodName |
+        call.getTarget().hasQualifiedName(&quot;github.com/gin-gonic/gin&quot;, &quot;Context&quot;, methodName) and
+        methodName in [
+            &quot;FullPath&quot;, &quot;GetHeader&quot;, &quot;QueryArray&quot;, &quot;Query&quot;, &quot;PostFormArray&quot;, &quot;PostForm&quot;, &quot;Param&quot;,
+            &quot;GetStringSlice&quot;, &quot;GetString&quot;, &quot;GetRawData&quot;, &quot;ClientIP&quot;, &quot;ContentType&quot;, &quot;Cookie&quot;,
+            &quot;GetQueryArray&quot;, &quot;GetQuery&quot;, &quot;GetPostFormArray&quot;, &quot;GetPostForm&quot;, &quot;DefaultPostForm&quot;,
+            &quot;DefaultQuery&quot;, &quot;GetPostFormMap&quot;, &quot;GetQueryMap&quot;, &quot;GetStringMap&quot;, &quot;GetStringMapString&quot;,
+            &quot;GetStringMapStringSlice&quot;, &quot;PostFormMap&quot;, &quot;QueryMap&quot;
+          ]
+      |
+        this = call.getResult(0)
+   )
+  }
+}
+
+from Source src
+select src
+</code></pre></div><br />
+这里如果对CodeQL不够熟悉可能会产生疑问，为什么Source的子类Node1的特征谓词(可以理解为其他语言中的构造函数)会对Source产生限制作用呢？其实这个就是CodeQL的特点，子类的特征谓词会限定父类。</p>
+<p>sink的分析和source同理，我们这里就不再分析了。可以看到其实CodeQL官方就是将很多常用的Web框架的source和sink都写了一遍，这样当我们使用这些Web框架编写代码时就可以使用CodeQL标准库来检测我们的代码是否存在漏洞了。<br />
+我们来运行下官方的标准库，可以得到相同的结果:<br />
+<img alt="" src="https://gitee.com/guuest/images/raw/master/img/20211103214011.png" /></p>
+
+              
+  
+
+            </article>
+          </div>
+        </div>
+        
+          <a href="#" class="md-top md-icon" data-md-component="top" data-md-state="hidden">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"/></svg>
+            回到页面顶部
+          </a>
+        
+      </main>
+      
+        
+<footer class="md-footer">
+<div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+    <div class="md-footer-copyright">
+        
+        
+    </div>
+    <div class="md-social">
+  
+    
+    
+      
+      
+    
+    <a href="https://github.com/WAY29" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+    </a>
+  
+    
+    
+    <a href="mailto:toloveu29@gmail.com" target="_blank" rel="noopener" title="" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M1.75 3A1.75 1.75 0 0 0 0 4.75v14c0 .966.784 1.75 1.75 1.75h20.5A1.75 1.75 0 0 0 24 18.75v-14A1.75 1.75 0 0 0 22.25 3H1.75zM1.5 4.75a.25.25 0 0 1 .25-.25h20.5a.25.25 0 0 1 .25.25v.852l-10.36 7a.25.25 0 0 1-.28 0l-10.36-7V4.75zm0 2.662V18.75c0 .138.112.25.25.25h20.5a.25.25 0 0 0 .25-.25V7.412l-9.52 6.433c-.592.4-1.368.4-1.96 0L1.5 7.412z"/></svg>
+    </a>
+  
+    
+    
+      
+      
+    
+    <a href="https://longlone.top/rss.xml" target="_blank" rel="noopener" title="longlone.top" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M3.5 3.25a.75.75 0 0 1 .75-.75C14.053 2.5 22 10.447 22 20.25a.75.75 0 0 1-1.5 0C20.5 11.275 13.225 4 4.25 4a.75.75 0 0 1-.75-.75zM3.5 19a2 2 0 1 1 4 0 2 2 0 0 1-4 0zm.75-9.5a.75.75 0 0 0 0 1.5 9.25 9.25 0 0 1 9.25 9.25.75.75 0 0 0 1.5 0C15 14.313 10.187 9.5 4.25 9.5z"/></svg>
+    </a>
+  
+</div>
+    </div>
+</div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    <script id="__config" type="application/json">{"base": "../../..", "features": ["header.autohide", "navigation.expand", "navigation.top", "toc.integrate", "tabs"], "translations": {"clipboard.copy": "\u590d\u5236", "clipboard.copied": "\u5df2\u590d\u5236", "search.config.lang": "ja", "search.config.pipeline": "trimmer, stemmer", "search.config.separator": "[\\uff0c\\u3002]+", "search.placeholder": "\u641c\u7d22", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.term.missing": "\u7f3a\u5c11", "select.version.title": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}, "search": "../../../assets/javascripts/workers/search.22074ed6.min.js"}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.960e086b.min.js"></script>
+      
+        <script src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+      
+    
+  </body>
+</html>

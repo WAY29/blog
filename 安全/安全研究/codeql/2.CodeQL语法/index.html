@@ -1,0 +1,2449 @@
+
+<!doctype html>
+<html lang="zh" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Longlone's Blog about daily and security.">
+      
+      
+      
+        <link rel="canonical" href="https://longlone.top/%E5%AE%89%E5%85%A8/%E5%AE%89%E5%85%A8%E7%A0%94%E7%A9%B6/codeql/2.CodeQL%E8%AF%AD%E6%B3%95/">
+      
+      <link rel="icon" href="../../../../attachment/favicon.ico">
+      <meta name="generator" content="mkdocs-1.2.3, mkdocs-material-8.1.8">
+    
+    
+      
+        <title>CodeQL语法 - Longlone's Blog</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../../assets/stylesheets/main.6e60f8b8.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../../assets/stylesheets/palette.e6a45f82.min.css">
+        
+          
+          
+          <meta name="theme-color" content="#7e56c2">
+        
+      
+    
+    
+    
+      
+    
+    
+    <script>__md_scope=new URL("../../../..",location),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="deep-purple" data-md-color-accent="indigo">
+  
+    
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#2codeql语法" class="md-skip">
+          跳转至
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="页眉">
+    <a href="../../../.." title="Longlone&#39;s Blog" class="md-header__button md-logo" aria-label="Longlone's Blog" data-md-component="logo">
+      
+  <img src="../../../../attachment/logo.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Longlone's Blog
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              CodeQL语法
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="搜索" placeholder="搜索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="查找">
+        
+        <button type="reset" class="md-search__icon md-icon" aria-label="清空当前内容" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            正在初始化搜索引擎
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--integrated" aria-label="导航栏" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../../.." title="Longlone&#39;s Blog" class="md-nav__button md-logo" aria-label="Longlone's Blog" data-md-component="logo">
+      
+  <img src="../../../../attachment/logo.svg" alt="logo">
+
+    </a>
+    Longlone's Blog
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../.." class="md-nav__link">
+        Index
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../%E5%8F%8B%E6%83%85%E9%93%BE%E6%8E%A5/" class="md-nav__link">
+        友情链接
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3" type="checkbox" id="__nav_3" checked>
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3">
+          安全
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="安全" data-md-level="1">
+        <label class="md-nav__title" for="__nav_3">
+          <span class="md-nav__icon md-icon"></span>
+          安全
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_1" data-md-state="indeterminate" type="checkbox" id="__nav_3_1" checked>
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_1">
+          Golang
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Golang" data-md-level="2">
+        <label class="md-nav__title" for="__nav_3_1">
+          <span class="md-nav__icon md-icon"></span>
+          Golang
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../golang/%E7%AC%AC%E4%B8%80%E7%AB%A0-Golang%E5%9F%BA%E7%A1%80/" class="md-nav__link">
+        第一章-Golang基础
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../golang/%E7%AC%AC%E4%B8%89%E7%AB%A0-HTTP/" class="md-nav__link">
+        第三章-HTTP
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../golang/%E7%AC%AC%E4%BA%8C%E7%AB%A0-%E7%BD%91%E7%BB%9C%E8%BF%9E%E6%8E%A5/" class="md-nav__link">
+        第二章-网络连接
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../golang/%E7%AC%AC%E4%BA%94%E7%AB%A0-DNS/" class="md-nav__link">
+        第五章-DNS
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../golang/%E7%AC%AC%E5%9B%9B%E7%AB%A0-HTTP%E6%9C%8D%E5%8A%A1%E5%99%A8/" class="md-nav__link">
+        第四章-HTTP服务器
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_2" data-md-state="indeterminate" type="checkbox" id="__nav_3_2" checked>
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_2">
+          Java
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Java" data-md-level="2">
+        <label class="md-nav__title" for="__nav_3_2">
+          <span class="md-nav__icon md-icon"></span>
+          Java
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_2_1" data-md-state="indeterminate" type="checkbox" id="__nav_3_2_1" checked>
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_2_1">
+          JavaWeb安全 文章复现
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="JavaWeb安全 文章复现" data-md-level="3">
+        <label class="md-nav__title" for="__nav_3_2_1">
+          <span class="md-nav__icon md-icon"></span>
+          JavaWeb安全 文章复现
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../java/JavaWeb%E5%AE%89%E5%85%A8-%E6%96%87%E7%AB%A0%E5%A4%8D%E7%8E%B0/ClassLoader%E7%B1%BB%E5%8A%A0%E8%BD%BD%E6%9C%BA%E5%88%B6/" class="md-nav__link">
+        ClassLoader类加载机制
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../java/JavaWeb%E5%AE%89%E5%85%A8-%E6%96%87%E7%AB%A0%E5%A4%8D%E7%8E%B0/JAVA%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/" class="md-nav__link">
+        java文件系统
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../java/JavaWeb%E5%AE%89%E5%85%A8-%E6%96%87%E7%AB%A0%E5%A4%8D%E7%8E%B0/JDBC/" class="md-nav__link">
+        JDBC
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../java/JavaWeb%E5%AE%89%E5%85%A8-%E6%96%87%E7%AB%A0%E5%A4%8D%E7%8E%B0/Unsafe/" class="md-nav__link">
+        Unsafe
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../java/JavaWeb%E5%AE%89%E5%85%A8-%E6%96%87%E7%AB%A0%E5%A4%8D%E7%8E%B0/java%20IO-NIO%E5%A4%9A%E7%A7%8D%E8%AF%BB%E5%86%99%E6%96%87%E4%BB%B6%E6%96%B9%E5%BC%8F/" class="md-nav__link">
+        java IO/NIO多种读写文件方式
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../java/JavaWeb%E5%AE%89%E5%85%A8-%E6%96%87%E7%AB%A0%E5%A4%8D%E7%8E%B0/java%20%E6%96%87%E4%BB%B6%E5%90%8D%E7%A9%BA%E5%AD%97%E8%8A%82%E6%88%AA%E6%96%AD%E6%BC%8F%E6%B4%9E/" class="md-nav__link">
+        java 文件名空字节截断漏洞
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../java/JavaWeb%E5%AE%89%E5%85%A8-%E6%96%87%E7%AB%A0%E5%A4%8D%E7%8E%B0/java%E5%8F%8D%E5%B0%84%E6%9C%BA%E5%88%B6/" class="md-nav__link">
+        java反射机制
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../java/JavaWeb%E5%AE%89%E5%85%A8-%E6%96%87%E7%AB%A0%E5%A4%8D%E7%8E%B0/java%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C/" class="md-nav__link">
+        java本地命令执行
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../java/JavaWeb%E5%AE%89%E5%85%A8-%E6%96%87%E7%AB%A0%E5%A4%8D%E7%8E%B0/%E5%BC%80%E5%A4%B4%E5%A3%B0%E6%98%8E/" class="md-nav__link">
+        开头声明
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_2_2" data-md-state="indeterminate" type="checkbox" id="__nav_3_2_2" checked>
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_2_2">
+          Java安全漫谈 文章复现
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Java安全漫谈 文章复现" data-md-level="3">
+        <label class="md-nav__title" for="__nav_3_2_2">
+          <span class="md-nav__icon md-icon"></span>
+          Java安全漫谈 文章复现
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../java/Java%E5%AE%89%E5%85%A8%E6%BC%AB%E8%B0%88-%E6%96%87%E7%AB%A0%E5%A4%8D%E7%8E%B0/RMI%E7%AF%871/" class="md-nav__link">
+        RMI篇1
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../java/Java%E5%AE%89%E5%85%A8%E6%BC%AB%E8%B0%88-%E6%96%87%E7%AB%A0%E5%A4%8D%E7%8E%B0/RMI%E7%AF%872/" class="md-nav__link">
+        RMI篇2
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../java/Java%E5%AE%89%E5%85%A8%E6%BC%AB%E8%B0%88-%E6%96%87%E7%AB%A0%E5%A4%8D%E7%8E%B0/RMI%E7%AF%873/" class="md-nav__link">
+        RMI篇3
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../java/Java%E5%AE%89%E5%85%A8%E6%BC%AB%E8%B0%88-%E6%96%87%E7%AB%A0%E5%A4%8D%E7%8E%B0/%E5%8F%8D%E5%B0%84%E7%AF%871/" class="md-nav__link">
+        反射篇1
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../java/Java%E5%AE%89%E5%85%A8%E6%BC%AB%E8%B0%88-%E6%96%87%E7%AB%A0%E5%A4%8D%E7%8E%B0/%E5%8F%8D%E5%B0%84%E7%AF%872/" class="md-nav__link">
+        反射篇2
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../java/Java%E5%AE%89%E5%85%A8%E6%BC%AB%E8%B0%88-%E6%96%87%E7%AB%A0%E5%A4%8D%E7%8E%B0/%E5%8F%8D%E5%B0%84%E7%AF%873/" class="md-nav__link">
+        反射篇3
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../java/Java%E5%AE%89%E5%85%A8%E6%BC%AB%E8%B0%88-%E6%96%87%E7%AB%A0%E5%A4%8D%E7%8E%B0/%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96CC%E7%AF%87%E6%80%BB%E7%BB%93/" class="md-nav__link">
+        反序列化CC篇总结
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../java/Java%E5%AE%89%E5%85%A8%E6%BC%AB%E8%B0%88-%E6%96%87%E7%AB%A0%E5%A4%8D%E7%8E%B0/%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96CC%E7%AF%87%E8%A1%A5%E5%85%85/" class="md-nav__link">
+        反序列化CC篇补充
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../java/Java%E5%AE%89%E5%85%A8%E6%BC%AB%E8%B0%88-%E6%96%87%E7%AB%A0%E5%A4%8D%E7%8E%B0/%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8BCommonsBeanUtils1/" class="md-nav__link">
+        反序列化之CommonsBeanUtils1
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../java/Java%E5%AE%89%E5%85%A8%E6%BC%AB%E8%B0%88-%E6%96%87%E7%AB%A0%E5%A4%8D%E7%8E%B0/%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8BRMI/" class="md-nav__link">
+        反序列化之RMI
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../java/Java%E5%AE%89%E5%85%A8%E6%BC%AB%E8%B0%88-%E6%96%87%E7%AB%A0%E5%A4%8D%E7%8E%B0/%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8Bfastjson/" class="md-nav__link">
+        反序列化之fastjson
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../java/Java%E5%AE%89%E5%85%A8%E6%BC%AB%E8%B0%88-%E6%96%87%E7%AB%A0%E5%A4%8D%E7%8E%B0/%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E7%AF%871/" class="md-nav__link">
+        反序列化篇1
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../java/Java%E5%AE%89%E5%85%A8%E6%BC%AB%E8%B0%88-%E6%96%87%E7%AB%A0%E5%A4%8D%E7%8E%B0/%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E7%AF%872/" class="md-nav__link">
+        反序列化篇2
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../java/Java%E5%AE%89%E5%85%A8%E6%BC%AB%E8%B0%88-%E6%96%87%E7%AB%A0%E5%A4%8D%E7%8E%B0/%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E7%AF%873/" class="md-nav__link">
+        反序列化篇3
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../java/Java%E5%AE%89%E5%85%A8%E6%BC%AB%E8%B0%88-%E6%96%87%E7%AB%A0%E5%A4%8D%E7%8E%B0/%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E7%AF%874/" class="md-nav__link">
+        反序列化篇4
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../java/Java%E5%AE%89%E5%85%A8%E6%BC%AB%E8%B0%88-%E6%96%87%E7%AB%A0%E5%A4%8D%E7%8E%B0/%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E7%AF%875/" class="md-nav__link">
+        反序列化篇5
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../java/Java%E5%AE%89%E5%85%A8%E6%BC%AB%E8%B0%88-%E6%96%87%E7%AB%A0%E5%A4%8D%E7%8E%B0/%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E7%AF%876/" class="md-nav__link">
+        反序列化篇6
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../java/Java%E5%AE%89%E5%85%A8%E6%BC%AB%E8%B0%88-%E6%96%87%E7%AB%A0%E5%A4%8D%E7%8E%B0/%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E7%AF%87%E4%B9%8BJDK7u21/" class="md-nav__link">
+        反序列化篇之JDK7u21
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../java/Java%E5%AE%89%E5%85%A8%E6%BC%AB%E8%B0%88-%E6%96%87%E7%AB%A0%E5%A4%8D%E7%8E%B0/%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E7%AF%87%E4%B9%8BJDK8u20/" class="md-nav__link">
+        反序列化篇之JDK8u20
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../java/Java%E5%AE%89%E5%85%A8%E6%BC%AB%E8%B0%88-%E6%96%87%E7%AB%A0%E5%A4%8D%E7%8E%B0/%E5%BC%80%E5%A4%B4%E5%A3%B0%E6%98%8E/" class="md-nav__link">
+        开头声明
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_2_3" data-md-state="indeterminate" type="checkbox" id="__nav_3_2_3" checked>
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_2_3">
+          Java安全
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Java安全" data-md-level="3">
+        <label class="md-nav__title" for="__nav_3_2_3">
+          <span class="md-nav__icon md-icon"></span>
+          Java安全
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../java/java%E5%AE%89%E5%85%A8/JNDI/" class="md-nav__link">
+        JNDI与JNDI注入
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_2_4" data-md-state="indeterminate" type="checkbox" id="__nav_3_2_4" checked>
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_2_4">
+          Spring
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Spring" data-md-level="3">
+        <label class="md-nav__title" for="__nav_3_2_4">
+          <span class="md-nav__icon md-icon"></span>
+          Spring
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../java/spring/AOP/" class="md-nav__link">
+        AOP
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../java/spring/Bean%E7%9A%84%E4%BD%9C%E7%94%A8%E5%9F%9F/" class="md-nav__link">
+        Bean的作用域
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../java/spring/Bean%E7%9A%84%E8%A3%85%E9%85%8D/" class="md-nav__link">
+        Bean的装配
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../java/spring/HelloSpring/" class="md-nav__link">
+        HelloSpring
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../java/spring/Spring%E4%B8%AD%E4%BD%BF%E7%94%A8java%E4%BB%A3%E7%A0%81%E9%85%8D%E7%BD%AE/" class="md-nav__link">
+        Spring中使用java代码配置
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../java/spring/Spring%E4%B8%AD%E4%BD%BF%E7%94%A8%E6%B3%A8%E8%A7%A3%E9%85%8D%E7%BD%AE/" class="md-nav__link">
+        Spring中使用注解配置
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../java/spring/Spring%E4%BD%BF%E7%94%A8XML%E9%85%8D%E7%BD%AE/" class="md-nav__link">
+        Spring使用XML配置
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../java/spring/Spring%E7%AE%80%E4%BB%8B/" class="md-nav__link">
+        Spring简介
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../java/spring/%E4%BB%A3%E7%90%86%E6%A8%A1%E5%BC%8F/" class="md-nav__link">
+        代理模式
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../java/spring/%E4%BE%9D%E8%B5%96%E6%B3%A8%E5%85%A5%28DI%29/" class="md-nav__link">
+        依赖注入(DI)
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../java/spring/%E6%8E%A7%E5%88%B6%E5%8F%8D%E8%BD%AC%28IOC%29/" class="md-nav__link">
+        控制反转(IOC)
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_2_5" data-md-state="indeterminate" type="checkbox" id="__nav_3_2_5" checked>
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_2_5">
+          Web
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Web" data-md-level="3">
+        <label class="md-nav__title" for="__nav_3_2_5">
+          <span class="md-nav__icon md-icon"></span>
+          Web
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../java/web/Cookie/" class="md-nav__link">
+        Cookie
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../java/web/Exercise/" class="md-nav__link">
+        Exercise
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../java/web/Filter/" class="md-nav__link">
+        Filter
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../java/web/HelloServlet/" class="md-nav__link">
+        HelloServlet
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../java/web/HttpServletRequest/" class="md-nav__link">
+        HttpServletRequest
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../java/web/HttpServletResponse/" class="md-nav__link">
+        HttpServletResponse
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../java/web/JSP/" class="md-nav__link">
+        JSP
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../java/web/JavaBean/" class="md-nav__link">
+        JavaBean
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../java/web/Listener/" class="md-nav__link">
+        Listener
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../java/web/MVC/" class="md-nav__link">
+        MVC
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../java/web/ServletContext/" class="md-nav__link">
+        ServletContext
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../java/web/Session/" class="md-nav__link">
+        Session
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../java/web/Tomcat/" class="md-nav__link">
+        Tomcat
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_3" data-md-state="indeterminate" type="checkbox" id="__nav_3_3" checked>
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_3">
+          前人之路
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="前人之路" data-md-level="2">
+        <label class="md-nav__title" for="__nav_3_3">
+          <span class="md-nav__icon md-icon"></span>
+          前人之路
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../%E5%89%8D%E4%BA%BA%E4%B9%8B%E8%B7%AF/thinkphp%205.1.x%20RCE/" class="md-nav__link">
+        thinkphp 5.1.x RCE
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_4" type="checkbox" id="__nav_3_4" checked>
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_4">
+          安全研究
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="安全研究" data-md-level="2">
+        <label class="md-nav__title" for="__nav_3_4">
+          <span class="md-nav__icon md-icon"></span>
+          安全研究
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../CodeQL%E4%B8%8Egolang%20sql%E6%B3%A8%E5%85%A5%E6%A3%80%E6%B5%8B/" class="md-nav__link">
+        CodeQL与golang sql注入检测
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../flask%E4%B8%8D%E5%87%BA%E7%BD%91%E5%9B%9E%E6%98%BE%E6%96%B9%E5%BC%8F/" class="md-nav__link">
+        flask不出网回显方式
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../python%E5%8F%97%E9%99%90%E7%9A%84%E4%BB%BB%E6%84%8F%E4%BB%A3%E7%A0%81%E6%89%A7%E8%A1%8C%E4%B8%8E%E9%BB%91%E9%AD%94%E6%B3%95/" class="md-nav__link">
+        python受限的任意代码执行与黑魔法
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../register_argc_argv%E4%B8%8Einclude%20to%20RCE%E7%9A%84%E5%B7%A7%E5%A6%99%E7%BB%84%E5%90%88/" class="md-nav__link">
+        register_argc_argv与include to RCE的巧妙组合
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../webshell%E5%85%8D%E6%9D%80%E6%80%BB%E7%BB%93/" class="md-nav__link">
+        webshell免杀总结
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E4%BB%BB%E6%84%8F%E4%BB%A3%E7%A0%81%E6%89%A7%E8%A1%8C%E4%B8%8B%E7%9A%84php%E5%8E%9F%E7%94%9F%E7%B1%BB%E5%88%A9%E7%94%A8/" class="md-nav__link">
+        任意代码执行下的php原生类利用
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_4_7" type="checkbox" id="__nav_3_4_7" checked>
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_4_7">
+          Codeql
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Codeql" data-md-level="3">
+        <label class="md-nav__title" for="__nav_3_4_7">
+          <span class="md-nav__icon md-icon"></span>
+          Codeql
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../1.CodeQL%E5%AE%89%E8%A3%85%E4%B8%8E%E4%BD%BF%E7%94%A8/" class="md-nav__link">
+        1.CodeQL安装与使用
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          CodeQL语法
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        CodeQL语法
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#前言" class="md-nav__link">
+    前言
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#基础数据类型primitive-types" class="md-nav__link">
+    基础数据类型(Primitive types)
+  </a>
+  
+    <nav class="md-nav" aria-label="基础数据类型(Primitive types)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#日期型date" class="md-nav__link">
+    日期型(date)
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#布尔型boolean" class="md-nav__link">
+    布尔型(boolean)
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#谓词predicates" class="md-nav__link">
+    谓词(Predicates)
+  </a>
+  
+    <nav class="md-nav" aria-label="谓词(Predicates)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#无结果谓词" class="md-nav__link">
+    无结果谓词
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#结果谓词" class="md-nav__link">
+    结果谓词
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#递归谓词" class="md-nav__link">
+    递归谓词
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#特征谓词非成员谓词成员谓词" class="md-nav__link">
+    特征谓词，非成员谓词，成员谓词
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#绑定行为与绑定集" class="md-nav__link">
+    绑定行为与绑定集
+  </a>
+  
+    <nav class="md-nav" aria-label="绑定行为与绑定集">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#单个绑定集" class="md-nav__link">
+    单个绑定集
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#多个绑定集" class="md-nav__link">
+    多个绑定集
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#查询query" class="md-nav__link">
+    查询(Query)
+  </a>
+  
+    <nav class="md-nav" aria-label="查询(Query)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#select子句" class="md-nav__link">
+    select子句
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#查询谓词" class="md-nav__link">
+    查询谓词
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#类classes" class="md-nav__link">
+    类(Classes)
+  </a>
+  
+    <nav class="md-nav" aria-label="类(Classes)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#类的定义" class="md-nav__link">
+    类的定义
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#类的主体" class="md-nav__link">
+    类的主体
+  </a>
+  
+    <nav class="md-nav" aria-label="类的主体">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#特征谓词" class="md-nav__link">
+    特征谓词
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#成员谓词" class="md-nav__link">
+    成员谓词
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#字段field" class="md-nav__link">
+    字段(Field)
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#具体类" class="md-nav__link">
+    具体类
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#抽象类" class="md-nav__link">
+    抽象类
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#重写成员谓词" class="md-nav__link">
+    重写成员谓词
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#多重继承" class="md-nav__link">
+    多重继承
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#模块种类" class="md-nav__link">
+    模块种类
+  </a>
+  
+    <nav class="md-nav" aria-label="模块种类">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#文件模块" class="md-nav__link">
+    文件模块
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#库模块" class="md-nav__link">
+    库模块
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#查询模块" class="md-nav__link">
+    查询模块
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#显式模块" class="md-nav__link">
+    显式模块
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../codeql/" class="md-nav__link">
+        codeql Overview
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_5" data-md-state="indeterminate" type="checkbox" id="__nav_3_5" checked>
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_5">
+          静态分析
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="静态分析" data-md-level="2">
+        <label class="md-nav__title" for="__nav_3_5">
+          <span class="md-nav__icon md-icon"></span>
+          静态分析
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../%E9%9D%99%E6%80%81%E5%88%86%E6%9E%90/DataFlowAnalysis-Applications/" class="md-nav__link">
+        Data Flow Analysis - Applications
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../%E9%9D%99%E6%80%81%E5%88%86%E6%9E%90/IntermediateRepresentation%28%E4%B8%AD%E9%97%B4%E8%AF%AD%E8%A8%80%29/" class="md-nav__link">
+        Intermediate Representation(中间语言)
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4" data-md-state="indeterminate" type="checkbox" id="__nav_4" checked>
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_4">
+          杂项
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="杂项" data-md-level="1">
+        <label class="md-nav__title" for="__nav_4">
+          <span class="md-nav__icon md-icon"></span>
+          杂项
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4_1" data-md-state="indeterminate" type="checkbox" id="__nav_4_1" checked>
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_4_1">
+          配置
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="配置" data-md-level="2">
+        <label class="md-nav__title" for="__nav_4_1">
+          <span class="md-nav__icon md-icon"></span>
+          配置
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../%E6%9D%82%E9%A1%B9/%E9%85%8D%E7%BD%AE/%E5%85%B3%E4%BA%8Ewindows%E6%8F%90%E5%8D%87%E6%95%88%E7%8E%87%E9%82%A3%E4%BA%9B%E4%BA%8B/" class="md-nav__link">
+        关于windows提升效率那些事
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../tags.html" class="md-nav__link">
+        Tags
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          <div class="md-content" data-md-component="content">
+            <article class="md-content__inner md-typeset">
+              
+    
+        
+            <a href = "/tags.html#代码审计" title="代码审计" class="md-tag">
+                #代码审计&nbsp;
+            </a>
+        
+            <a href = "/tags.html#codeql" title="codeql" class="md-tag">
+                #codeql&nbsp;
+            </a>
+        
+    
+    
+    
+    <div style="float:right"><span id="busuanzi_container_page_pv"><font size="2" color="grey">本文阅读量&nbsp;<span id="busuanzi_value_page_pv"></span></font></span></div>
+    
+  
+                
+
+<h1 id="2codeql语法">2.CodeQL语法<a class="headerlink" href="#2codeql语法" title="Permanent link">#</a></h1>
+<h2 id="前言">前言<a class="headerlink" href="#前言" title="Permanent link">#</a></h2>
+<p>CodeQL的很多语法和现在的主流高级语言有很多相似之处，但也有许多的不同，学习的时候需要注意。<br />
+举一个简单的例子，在CodeQL中不存在<code>==</code>，只有<code>=</code>，当一个变量定义了而没有初始化的时候，<code>=</code>的意思是赋值，但当其已经被赋值了之后，<code>=</code>的意思就变成了比较。</p>
+<h2 id="基础数据类型primitive-types">基础数据类型(Primitive types)<a class="headerlink" href="#基础数据类型primitive-types" title="Permanent link">#</a></h2>
+<p>CodeQL 是一种静态类型的语言，因此每个变量都必须有一个声明的类型。类型是一组值。例如，int 类型是一组整数。注意，一个值可以属于这些集合中的多个，这意味着它可以有多个类型。<br />
+整型(int)，浮点型(float)，日期型(date)，字符型(stirng)，布尔型(boolean)，简单介绍下日期型和布尔型。</p>
+<h3 id="日期型date">日期型(date)<a class="headerlink" href="#日期型date" title="Permanent link">#</a></h3>
+<p>日期型变量用于保存公历表示的时间值和日期值，如年、月、日、时、分、秒以及毫秒等，注意，它们的取值都是整数。其中，表示年的整数的取值范围是从-16777216到16777215，表示月的整数的取值范围为从0到11，表示日的整数的取值范围是从1到31，表示时的整数的取值范围是从0到23，表示分的整数的取值范围是从0到59，表示秒的整数的取值范围是从0到59，表示毫秒的整数的取值范围是从0到999。</p>
+<p>编写一个简单的实例用于计算从今年9月1日到今天(11月2日)一共过了多久:<br />
+<div class="highlight"><pre><span></span><code>from date start, date end
+where start = &quot;01/09/2021&quot;.toDate() and end = &quot;02/11/2021&quot;.toDate()
+select start.daysTo(end)
+</code></pre></div><br />
+<img alt="" src="https://gitee.com/guuest/images/raw/master/img/20211102100823.png" /><br />
+这里我们用到了字符串的一个内置函数<code>toDate()</code>，更多的相关函数可以查阅CodeQL文档<br />
+- <a href="https://help.semmle.com/QL/ql-spec/language.html#built-ins-for-string">string - go</a><br />
+- <a href="https://codeql.github.com/codeql-standard-libraries/go/type.date.html">date - go</a></p>
+<h3 id="布尔型boolean">布尔型(boolean)<a class="headerlink" href="#布尔型boolean" title="Permanent link">#</a></h3>
+<p>布尔型变量用来存放布尔值，即false（假）或者 true（真）。<br />
+编写一个简单的例子来实现两个布尔之间的和关系:<br />
+<div class="highlight"><pre><span></span><code>from boolean a, boolean b
+where a = true and b = false
+select a.booleanAnd(b)
+</code></pre></div><br />
+<img alt="" src="https://gitee.com/guuest/images/raw/master/img/20211102102023.png" /></p>
+<p>更多相关函数可以查阅CodeQL文档<br />
+- <a href="https://codeql.github.com/codeql-standard-libraries/go/type.boolean.html">boolean - go</a></p>
+<h2 id="谓词predicates">谓词(Predicates)<a class="headerlink" href="#谓词predicates" title="Permanent link">#</a></h2>
+<p>谓词有点类似于其他语言中的函数，但又与函数不同，谓词用于描述构成 QL 程序的逻辑关系。确切的说，谓词描述的是给定参数与元组集合的关系。<br />
+定义谓词有以下几个注意点(坑点):<br />
+1. 需要注意的是谓词的名字开头必须是小写字母。<br />
+2. 绑定行为与绑定集，这个在后面会介绍。</p>
+<h3 id="无结果谓词">无结果谓词<a class="headerlink" href="#无结果谓词" title="Permanent link">#</a></h3>
+<p>没有结果的谓词以predicate作为开头，剩下的语法结构类似于定义函数。这种谓词只能在where语句中使用<br />
+一个简单的例子如下:<br />
+<div class="highlight"><pre><span></span><code>predicate isCity(string city) {
+city = &quot;Beijing&quot;
+or
+city = &quot;ShangHai&quot;
+}
+
+from string city
+where city = &quot;Beijing&quot; and isCity(city)
+select city
+</code></pre></div></p>
+<h3 id="结果谓词">结果谓词<a class="headerlink" href="#结果谓词" title="Permanent link">#</a></h3>
+<p>有结果的谓词的定义类似于c/c++语言的函数定义，以返回类型替代predicate作为开头。这种谓词可以在where与select语句中使用<br />
+一个简单的例子如下:<br />
+<div class="highlight"><pre><span></span><code>int addOne(int i) {
+    result = i + 1 and
+    i in [1 .. 10]
+}
+
+from int v
+where v = 1
+select addOne(v)
+</code></pre></div></p>
+<h3 id="递归谓词">递归谓词<a class="headerlink" href="#递归谓词" title="Permanent link">#</a></h3>
+<p>这里说的递归并非我们常规理解的函数递归，我们可以理解为一个reverse(可反向查找的)谓词，或者换一个思维，把非递归的结果谓词理解为一个有向图，那么递归的结果谓词可以理解为一个无向图。<br />
+一个简单的例子如下:<br />
+<div class="highlight"><pre><span></span><code>string getANeighbor(string country) {
+    country = &quot;France&quot; and result = &quot;Belgium&quot;
+    or
+    country = &quot;France&quot; and result = &quot;Germany&quot;
+    or
+    country = &quot;Germany&quot; and result = &quot;Austria&quot;
+    or
+    country = &quot;Germany&quot; and result = &quot;Belgium&quot;
+    or
+    country = getANeighbor(result)
+  }
+
+from string people
+where people = getANeighbor(&quot;Germany&quot;)
+select people
+</code></pre></div><br />
+<img alt="" src="https://gitee.com/guuest/images/raw/master/img/20211102112906.png" /><br />
+可以看到查询到三个结果，<code>France</code>，<code>Austria</code>，<code>Belgium</code>，查询到<code>France</code>的原因就是它可以反向查找。</p>
+<h3 id="特征谓词非成员谓词成员谓词">特征谓词，非成员谓词，成员谓词<a class="headerlink" href="#特征谓词非成员谓词成员谓词" title="Permanent link">#</a></h3>
+<p>谓词分为三种，即非成员谓词、成员谓词和特征谓词。<br />
+非成员谓词是在类之外定义的，也就是说，它们不是任何类的成员，而成员谓词则是在类里面定义的。特征谓词则是类中的特殊谓词，类似于其他语言中类的构造函数。<br />
+下面是每种谓词的示例：<br />
+<div class="highlight"><pre><span></span><code>int getSuccessor(int i) {  // 1. Non-member predicate
+  result = i + 1 and
+  i in [1 .. 9]
+}
+
+class FavoriteNumbers extends int {
+  FavoriteNumbers() {  // 2. Characteristic predicate
+    this = 1 or
+    this = 4 or
+    this = 9
+  }
+
+  string getName() {   // 3. Member predicate for the class `FavoriteNumbers`
+    this = 1 and result = &quot;one&quot;
+    or
+    this = 4 and result = &quot;four&quot;
+    or
+    this = 9 and result = &quot;nine&quot;
+  }
+}
+</code></pre></div></p>
+<h3 id="绑定行为与绑定集">绑定行为与绑定集<a class="headerlink" href="#绑定行为与绑定集" title="Permanent link">#</a></h3>
+<p>谓词所描述的集合通常不允许是无限的，换句话说，谓词只能包含有限数量的元组(It must be possible to evaluate a predicate in a finite amount of time, so the set it describes is not usually allowed to be infinite. In other words, a predicate can only contain a finite number of tuples.)<br />
+举个简单的正例和反例:<br />
+<div class="highlight"><pre><span></span><code>// 正例，i被限定在1到10内，或者你也可以给i赋一个确定的值如i=1
+int addOne(int i) {
+    result = i + 1 and
+    i in [1 .. 10]
+}
+</code></pre></div><br />
+<div class="highlight"><pre><span></span><code>// 反例，i是无限数量值的，此时CodeQL编译器会报错: &#39;i&#39; is not bound to a value
+int addOne(int i) {
+    result = i + 1 and
+    i &gt; 0
+}
+</code></pre></div></p>
+<h4 id="单个绑定集">单个绑定集<a class="headerlink" href="#单个绑定集" title="Permanent link">#</a></h4>
+<p>为了使上述的反例谓词能够通过编译，我们可以使用绑定集(bindingset)，但是当我们去调用这个谓词时，传递的参数还是只能在有限的参数集中。<br />
+上面的反例可以修改为如下:<br />
+<div class="highlight"><pre><span></span><code>bindingset[i]
+int addOne(int i) {
+    result = i + 1 and
+    i &gt; 0
+}
+
+// 此时我们可以去调用这个谓词，但是需要注意传递过来的参数还是只能在有限的参数集中
+from int i
+where i = 1
+select addOne(i)
+</code></pre></div></p>
+<h4 id="多个绑定集">多个绑定集<a class="headerlink" href="#多个绑定集" title="Permanent link">#</a></h4>
+<p>我们同样可以添加多个绑定集，下面是一个例子:<br />
+<div class="highlight"><pre><span></span><code>bindingset[x] bindingset[y]
+predicate plusOne(int x, int y) {
+  x + 1 = y
+}
+</code></pre></div><br />
+这个绑定集的意思是如果x或y绑定(bound)了，那么x和y都绑定，即至少有一个参数受到约束。<br />
+如果我们想要两者都受约束，可以将例子修改一下:<br />
+<div class="highlight"><pre><span></span><code>bindingset[x, y]
+predicate plusOne(int x, int y) {
+  x + 1 = y
+}
+</code></pre></div><br />
+那么这个谓词就变为了一个类似于校验的函数，即<code>x+1 == y</code></p>
+<h2 id="查询query">查询(Query)<a class="headerlink" href="#查询query" title="Permanent link">#</a></h2>
+<p>查询是CodeQL的输出。查询有两种类型，分别是<br />
+- select子句<br />
+- 查询谓词，这意味着我们可以在当前模块中定义或者从其他模块中导入</p>
+<h3 id="select子句">select子句<a class="headerlink" href="#select子句" title="Permanent link">#</a></h3>
+<p>select子句的格式如下:<br />
+<div class="highlight"><pre><span></span><code>[from] /* ... variable declarations ... */
+[where] /* ... logical formula ... */
+select /* ... expressions ... */
+</code></pre></div><br />
+其中from和where语句是可选的。我们可以在from中定义变量，在where中给变量赋值和对查询结果的过滤，最后在select中显示结果。<br />
+在select语句中我们还可以使用一些关键字:<br />
+- <code>as</code>关键字，后面跟随一个名字。作用相当于sql中的<code>as</code>，为结果列提供了一个"标签"，并允许在后续的select表达式中使用它们。<br />
+- <code>order by</code>关键字，后面跟随一个一个结果列名。作用相当于sql中的<code>order by</code>，用于排序结果，并且在结果列名后可选<code>asc</code>(升序)或<code>desc</code>(降序)关键字。</p>
+<p>一个简单的例子如下:<br />
+<div class="highlight"><pre><span></span><code>from int x, int y
+where x = 3 and y in [0 .. 2]
+select x, y, x * y as product, &quot;product: &quot; + product
+</code></pre></div></p>
+<h3 id="查询谓词">查询谓词<a class="headerlink" href="#查询谓词" title="Permanent link">#</a></h3>
+<p>查询谓词是一个非成员谓词，并在最开头使用<code>query</code>作为注解。它返回谓词计算结果的所有元组，下面是一个简单的示例:<br />
+<div class="highlight"><pre><span></span><code>query int getProduct(int x, int y) {
+  x = 3 and
+  y in [0 .. 2] and
+  result = x * y
+}
+</code></pre></div><br />
+它返回的结果如下:<br />
+<img alt="" src="https://gitee.com/guuest/images/raw/master/img/20211102161126.png" /></p>
+<p>编写查询谓词而不是select子句的好处是我们可以在代码的其他部分中调用谓词。例如，我们可以在类中的特征谓词内部调用:<br />
+<div class="highlight"><pre><span></span><code>query int getProduct(int x, int y) {
+  x = 3 and
+  y in [0 .. 2] and
+  result = x * y
+}
+class MultipleOfThree extends int {
+  MultipleOfThree() { this = getProduct(_, _) }
+}
+
+from MultipleOfThree m  
+select m
+</code></pre></div><br />
+这样我们查询结果就有2个，一个是内置的<code>#select</code>，一个是<code>getProduct</code>，<code>#select</code>的结果如下:<br />
+<img alt="" src="https://gitee.com/guuest/images/raw/master/img/20211102161534.png" /></p>
+<h2 id="类classes">类(Classes)<a class="headerlink" href="#类classes" title="Permanent link">#</a></h2>
+<p>我们可以在CodeQL中定义自己的类型，一个方法是定义一个类。<br />
+类提供了一种简单的方法来重用和构造代码。例如，我们可以:<br />
+- 在类中定义成员谓词<br />
+- 定义子类以重写成员谓词</p>
+<h3 id="类的定义">类的定义<a class="headerlink" href="#类的定义" title="Permanent link">#</a></h3>
+<p>定义类的格式如下:<br />
+<div class="highlight"><pre><span></span><code>class ClassName [extends Parent] {
+      // ...
+}
+</code></pre></div><br />
+注意这里有个坑点是类名首字母必须是大写。<br />
+一个简单的例子如下:<br />
+<div class="highlight"><pre><span></span><code>class OneTwoThree extends int {
+  OneTwoThree() { // characteristic predicate
+    this = 1 or this = 2 or this = 3
+  }
+
+  string getAString() { // member predicate
+    result = &quot;One, two or three: &quot; + this.toString()
+  }
+
+  predicate isEven() { // member predicate
+    this = 2
+  }
+}
+</code></pre></div><br />
+在CodeQL中，类允许多重继承，但是以下操作是非法的:<br />
+- 不能继承本身<br />
+- 不能继承final类<br />
+- 不能继承不兼容的类型，请参阅<a href="https://codeql.github.com/docs/ql-language-reference/types/#type-compatibility">类型兼容性</a></p>
+<h3 id="类的主体">类的主体<a class="headerlink" href="#类的主体" title="Permanent link">#</a></h3>
+<p>类的主体可以包含以下内容<br />
+- 一个特征谓词<br />
+- 任意数量的成员谓词<br />
+- 任意数量的字段(field)</p>
+<p>在类中，我们可以使用this来指代类本身。当我们定义类时，该类还会从其父类继承所有非私有成员谓词和字段，我们可以覆盖(override)这些谓词和字段。</p>
+<h4 id="特征谓词">特征谓词<a class="headerlink" href="#特征谓词" title="Permanent link">#</a></h4>
+<p>类似于其他语言中类的构造函数，只能定义一个，我们可以在特征谓词中使用this来限制类中可能的值。在上述例子中，<code>OneTwoThree</code>被限制为1-3中的整数。</p>
+<h4 id="成员谓词">成员谓词<a class="headerlink" href="#成员谓词" title="Permanent link">#</a></h4>
+<p>这些谓词仅适用于类中。我们可以这样去调用上述类的成员谓词:<br />
+<div class="highlight"><pre><span></span><code>(OneTwoThree).getAString()
+// 结果是 One, two or three: 1
+</code></pre></div></p>
+<h4 id="字段field">字段(Field)<a class="headerlink" href="#字段field" title="Permanent link">#</a></h4>
+<p>字段是在类的主题中声明的变量，一个类的主题中可以有任意数量的字段声明。我们可以在类中的谓词适用这些变量，用法和this类似，字段必须受限于特征谓词。<br />
+一个简单的例子如下，它输出10以内每个数字的除数:<br />
+<div class="highlight"><pre><span></span><code>class SmallInt extends int {
+  SmallInt() { this = [1 .. 10] }
+}
+
+class DivisibleInt extends SmallInt {
+  SmallInt divisor;   // declaration of the field `divisor`
+  DivisibleInt() { this % divisor = 0 }
+
+  SmallInt getADivisor() { result = divisor }
+}
+
+from DivisibleInt i
+select i, i.getADivisor()
+</code></pre></div></p>
+<h3 id="具体类">具体类<a class="headerlink" href="#具体类" title="Permanent link">#</a></h3>
+<p>上面的例子都是具体类，具体类是通过限制较大类型中的值来定义的。</p>
+<h3 id="抽象类">抽象类<a class="headerlink" href="#抽象类" title="Permanent link">#</a></h3>
+<p>抽象类使用关键字<code>abstract</code>放在关键字<code>class</code>前来定义。抽象的概念相信在许多其他语言中我们都有接触到(例如java)。抽象类我们又可以叫做元类，它定义其子类的谓词和字段。</p>
+<p>一个简单的例子如下:<br />
+<div class="highlight"><pre><span></span><code>import go
+
+abstract class SqlExpr extends Expr {
+int ID;
+}
+
+class PostgresSqlExpr extends SqlExpr {
+PostgresSqlExpr(){ ID=1 }
+}
+
+class MySqlExpr extends SqlExpr {
+MySqlExpr(){ ID=2 }
+}
+</code></pre></div></p>
+<h3 id="重写成员谓词">重写成员谓词<a class="headerlink" href="#重写成员谓词" title="Permanent link">#</a></h3>
+<p>我们使用关键字<code>override</code>来重写一个成员谓词，子类重写的成员谓词会影响父类的成员谓词。<br />
+例如，我们可以扩展上面的<code>OneTwoThree</code>类:<br />
+<div class="highlight"><pre><span></span><code>class OneTwo extends OneTwoThree {
+  OneTwo() {
+    this = 1 or this = 2
+  }
+
+  override string getAString() {
+    result = &quot;One or two: &quot; + this.toString()
+  }
+}
+</code></pre></div><br />
+那么假如我们编写以下查询:<br />
+<div class="highlight"><pre><span></span><code>from OneTwoThree o
+select o, o.getAString()
+</code></pre></div><br />
+得到的结果如下:<br />
+<img alt="" src="https://gitee.com/guuest/images/raw/master/img/20211103172042.png" /><br />
+在CodeQL中，与其他语言不同，相同父类的子类不会互相冲突。例如，我们可以定义一个TwoThree，它同样继承于<code>OneTwoThree</code>，它的特征谓词的一部分与<code>OneTwo</code>重叠。<br />
+<div class="highlight"><pre><span></span><code>class TwoThree extends OneTwoThree {
+  TwoThree() {
+    this = 2 or this = 3
+  }
+
+  override string getAString() {
+    result = &quot;Two or three: &quot; + this.toString()
+  }
+}
+</code></pre></div><br />
+现在整数2既是<code>TwoThree</code>也是<code>OneTwo</code>的特征，这两个类都覆盖了原始父类的成员谓词<code>getAString</code>，那么我们重新执行上述查询，在遇到2时会得到2个结果:<br />
+<img alt="" src="https://gitee.com/guuest/images/raw/master/img/20211103172608.png" /></p>
+<h3 id="多重继承">多重继承<a class="headerlink" href="#多重继承" title="Permanent link">#</a></h3>
+<p>在CodeQL中一个类可以继承多个类型，例如:<br />
+<div class="highlight"><pre><span></span><code>class Two extends OneTwo, TwoThree {}
+</code></pre></div><br />
+这个类<code>Two</code>同时继承了<code>OneTwo</code>和<code>TwoThree</code>，它还间接继承自<code>OneTwoThree</code>和<code>int</code>，那么通过特征谓词我们知道其值只能是2。<br />
+如果一个子类继承了同一个谓词的多个定义，那么该类还需要手动重写该谓词以避免歧义，在这种情况下我们可以考虑使用<code>super</code>表达式，例如:<br />
+<div class="highlight"><pre><span></span><code>class Two extends OneTwo, TwoThree {
+  override string getAString() {
+    result = TwoThree.super.getAString()
+  }
+}
+</code></pre></div></p>
+<p>### 非继承子类(Non-extending subtypes)<br />
+ 除了使用关键字<code>extends</code>之外，我们还可以使用<code>instanceof</code>来"继承"父类，将一个类声明为<code>instanceof Foo</code>大致等价于在特征谓词中声明了<code>this instanceof Foo</code>，主要的区别是其可以通过super来调用父类的方法。<br />
+ 需要注意的是，在使用关键字<code>instanceof</code>"继承"父类时，使用<code>override</code>关键字重写成员谓词不会对父类造成影响。</p>
+<p>## 模块(Modules)<br />
+ 模块提供了一种通过将相关类型、谓词和其他模块组合在一起来组织 QL 代码的方法。<br />
+我们可以将模块导入到其他文件中，这样可以避免重复，并有助于代码管理。</p>
+<p>### 模块主体<br />
+ 模块中允许包含以下的结构:<br />
+ - 导入模块语句<br />
+ - 谓词<br />
+ - 类型<br />
+ - 别名<br />
+ - 显式模块<br />
+ - select子句(仅可在查询模块中使用)</p>
+<p>### 定义模块<br />
+ 直接使用关键字<code>module</code>来显式定义一个模块，一个简单的例子(example.qll)如下:<br />
+<code>``ql
+ module Example {
+  class OneTwoThree extends int {
+    OneTwoThree() {
+      this = 1 or this = 2 or this = 3
+    }
+  }
+}
+<div class="highlight"><pre><span></span><code>### 导入模块
+我们可以使用关键字`import`导入模块，这会将命名空间中的所有名称(除私有名称外)都导入当前模块的命名空间里，导入模块语句的形式如下:
+```ql
+import &lt;module_expression1&gt; as &lt;name&gt;
+import &lt;module_expression2&gt;
+</code></pre></div>
+这相当于python中的</code>from <module> import *`</p>
+<h3 id="模块种类">模块种类<a class="headerlink" href="#模块种类" title="Permanent link">#</a></h3>
+<h4 id="文件模块">文件模块<a class="headerlink" href="#文件模块" title="Permanent link">#</a></h4>
+<p>每个查询文件(.ql)或库文件(.qll)都隐式地定义了一个模块，其模块名与文件同名，但文件中的任何空格都被转换为下划线</p>
+<h4 id="库模块">库模块<a class="headerlink" href="#库模块" title="Permanent link">#</a></h4>
+<p>库模块由.qll文件定义，它可以包含除了select字句之外的模块主体。</p>
+<h4 id="查询模块">查询模块<a class="headerlink" href="#查询模块" title="Permanent link">#</a></h4>
+<p>库模块存在于库文件(.qll)中，它可以包含除了select字句之外的模块主体。<br />
+查询模块由.ql文件定义。它可以包含以下模块主体中列出的任何元素。<br />
+查询模块与其他模块稍有不同:<br />
+- 无法导入其他查询模块<br />
+- 一个查询模块必须包含一个查询，它可以是select语句或者一个查询谓词</p>
+<h4 id="显式模块">显式模块<a class="headerlink" href="#显式模块" title="Permanent link">#</a></h4>
+<p>我们还可以在一个模块中显式地定义另外一个模块。例如，我们可以在上述的例子(example.qll)中再定义一个模块，例子如下:<br />
+<div class="highlight"><pre><span></span><code>...
+module M {
+  class OneTwo extends OneTwoThree {
+    OneTwo() {
+      this = 1 or this = 2
+    }
+  }
+}
+</code></pre></div></p>
+
+              
+  
+
+            </article>
+          </div>
+        </div>
+        
+          <a href="#" class="md-top md-icon" data-md-component="top" data-md-state="hidden">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"/></svg>
+            回到页面顶部
+          </a>
+        
+      </main>
+      
+        
+<footer class="md-footer">
+<div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+    <div class="md-footer-copyright">
+        
+        
+    </div>
+    <div class="md-social">
+  
+    
+    
+      
+      
+    
+    <a href="https://github.com/WAY29" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+    </a>
+  
+    
+    
+    <a href="mailto:toloveu29@gmail.com" target="_blank" rel="noopener" title="" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M1.75 3A1.75 1.75 0 0 0 0 4.75v14c0 .966.784 1.75 1.75 1.75h20.5A1.75 1.75 0 0 0 24 18.75v-14A1.75 1.75 0 0 0 22.25 3H1.75zM1.5 4.75a.25.25 0 0 1 .25-.25h20.5a.25.25 0 0 1 .25.25v.852l-10.36 7a.25.25 0 0 1-.28 0l-10.36-7V4.75zm0 2.662V18.75c0 .138.112.25.25.25h20.5a.25.25 0 0 0 .25-.25V7.412l-9.52 6.433c-.592.4-1.368.4-1.96 0L1.5 7.412z"/></svg>
+    </a>
+  
+    
+    
+      
+      
+    
+    <a href="https://longlone.top/rss.xml" target="_blank" rel="noopener" title="longlone.top" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M3.5 3.25a.75.75 0 0 1 .75-.75C14.053 2.5 22 10.447 22 20.25a.75.75 0 0 1-1.5 0C20.5 11.275 13.225 4 4.25 4a.75.75 0 0 1-.75-.75zM3.5 19a2 2 0 1 1 4 0 2 2 0 0 1-4 0zm.75-9.5a.75.75 0 0 0 0 1.5 9.25 9.25 0 0 1 9.25 9.25.75.75 0 0 0 1.5 0C15 14.313 10.187 9.5 4.25 9.5z"/></svg>
+    </a>
+  
+</div>
+    </div>
+</div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    <script id="__config" type="application/json">{"base": "../../../..", "features": ["header.autohide", "navigation.expand", "navigation.top", "toc.integrate", "tabs"], "translations": {"clipboard.copy": "\u590d\u5236", "clipboard.copied": "\u5df2\u590d\u5236", "search.config.lang": "ja", "search.config.pipeline": "trimmer, stemmer", "search.config.separator": "[\\uff0c\\u3002]+", "search.placeholder": "\u641c\u7d22", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.term.missing": "\u7f3a\u5c11", "select.version.title": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}, "search": "../../../../assets/javascripts/workers/search.22074ed6.min.js"}</script>
+    
+    
+      <script src="../../../../assets/javascripts/bundle.960e086b.min.js"></script>
+      
+        <script src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+      
+    
+  </body>
+</html>
