@@ -1,10 +1,11 @@
 ---
 created: '21/06/28'
-title: 类加载机制
+title: ClassLoader类加载机制
 tags:
   - java
+  - java安全
 ---
-# 类加载机制
+# ClassLoader类加载机制
 Java程序在运行前需要先编译成`class文件`，Java类初始化的时候会调用`java.lang.ClassLoader`加载类字节码，`ClassLoader`会调用JVM的native方法(`defineClass0/1/2`)来定义一个`java.lang.Class`实例。
 
 ## ClassLoader

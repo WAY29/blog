@@ -49,19 +49,19 @@ tags:
 
 **我们常见的webshell入口都是_GET,_POST之类的,但是其实一切的入口我们都可以进行利用,以此来逃过查杀:**
 
-- $_GET
+- `$_GET`
 
-- $_POST
+- `$_POST`
 
-- $_COOKIE
+- `$_COOKIE`
 
-- $_REQUEST
+- `$_REQUEST`
 
-- $_SERVER  其中的某些参数可控,如REQUEST_METHOD,QUERY_STRING,HTTP_USER_AGENT等
+- `$_SERVER`  其中的某些参数可控,如REQUEST_METHOD,QUERY_STRING,HTTP_USER_AGENT等
 
 - session_id()  这个比较特殊,但是依然可以利用
 
-- $_FILE
+- `$_FILE`
 
 - $GLOBALS
 
@@ -184,7 +184,7 @@ implode():可以将数组中的元素拼接起来,如拼接成字符串
 
 - proc_open()
 
-- ``  // 反引号执行系统命令
+- 反引号执行系统命令
 
 或者使用一些匿名函数,动态调用函数,回调函数:
 

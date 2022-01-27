@@ -3,6 +3,7 @@ created: '21/07/07'
 title: java文件系统
 tags:
   - java
+  - java安全
 ---
 # JAVA文件系统
 JAVA SE内置了两类文件系统:：`java.io`和`java.nio`，`java.nio`的实现是`sun.nio`

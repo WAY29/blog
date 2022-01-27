@@ -151,3 +151,5 @@ public class ResourceServlet extends HttpServlet {
     }
 }
 ```
+## 总结
+本节主要讲了什么是ServletContext以及它的四大作用:共享数据， 配置文件，请求转发，读取资源文件。

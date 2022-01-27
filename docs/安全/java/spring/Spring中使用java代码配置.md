@@ -41,7 +41,25 @@ public class AppConfig {
 ### @Import
 相当于xml中的`<import>`标签，用于包含其他配置类
 ### CompoentScan
-相当于`<context:component-scan base-package=""/>`
+在java类代码中每次创建一个bean都需要在配置类中写一个方法，这样很不方便，所以可以使用包扫描的方式，相当于xml中的`<context:component-scan base-package=""/>`
+```java
+package top.longlone;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Scope;
+
+@Configuration
+@ComponentScan({"top.longlone"})
+public class AppConfig {
+
+    @Bean
+    @Scope("singleton")
+    public User user() {
+        return new User();
+    }
+}
+```
 
 ## 总结
 这种配置类经常见于SpringBoot中。是spring4之后推荐使用的配置方式。它和xml配置文件任选其一作为spring的配置方式即可。

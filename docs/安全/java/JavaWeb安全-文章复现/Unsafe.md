@@ -3,6 +3,7 @@ created: '21/07/02'
 title: Unsafe
 tags:
   - java
+  - java安全
 ---
 # Unsafe
 `sun.misc.Unsafe`是Java底层API(`仅限Java内部使用,反射可调用`)提供的一个神奇的Java类，`Unsafe`提供了非常底层的`内存、CAS、线程调度、类、对象`等操作、`Unsafe`正如它的名字一样它提供的几乎所有的方法都是不安全的，本节只讲解如何使用`Unsafe`定义Java类、创建类实例。
