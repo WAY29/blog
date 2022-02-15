@@ -105,5 +105,4 @@ A definition reaches a program point as long as there exists at least one path a
 
 1. 当OUT不改变时IN不会改变
 2. 当IN不改变时OUT不会改变
-3. 他们最终会到达一个不动点(这也与单调性有关)
-
+3. 他们最终会到达一个不动点(这也与单调性有关)  

@@ -203,7 +203,7 @@ public class javassit_test {
 
         ClassPool pool = ClassPool.getDefault();
         CtClass cc = pool.makeClass("Cat");
-        String cmd = "System.out.println(\"evil code\");";
+        String cmd = "Runtime.getRuntime().exec(\"calc.exe\");";
         // 创建 static 代码块，并插入代码
         cc.makeClassInitializer().insertBefore(cmd);
         String randomClassName = "EvilCat" + System.nanoTime();
@@ -211,7 +211,7 @@ public class javassit_test {
         // 生成bytes字节码，等下要用到
         //byte[] classBytes = cc.toBytecode();
         // 写入.class 文件
-        cc.writeFile();
+        cc.writeFile("./");
     }
 
     public static void main(String[] args) {

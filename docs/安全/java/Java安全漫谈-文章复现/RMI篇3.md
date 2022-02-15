@@ -19,23 +19,3 @@ tags:
 
 `classAnnotations`表示和类相关的`Annotation`的描述信息，这里的数据值一般是由`ObjectOutputStream`的`annotateClass()`方法写入的，但由于`annotateClass()`方法默认为空，所以`classAnnotations`后一般会设置`TC_ENDBLOCKDATA`标识；
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
