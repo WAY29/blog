@@ -1,11 +1,12 @@
 ---
 created: '21/11/18'
-title: fastjson反序列化
+title: fastjson
 tags:
   - java
+  - 组件安全
   - java安全
 ---
-# fastjson反序列化
+# fastjson
 ***以下代码来源于fastjson1.2.25***
 > fastjson反序列化本质上就是通过在反序列化时自动调用getter和setter方法，而某些类的getter和setter方法存在某些危险逻辑(如我们的老朋友`TemplatesImpl`)，从而达到我们的目的(如RCE)。
 

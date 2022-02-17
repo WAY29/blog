@@ -1,4 +1,11 @@
-# JNDI与JNDI注入
+---
+created: '21/11/18'
+title: JNDI
+tags:
+  - java
+  - java安全
+---
+# JNDI
 ## 参考文章
 - https://paper.seebug.org/1091/
 - https://xz.aliyun.com/t/10674
