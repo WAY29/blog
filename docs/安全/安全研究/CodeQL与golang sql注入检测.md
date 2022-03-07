@@ -2,6 +2,7 @@
 title: CodeQL与golang sql注入检测
 tags:
   - codeql
+  - golang
   - 代码审计
 ---
 # CodeQL与golang sql注入检测

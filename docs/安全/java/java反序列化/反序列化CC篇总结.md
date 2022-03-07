@@ -4,6 +4,7 @@ title: 反序列化CC篇总结
 tags:
   - java
   - java安全
+  - 反序列化
 ---
 # 反序列化CC篇总结
 1. 首先CC链虽然很多条，但是基本上都可以分为前段和后段，重要的承上启下方法是`Transformer.transform`

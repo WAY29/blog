@@ -4,6 +4,7 @@ title: RMI篇2
 tags:
   - java
   - java安全
+  - 反序列化 
 ---
 # RMI篇2
 RMI虽然分成三个部分，但是通常我们在新建RMI Registry的时候对会直接绑定一个对象在上面，也就是说同时承担了Server和Registry的角色。

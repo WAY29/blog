@@ -4,6 +4,7 @@ title: 反序列化之CommonsBeanUtils1
 tags:
   - java
   - java安全
+  - 反序列化
 ---
 # 反序列化之CommonsBeanUtils1
 CommonsBeanUtils1的后半段还是我们熟悉的老朋友`TemplatesImpl`，只要触发到其`newTransformer`方法，后面的链就和CC2之类的一样了，而CB1触发`newTransformer`的方法是`getOutputProperties`，所以CommonsBeanUtils的前半段主要是围绕如何通过readObject触发getter方法展开

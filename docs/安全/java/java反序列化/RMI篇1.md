@@ -4,6 +4,7 @@ title: RMI篇1
 tags:
   - java
   - java安全
+  - 反序列化
 ---
 # RMI篇1
 RMI全称是Remote Method Invocation，远程⽅方法调用。从这个名字就可以看出，他的目标和RPC其实是类似的，是让某个Java虚拟机上的对象调用另一个Java虚拟机中对象上的方法，只不过RMI是Java独有的一种机制。

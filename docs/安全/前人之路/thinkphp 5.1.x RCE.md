@@ -34,4 +34,4 @@ TP5.1.0-5.1.30
 
 
 ### 分析
-![](/attachment/images/thinkphp5.1_rce.png)
+![](https://gitee.com/guuest/images/raw/master/img/20220306114338.png)
