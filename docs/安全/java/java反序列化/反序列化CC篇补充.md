@@ -578,8 +578,7 @@ public class CC7 {
 ```
 Hashtable.readObject()
   Hashtable.reconstitutionPut()
-    TiedMapEntry.getValue()
-      org.apache.commons.collections.map.AbstractMapDecorator.equals() === java.util.AbstractMap.equals()
+    org.apache.commons.collections.map.AbstractMapDecorator.equals() === java.util.AbstractMap.equals()
         LazyMap.get()
            ChainedTransformer.transform()
             ConstantTransformer.transform() // 获取Runtime.class
