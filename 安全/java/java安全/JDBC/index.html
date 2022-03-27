@@ -13,7 +13,7 @@
         <link rel="canonical" href="https://longlone.top/%E5%AE%89%E5%85%A8/java/java%E5%AE%89%E5%85%A8/JDBC/">
       
       <link rel="icon" href="../../../../attachment/favicon.ico">
-      <meta name="generator" content="mkdocs-1.2.3, mkdocs-material-8.2.5">
+      <meta name="generator" content="mkdocs-1.3.0, mkdocs-material-8.2.7">
     
     
       
@@ -21,7 +21,7 @@
       
     
     
-      <link rel="stylesheet" href="../../../../assets/stylesheets/main.2d9f7617.min.css">
+      <link rel="stylesheet" href="../../../../assets/stylesheets/main.9d5733d3.min.css">
       
         
         <link rel="stylesheet" href="../../../../assets/stylesheets/palette.e6a45f82.min.css">
@@ -2133,8 +2133,8 @@
 <p>JDBC一般指Java数据库连接。Java数据库连接，（Java Data Base Connectivity，简称JDBC）<br />
 是一种用于执行SQL语句的Java API，可以为多种关系数据库提供统一访问，它由一组用Java语言编写的类和接口组成。JDBC提供了一种基准，据此可以构建更高级的工具和接口，使数据库开发人员能够编写数据库应用程序。</p>
 </blockquote>
-<p><img alt="" src="https://gitee.com/guuest/images/raw/master/img/20220303103911.png" /><br />
-<img alt="" src="https://gitee.com/guuest/images/raw/master/img/20220303103920.png" /></p>
+<p><img alt="" src="https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20220303103911.png" /><br />
+<img alt="" src="https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20220303103920.png" /></p>
 <p>一个简单的示例如下:<br />
 <div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">java.sql.*</span><span class="p">;</span>
 
@@ -2162,8 +2162,8 @@
 -   SHOW COLLATION</p>
 <h2 id="jdbc反序列化漏洞分析">JDBC反序列化漏洞分析<a class="headerlink" href="#jdbc反序列化漏洞分析" title="Permanent link">#</a></h2>
 <p>反序列化点(<code>readObject()</code>)在<code>com.mysql.cj.jdbc.result.ResultSetImpl</code>的<code>public Object getObject(int columnIndex)</code>的<code>switch</code>条件语句中，存在两处反序列化点，一处是<code>case BIT</code>，另一处是<code>case BLOB</code>:<br />
-<img alt="" src="https://gitee.com/guuest/images/raw/master/img/20220303111234.png" /></p>
-<p><img alt="" src="https://gitee.com/guuest/images/raw/master/img/20220303111318.png" /></p>
+<img alt="" src="https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20220303111234.png" /></p>
+<p><img alt="" src="https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20220303111318.png" /></p>
 <p>那么我们就需要了解一下<code>getObject()</code>方法的作用，参考<a href="[https://dev.mysql.com/doc/connector-j/8.0/en/connector-j-reference-type-conversions.html](https://dev.mysql.com/doc/connector-j/8.0/en/connector-j-reference-type-conversions.html)">jdbc的文档</a></p>
 <blockquote>
 <p><code>ResultSet.getObject()</code>方法是用于MySQL和Java类型之间的类型转换</p>
@@ -2179,23 +2179,23 @@
 <p>Bit数据类型用来存储bit值 BIT(M)代表可以存储M个bit，M的取值范围为1到64 如果手工指定bit值，则可以使用b'value'格式，比如b'111'和 b'10000000'分别代表7和128</p>
 </blockquote>
 <p>根据上面的介绍，我们将重点放在了BLOB这个数据格式，再分析一下代码逻辑，先获取结果集中的一列，判断其的mysql数据类型:<br />
-<img alt="" src="https://gitee.com/guuest/images/raw/master/img/20220303112147.png" /></p>
+<img alt="" src="https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20220303112147.png" /></p>
 <p>接下来是判断几个条件: <br />
 1. filed是binary或者blob<br />
 2. 配置中的autoDeserialize为<code>true</code><br />
 3. <code>data</code>满足第一位为<code>-84</code>第二位为<code>-19</code>，实际上为java序列化对象魔术头: <code>AC(0xAC == 256 - 84) ED(0xED == 256 - 19)</code><br />
-<img alt="" src="https://gitee.com/guuest/images/raw/master/img/20220303112313.png" /></p>
+<img alt="" src="https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20220303112313.png" /></p>
 <h3 id="serverstatusdiffinterceptor触发方式">ServerStatusDiffInterceptor触发方式<a class="headerlink" href="#serverstatusdiffinterceptor触发方式" title="Permanent link">#</a></h3>
 <p>通过上面的了解，我们知道只要调用到<code>ResultSetImpl.getObject()</code>方法，就有机会造成反序列化。我们来看看这个类触发方式的payload(8.x，不同jdbc版本的payload不一样):<br />
 <div class="highlight"><pre><span></span><code>jdbc:mysql://127.0.0.1:3306/test?autoDeserialize=true&amp;queryInterceptors=com.mysql.cj.jdbc.interceptors.ServerStatusDiffInterceptor
 </code></pre></div></p>
 <p>这里传入了2个参数，一个是我们上文提到的<code>autoDeserialize</code>，将其设置为<code>true</code>才有机会进入反序列化，第二个参数则是<code>queryInterceptors</code>，这是一个新的参数，通过查询jdbc的文档知道它一个逗号分割的Class列表（实现了com.mysql.cj.interceptors.QueryInterceptor接口的类），在Query”之间”进行执行来影响结果。（效果上来看是在Query执行前后各插入一次操作）；</p>
 <p>我们这里用到的<code>ServerStatusDiffInterceptor</code>就是一个实现了<code>com.mysql.cj.interceptors.QueryInterceptor</code>的类，其具体触发方式如下，先触发了<code>ServerStatusDiffInterceptor.preProcess()</code>方法:<br />
-<img alt="" src="https://gitee.com/guuest/images/raw/master/img/20220303113816.png" /></p>
+<img alt="" src="https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20220303113816.png" /></p>
 <p>继续跟进，会调用<code>ServerStatusDiffInterceptor.populateMapWithSessionStatusValues()</code>方法，其会执行<code>SHOW SESSION STATUS</code>，然后将结果传入<code>ResultSetUtil.resultSetToMap()</code>方法:<br />
-<img alt="" src="https://gitee.com/guuest/images/raw/master/img/20220303113939.png" /></p>
+<img alt="" src="https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20220303113939.png" /></p>
 <p>这里最终调用到了<code>ResultSetImpl.getObject()</code>方法:<br />
-<img alt="" src="https://gitee.com/guuest/images/raw/master/img/20220303115853.png" /></p>
+<img alt="" src="https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20220303115853.png" /></p>
 <h3 id="detectcustomcollations触发方式">detectCustomCollations触发方式<a class="headerlink" href="#detectcustomcollations触发方式" title="Permanent link">#</a></h3>
 <p>这里的<code>detectCustomCollations</code>是jdbc链接时的一个选项，这个选项是从5.1.29开始的，经过代码比对，可以认为<code>detectCustomCollations</code>这个选项在5.1.29之前一直为true。我们来看看这个类触发方式的payload:<br />
 <div class="highlight"><pre><span></span><code>jdbc:mysql://127.0.0.1:3306/test?detectCustomCollations=true&amp;autoDeserialize=true
@@ -2203,7 +2203,7 @@
 <p>触发点在<code>com.mysql.jdbc.ConnectionImpl</code>的<code>buildCollationMapping</code>方法中，这里可以看到需要满足2个条件：<br />
 1. 服务器版本大于等于4.1.0<br />
 2. <code>detectCustomCollations</code>选项为<code>true</code><br />
-<img alt="" src="https://gitee.com/guuest/images/raw/master/img/20220303120652.png" /></p>
+<img alt="" src="https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20220303120652.png" /></p>
 <p>后续的分析和上面是一样的，其会执行<code>SHOW COLLATION</code>语句并将将结果传入<code>ResultSetUtil.resultSetToMap()</code>方法，最后调用到<code>ResultSetImpl.getObject()</code>方法。</p>
 <h2 id="利用方式">利用方式<a class="headerlink" href="#利用方式" title="Permanent link">#</a></h2>
 <p>实际上利用方式就是构造一个Mysql的虚假服务器，在执行对应语句时返回BLOB类型的数据(恶意的java序列化对象)，一般我们会使用现有的项目: <a href="https://github.com/fnmsd/MySQL_Fake_Server">MySQL<em>Fake</em>Server</a></p>
@@ -2218,7 +2218,7 @@
 <p><strong>detectCustomCollations触发：</strong><br />
 <strong>6.0.7及以上:</strong> 不可用<br />
 <strong>6.0.2-6.0.6:</strong> <code>jdbc:mysql://127.0.0.1:3306/test?detectCustomCollations=true&amp;autoDeserialize=true&amp;user=yso_JRE8u20_calc</code><br />
-<strong>5.1.40-5.1.48:</strong> 需要对<a href="https://github.com/fnmsd/MySQL_Fake_Server">fnmsd/MySQL<em>Fake</em>Server</a>项目稍作调整，将第三个字段也填充为序列化数据即可。<img alt="" src="https://gitee.com/guuest/images/raw/master/img/20220304094851.png" /><br />
+<strong>5.1.40-5.1.48:</strong> 需要对<a href="https://github.com/fnmsd/MySQL_Fake_Server">fnmsd/MySQL<em>Fake</em>Server</a>项目稍作调整，将第三个字段也填充为序列化数据即可。<img alt="" src="https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20220304094851.png" /><br />
 <code>jdbc:mysql://127.0.0.1:3306/test?detectCustomCollations=true&amp;autoDeserialize=true&amp;user=yso_JRE8u20_calc</code><br />
 <strong>5.1.29-5.1.39:</strong><code>jdbc:mysql://127.0.0.1:3306/test?detectCustomCollations=true&amp;autoDeserialize=true&amp;user=yso_JRE8u20_calc</code><br />
 <strong>5.1.19-5.1.28：</strong><code>jdbc:mysql://127.0.0.1:3306/test?autoDeserialize=true&amp;user=yso_JRE8u20_calc</code><br />
@@ -2263,7 +2263,7 @@
       
     
     <a href="https://github.com/WAY29" target="_blank" rel="noopener" title="github.com" class="md-social__link">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
     </a>
   
     
@@ -2290,10 +2290,10 @@
     <div class="md-dialog" data-md-component="dialog">
       <div class="md-dialog__inner md-typeset"></div>
     </div>
-    <script id="__config" type="application/json">{"base": "../../../..", "features": ["header.autohide", "navigation.expand", "navigation.top", "toc.integrate", "tabs"], "translations": {"clipboard.copy": "\u590d\u5236", "clipboard.copied": "\u5df2\u590d\u5236", "search.config.lang": "ja", "search.config.pipeline": "trimmer, stemmer", "search.config.separator": "[\\uff0c\\u3002]+", "search.placeholder": "\u641c\u7d22", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.term.missing": "\u7f3a\u5c11", "select.version.title": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}, "search": "../../../../assets/javascripts/workers/search.bd0b6b67.min.js"}</script>
+    <script id="__config" type="application/json">{"base": "../../../..", "features": ["header.autohide", "navigation.expand", "navigation.top", "toc.integrate", "tabs"], "search": "../../../../assets/javascripts/workers/search.5e67fbfe.min.js", "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.config.lang": "ja", "search.config.pipeline": "trimmer, stemmer", "search.config.separator": "[\\uff0c\\u3002]+", "search.placeholder": "\u641c\u7d22", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version.title": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}}</script>
     
     
-      <script src="../../../../assets/javascripts/bundle.467223ff.min.js"></script>
+      <script src="../../../../assets/javascripts/bundle.e87a5f81.min.js"></script>
       
         <script src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
       

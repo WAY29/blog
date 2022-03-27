@@ -13,7 +13,7 @@
         <link rel="canonical" href="https://longlone.top/%E5%AE%89%E5%85%A8/java/java%E5%AE%89%E5%85%A8/%E7%BB%84%E4%BB%B6%E5%AE%89%E5%85%A8/fastjson/">
       
       <link rel="icon" href="../../../../../attachment/favicon.ico">
-      <meta name="generator" content="mkdocs-1.2.3, mkdocs-material-8.2.5">
+      <meta name="generator" content="mkdocs-1.3.0, mkdocs-material-8.2.7">
     
     
       
@@ -21,7 +21,7 @@
       
     
     
-      <link rel="stylesheet" href="../../../../../assets/stylesheets/main.2d9f7617.min.css">
+      <link rel="stylesheet" href="../../../../../assets/stylesheets/main.9d5733d3.min.css">
       
         
         <link rel="stylesheet" href="../../../../../assets/stylesheets/palette.e6a45f82.min.css">
@@ -2493,7 +2493,7 @@ User{id=123, name=&#39;Tom&#39;, t1=null}
 <span class="p">}</span>
 </code></pre></div><br />
 完整的调用链如下:<br />
-<img alt="" src="https://gitee.com/guuest/images/raw/master/img/20220210160606.png" /></p>
+<img alt="" src="https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20220210160606.png" /></p>
 <blockquote>
 <p><code>toJSON()</code>方法会将目标类中所有getter方法记录下来，然后通过反射去调用了所有的getter方法</p>
 </blockquote>
@@ -2766,36 +2766,36 @@ org.springframework
 </code></pre></div><br />
 可以看到这个payload中使用到了2次@type，并且在第一个@type中指定了类型为<code>java.lang.Class</code>这个看起来比较特殊的类，并且存在val字段为<code>com.sun.rowset.JdbcRowSetImpl</code>，第二段中则是我们的原始payload。<br />
 我们通过调试来理解这个payload，当fastjson在处理第一个@type时，会在<code>this.deserializers.findClass(typeName)</code>找到Class这个类，然后这个类会被返回，在上层经过一些赋值，最终会使用MiscCodec这个deserializer来对这个类进行解析:<br />
-<img alt="" src="https://gitee.com/guuest/images/raw/master/img/20220211141552.png" /><br />
+<img alt="" src="https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20220211141552.png" /><br />
 跟进这个方法，这里也可以看到它会从val中拿到值，并赋值给objVal:<br />
-<img alt="" src="https://gitee.com/guuest/images/raw/master/img/20220211142238.png" /></p>
+<img alt="" src="https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20220211142238.png" /></p>
 <p>后面又将objVal的值赋给strVal:<br />
-<img alt="" src="https://gitee.com/guuest/images/raw/master/img/20220211142341.png" /><br />
+<img alt="" src="https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20220211142341.png" /><br />
 判断clazz的类型，这里是Class.class，最后会根据strVal里的值加载类:<br />
-<img alt="" src="https://gitee.com/guuest/images/raw/master/img/20220211142606.png" /><br />
+<img alt="" src="https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20220211142606.png" /><br />
 同时我们可以看到使用<code>TypeUtils.loadClass()</code>时默认是将类缓存的，这样我们就将我们的恶意类放入了缓存。<br />
-<img alt="" src="https://gitee.com/guuest/images/raw/master/img/20220211142702.png" /><br />
+<img alt="" src="https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20220211142702.png" /><br />
 到第二个@type时，由于缓存已经存在这个恶意类，所以会直接返回，而不会走黑名单，所以我们的payload就能够绕过之前的安全机制。</p>
 <p>这里有一些注意事项，由于不同版本的<code>ParserConfig.checkAutoType()</code>解析存在差异，因此:<br />
 -   1.2.25-1.2.32：未开启AutoTypeSupport时能成功利用，开启AutoTypeSupport反而不能成功触发<br />
 -   1.2.33-1.2.47：无论是否开启AutoTypeSupport，都能成功利用</p>
 <p>这里存在的差异主要是由于在1.2.33-1.2.47中黑名单会判断类是否已经在缓存中，如果已经在缓存里则不会进行拦截:<br />
-<img alt="" src="https://gitee.com/guuest/images/raw/master/img/20220211143108.png" /><br />
+<img alt="" src="https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20220211143108.png" /><br />
 而在旧版本中则不存在这个判断，因此在1.2.25-1.2.32时，如果开启了autotypesupport，则会直接被黑名单拦截。</p>
 <h4 id="1248-1267">1.2.48-1.2.67<a class="headerlink" href="#1248-1267" title="Permanent link">#</a></h4>
 <p>这版本的fastjson主要是继续添加黑名单，同时<code>TypeUtils.loadClass()</code>方法默认不启用缓存:<br />
-<img alt="" src="https://gitee.com/guuest/images/raw/master/img/20220211143808.png" /></p>
-<p><img alt="" src="https://gitee.com/guuest/images/raw/master/img/20220211143818.png" /></p>
+<img alt="" src="https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20220211143808.png" /></p>
+<p><img alt="" src="https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20220211143818.png" /></p>
 <h5 id="1267-expectclass-bypass">&lt;=1.2.67 expectclass bypass<a class="headerlink" href="#1267-expectclass-bypass" title="Permanent link">#</a></h5>
 <p>上面的绕过方式都行不通了，我们还有什么方法可以加载恶意类吗？实际上在<code>TypeUtils.checkAutoType()</code>还存在着一个加载类的语句:<br />
-<img alt="" src="https://gitee.com/guuest/images/raw/master/img/20220211151916.png" /><br />
+<img alt="" src="https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20220211151916.png" /><br />
 这里的条件<code>autotypesupport || jsonType || expectClassFlag</code>，这里autotypesupport不管开关都影响不大，因为我们没办法绕过前面的黑名单检测，我们重点关注<code>expectClassFlag</code>这个选项，其在这里被赋值:<br />
-<img alt="" src="https://gitee.com/guuest/images/raw/master/img/20220211152313.png" /><br />
+<img alt="" src="https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20220211152313.png" /><br />
 这里需要满足以下几个条件<code>expectClassFlag</code>才为true:<br />
 1. expectClass存在<br />
 2. expectClass不在黑名单里</p>
 <p>我们可以看到expectClass是调用该函数时传入的，在整个fastjson中寻找checkAutoType的调用且expectClass不为空的，在<code>JavaBeanDeserializer.deserialize()</code>方法中找到我们的目标:<br />
-<img alt="" src="https://gitee.com/guuest/images/raw/master/img/20220211153326.png" /><br />
+<img alt="" src="https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20220211153326.png" /><br />
 这里的分析由于有点复杂，参考了其他师傅的文章，想要进入到这个位置，需要两个@type，第二个需要实现 AutoCloseable 接口，也就是最终payload类似于:<br />
 <div class="highlight"><pre><span></span><code><span class="mf">1.</span><span class="w">  </span><span class="err">`</span><span class="p">{</span><span class="nt">&quot;@type&quot;</span><span class="p">:</span><span class="s2">&quot;java.lang.AutoCloseable&quot;</span><span class="p">,</span><span class="nt">&quot;@type&quot;</span><span class="p">:</span><span class="s2">&quot;com.example.json.evil.Evil&quot;</span><span class="p">,</span><span class="nt">&quot;cmd&quot;</span><span class="p">:</span><span class="s2">&quot;calc&quot;</span><span class="p">}</span><span class="err">`</span><span class="w"></span>
 </code></pre></div><br />
@@ -3078,7 +3078,7 @@ commons-io 2.7 - 2.8.0 版本:<br />
 <div class="highlight"><pre><span></span><code><span class="p">{</span><span class="nt">&quot;@type&quot;</span><span class="p">:</span><span class="s2">&quot;java.lang.AutoCloseable&quot;</span><span class="w"></span>
 </code></pre></div></p>
 <h2 id="其他注意事项">其他注意事项<a class="headerlink" href="#其他注意事项" title="Permanent link">#</a></h2>
-<p><img alt="" src="https://gitee.com/guuest/images/raw/master/img/1.jpg" /></p>
+<p><img alt="" src="https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/1.jpg" /></p>
 
               
   
@@ -3110,7 +3110,7 @@ commons-io 2.7 - 2.8.0 版本:<br />
       
     
     <a href="https://github.com/WAY29" target="_blank" rel="noopener" title="github.com" class="md-social__link">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
     </a>
   
     
@@ -3137,10 +3137,10 @@ commons-io 2.7 - 2.8.0 版本:<br />
     <div class="md-dialog" data-md-component="dialog">
       <div class="md-dialog__inner md-typeset"></div>
     </div>
-    <script id="__config" type="application/json">{"base": "../../../../..", "features": ["header.autohide", "navigation.expand", "navigation.top", "toc.integrate", "tabs"], "translations": {"clipboard.copy": "\u590d\u5236", "clipboard.copied": "\u5df2\u590d\u5236", "search.config.lang": "ja", "search.config.pipeline": "trimmer, stemmer", "search.config.separator": "[\\uff0c\\u3002]+", "search.placeholder": "\u641c\u7d22", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.term.missing": "\u7f3a\u5c11", "select.version.title": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}, "search": "../../../../../assets/javascripts/workers/search.bd0b6b67.min.js"}</script>
+    <script id="__config" type="application/json">{"base": "../../../../..", "features": ["header.autohide", "navigation.expand", "navigation.top", "toc.integrate", "tabs"], "search": "../../../../../assets/javascripts/workers/search.5e67fbfe.min.js", "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.config.lang": "ja", "search.config.pipeline": "trimmer, stemmer", "search.config.separator": "[\\uff0c\\u3002]+", "search.placeholder": "\u641c\u7d22", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version.title": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}}</script>
     
     
-      <script src="../../../../../assets/javascripts/bundle.467223ff.min.js"></script>
+      <script src="../../../../../assets/javascripts/bundle.e87a5f81.min.js"></script>
       
         <script src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
       

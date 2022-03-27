@@ -13,7 +13,7 @@
         <link rel="canonical" href="https://longlone.top/%E5%AE%89%E5%85%A8/java/java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E7%AF%87%E4%B9%8BROME/">
       
       <link rel="icon" href="../../../../attachment/favicon.ico">
-      <meta name="generator" content="mkdocs-1.2.3, mkdocs-material-8.2.5">
+      <meta name="generator" content="mkdocs-1.3.0, mkdocs-material-8.2.7">
     
     
       
@@ -21,7 +21,7 @@
       
     
     
-      <link rel="stylesheet" href="../../../../assets/stylesheets/main.2d9f7617.min.css">
+      <link rel="stylesheet" href="../../../../assets/stylesheets/main.9d5733d3.min.css">
       
         
         <link rel="stylesheet" href="../../../../assets/stylesheets/palette.e6a45f82.min.css">
@@ -2134,14 +2134,14 @@
 </code></pre></div></p>
 <p>了解一个反序列化链，主要是关注其的source，sink以及关键转折点，这条链的source是HashMap，sink是<code>TemplatesImpl.getOutputProperties()</code>造成的新类初始化从而执行新类static中的恶意代码，而关键转折点主要是<code>pReadMethod.invoke(_obj,NO_PARAMS)</code>，也是ROME这个依赖我们最后利用到的点。</p>
 <p>但是很显然这道题目没办法直接用这条链打通，原因是因为这个链base64之后太长了，单纯执行一个whoami的长度长达4380:<br />
-<img alt="" src="https://gitee.com/guuest/images/raw/master/img/20220307102820.png" /></p>
+<img alt="" src="https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20220307102820.png" /></p>
 <p>为了缩减payload长度，这里参考了一下<a href="https://xz.aliyun.com/t/10824">终极Java反序列化Payload缩小技术</a>，但最终发现了如果不修改链的话是没办法达到题目要求的长度的，所以我们这里需要去挖掘一条新链:</p>
 <h2 id="新链1符合题目要求">新链1(符合题目要求)<a class="headerlink" href="#新链1符合题目要求" title="Permanent link">#</a></h2>
 <p>首先我们要了解一下为什么上文的payload如此长，实际上根据调用链我们不难发现ObjectBean是罪魁祸首，其在实例化时会实例化三个bean，这能不大吗:<br />
-<img alt="" src="https://gitee.com/guuest/images/raw/master/img/20220307103409.png" /></p>
+<img alt="" src="https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20220307103409.png" /></p>
 <p>但是ObjectBean实际上是上文链的核心关键: <code>ObjectBean.hashCode() =&gt; ObjectBean._equalsBean.beanHashCode() =&gt; ObjectBean._toStringBean.toString()</code>。如果我们想要抛弃ObjectBean的话，我们没办法通过<code>HashMap</code>触发<code>ToStringBean.toString()</code>。</p>
 <p>上面我们分析到ROME链的关键转折点是<code>pReadMethod.invoke(_obj,NO_PARAMS)</code>这段代码，我们可以通过IDEA去搜索一下，可以发现不止ToStringBean存在这个利用点，其他Bean也存在:<br />
-<img alt="" src="https://gitee.com/guuest/images/raw/master/img/20220307103228.png" /></p>
+<img alt="" src="https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20220307103228.png" /></p>
 <p>根据截图我们可以看到<code>EqualsBean</code>也存在这个关键代码，可以看到当调用<code>EqualsBean.equals()</code>时最终会调用到<code>EqualsBean.beanEquals()</code>，触发我们的关键代码:<br />
 <div class="highlight"><pre><span></span><code><span class="kd">public</span> <span class="kt">boolean</span> <span class="nf">equals</span><span class="p">(</span><span class="n">Object</span> <span class="n">obj</span><span class="p">)</span> <span class="p">{</span>  
  <span class="k">return</span> <span class="n">beanEquals</span><span class="p">(</span><span class="n">obj</span><span class="p">);</span>  
@@ -2192,7 +2192,7 @@
     <span class="p">}</span>
 </code></pre></div></p>
 <p>如果我们有过调试和构造CC7链的经验的话，我们很容易想到我们可以使用Hashtable来作为source，触发equals方法:<br />
-<img alt="" src="https://gitee.com/guuest/images/raw/master/img/20220307105120.png" /></p>
+<img alt="" src="https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20220307105120.png" /></p>
 <p>接下来就是根据CC7和ROME链进行改造，最终得到如下的payload(扩展于<a href="https://github.com/EmYiQing/ShortPayload">EmYiQing/ShortPayload</a>):<br />
 <div class="highlight"><pre><span></span><code><span class="kn">package</span> <span class="nn">org.sec.payload</span><span class="p">;</span>
 
@@ -2233,9 +2233,9 @@
 <span class="p">}</span>
 </code></pre></div><br />
 让我们来实际测试一下长度:<br />
-<img alt="" src="https://gitee.com/guuest/images/raw/master/img/20220307105342.png" /><br />
+<img alt="" src="https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20220307105342.png" /><br />
 最终base64之后的payload长度只有1452，完美符合我们的预期:<br />
-<img alt="" src="https://gitee.com/guuest/images/raw/master/img/20220307105459.png" /></p>
+<img alt="" src="https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20220307105459.png" /></p>
 <h3 id="利用链">利用链<a class="headerlink" href="#利用链" title="Permanent link">#</a></h3>
 <div class="highlight"><pre><span></span><code>Hashtable.readObject()
   Hashtable.reconstitutionPut()
@@ -2301,7 +2301,7 @@
 <span class="p">}</span>
 </code></pre></div><br />
 但是当我们运行程序时很遗憾地发现长度还是超出了1956:<br />
-<img alt="" src="https://gitee.com/guuest/images/raw/master/img/20220307113636.png" /></p>
+<img alt="" src="https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20220307113636.png" /></p>
 <p>新链2长度很大的原因是因为 <code>JdbcRowSetImpl</code> 这个类的对象太大了，方法巨多，本来优化的思路是用ASM把没用的属性和方法全部扬了，但是这个类的类加载器是 <code>BootStrap</code> ，位于双亲委派的最顶层，所以修改过后的字节码没办法再次加载。</p>
 <p>另一个优化思路是把没用的属性全部改为null，但是要注意不能影响sink的最终执行结果，所以这里要对照 <code>pds[]</code> 中 getter 方法的顺序选择对应的属性进行修改：<br />
 <div class="highlight"><pre><span></span><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">ROME_JNDI</span> <span class="p">{</span>
@@ -2348,12 +2348,12 @@
 </code></pre></div><br />
 最后长度为：<br />
 <img alt="" src="https://syclover.feishu.cn/space/api/box/stream/download/asynccode/?code=MTYzOTBiOWY0ZGJhZmIxZTc4MTk3NGNhZmUzMzI5NTJfd2V6RFdKQmhJd3RVeGRFcWJmN1BSRTIxeUp2RTlOOUlfVG9rZW46Ym94Y25ZUE1tVVdYY3hQNDUxNXJwOEpEWkVjXzE2NDY4ODcyMDU6MTY0Njg5MDgwNV9WNA" /><br />
-<img alt="" src="https://gitee.com/guuest/images/raw/master/img/20220321143222.png" /></p>
+<img alt="" src="https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20220321143222.png" /></p>
 <h2 id="二次反序列化绕过方式">二次反序列化绕过方式<a class="headerlink" href="#二次反序列化绕过方式" title="Permanent link">#</a></h2>
 <p>有时候我们会遇到一些其他的反序列化方式，例如Hessian(2)，如果使用这种序列化/反序列化的话，我们的链可能会出现问题，原因是我们的Sink不能再使用TemplatesImpl类，原因是: 这种反序列化不会触发<code>TemplatesImpl.readObject()</code>方法，导致反序列化出来的<code>TemplatesImpl._tfactory</code>属性为空(这个属性存在transient关键字修饰，无法序列化)，这样导致我们最后没办法利用<code>TemplatesImpl#defineTransletClasses</code>方法去实现任意java代码执行。</p>
 <p>在这种情况下实际上我们就只剩下JNDI这一条路，但加入目标不出网/JDK版本过高的话，JNDI是不好用的，还有其他方法吗？</p>
 <p>答案是二次反序列化，我们知道EqualsBean/ToStringBean这几个类最终会触发某个类的所有getter，那么假如存在一个类其getter方法又会使用java原生反序列化，而且其反序列化内容我们可以控制的话，我们就可以进行绕过了，这个类正是<code>java.security.SignedObject</code>:<br />
-<img alt="" src="https://gitee.com/guuest/images/raw/master/img/20220321144705.png" /></p>
+<img alt="" src="https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20220321144705.png" /></p>
 <p>那么我们去找下这个类的用法，其构造方法的第一个参数会被序列化然后存放到<code>SignedObject.content</code>中:<br />
 <div class="highlight"><pre><span></span><code><span class="n">KeyPairGenerator</span> <span class="n">kpg</span> <span class="o">=</span> <span class="n">KeyPairGenerator</span><span class="p">.</span><span class="na">getInstance</span><span class="p">(</span><span class="s">&quot;DSA&quot;</span><span class="p">);</span>
 <span class="n">kpg</span><span class="p">.</span><span class="na">initialize</span><span class="p">(</span><span class="mi">1024</span><span class="p">);</span>
@@ -2450,7 +2450,7 @@
       
     
     <a href="https://github.com/WAY29" target="_blank" rel="noopener" title="github.com" class="md-social__link">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
     </a>
   
     
@@ -2477,10 +2477,10 @@
     <div class="md-dialog" data-md-component="dialog">
       <div class="md-dialog__inner md-typeset"></div>
     </div>
-    <script id="__config" type="application/json">{"base": "../../../..", "features": ["header.autohide", "navigation.expand", "navigation.top", "toc.integrate", "tabs"], "translations": {"clipboard.copy": "\u590d\u5236", "clipboard.copied": "\u5df2\u590d\u5236", "search.config.lang": "ja", "search.config.pipeline": "trimmer, stemmer", "search.config.separator": "[\\uff0c\\u3002]+", "search.placeholder": "\u641c\u7d22", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.term.missing": "\u7f3a\u5c11", "select.version.title": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}, "search": "../../../../assets/javascripts/workers/search.bd0b6b67.min.js"}</script>
+    <script id="__config" type="application/json">{"base": "../../../..", "features": ["header.autohide", "navigation.expand", "navigation.top", "toc.integrate", "tabs"], "search": "../../../../assets/javascripts/workers/search.5e67fbfe.min.js", "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.config.lang": "ja", "search.config.pipeline": "trimmer, stemmer", "search.config.separator": "[\\uff0c\\u3002]+", "search.placeholder": "\u641c\u7d22", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version.title": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}}</script>
     
     
-      <script src="../../../../assets/javascripts/bundle.467223ff.min.js"></script>
+      <script src="../../../../assets/javascripts/bundle.e87a5f81.min.js"></script>
       
         <script src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
       

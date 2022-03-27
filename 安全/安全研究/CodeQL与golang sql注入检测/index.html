@@ -13,7 +13,7 @@
         <link rel="canonical" href="https://longlone.top/%E5%AE%89%E5%85%A8/%E5%AE%89%E5%85%A8%E7%A0%94%E7%A9%B6/CodeQL%E4%B8%8Egolang%20sql%E6%B3%A8%E5%85%A5%E6%A3%80%E6%B5%8B/">
       
       <link rel="icon" href="../../../attachment/favicon.ico">
-      <meta name="generator" content="mkdocs-1.2.3, mkdocs-material-8.2.5">
+      <meta name="generator" content="mkdocs-1.3.0, mkdocs-material-8.2.7">
     
     
       
@@ -21,7 +21,7 @@
       
     
     
-      <link rel="stylesheet" href="../../../assets/stylesheets/main.2d9f7617.min.css">
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.9d5733d3.min.css">
       
         
         <link rel="stylesheet" href="../../../assets/stylesheets/palette.e6a45f82.min.css">
@@ -2256,14 +2256,14 @@
 <p>开源的codeql标准库和查询库</p>
 <p><a href="https://github.com/github/codeql">项目地址: github/codeql</a><br />
 进入到上面解压codeql-cli的文件夹，并把该仓库clone下来，保证codeql-cli和codeql在同一个目录下<br />
-<img alt="" src="https://gitee.com/guuest/images/raw/master/img/20211101170723.png" /></p>
+<img alt="" src="https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20211101170723.png" /></p>
 <h3 id="vscode-codeql">vscode-codeql<a class="headerlink" href="#vscode-codeql" title="Permanent link">#</a></h3>
 <p>vscode的codeql插件，直接在插件市场安装<br />
-<img alt="" src="https://gitee.com/guuest/images/raw/master/img/20211101170802.png" /></p>
+<img alt="" src="https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20211101170802.png" /></p>
 <h3 id="配置环境变量">配置环境变量<a class="headerlink" href="#配置环境变量" title="Permanent link">#</a></h3>
 <p>为了方便我们使用codeql-cli，我们需要将其路径放到PATH下，具体的方法就不多介绍了(windows下将其添加到环境变量中，linux下修改PATH变量)</p>
 <p>同时我们最好再配置下codeql插件的可执行文件路径，打开vscode的设置，搜索codeql，修改Executable Path<br />
-<img alt="" src="https://gitee.com/guuest/images/raw/master/img/20211101171106.png" /></p>
+<img alt="" src="https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20211101171106.png" /></p>
 <p>至此我们的环境算是配的差不多了。。。但是如果你需要用go的话还需要进行额外配置</p>
 <h3 id="codeql-go">codeql-go<a class="headerlink" href="#codeql-go" title="Permanent link">#</a></h3>
 <p>开源的codeql-go标准库和查询库(不太明白为什么不直接放在codeql库里)</p>
@@ -2277,7 +2277,7 @@
 <p>意思是说我们如果需要使用go的标准库时，还需要手动添加到vscode的workspace里，非常麻烦</p>
 <p>为了解决这个弊端，我自己捣鼓了一下，将其放在了codeql标准库里，具体步骤如下<br />
 1. clone仓库到ql文件夹里(即codeql标准库)并改其文件夹名为go<br />
-<img alt="" src="https://gitee.com/guuest/images/raw/master/img/20211101171752.png" /></p>
+<img alt="" src="https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20211101171752.png" /></p>
 <ol>
 <li>修改.codeqlmanifest.json，加入一行<code>"go/.codeqlmanifest.json",</code><br />
 <div class="highlight"><pre><span></span><code><span class="p">{</span><span class="w"> </span><span class="nt">&quot;provide&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="s2">&quot;ruby/.codeqlmanifest.json&quot;</span><span class="p">,</span><span class="w"></span>
@@ -2316,12 +2316,12 @@ select &quot;hello world&quot;
 </code></pre></div></li>
 <li>
 <p>从vscode中选择codeql_database作为数据库<br />
-<img alt="" src="https://gitee.com/guuest/images/raw/master/img/20211101174647.png" /><br />
-<img alt="" src="https://gitee.com/guuest/images/raw/master/img/20211101174714.png" /></p>
+<img alt="" src="https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20211101174647.png" /><br />
+<img alt="" src="https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20211101174714.png" /></p>
 </li>
 <li>
 <p>右键helloworld.ql，选择<code>CodeQL: Run Query</code><br />
-<img alt="" src="https://gitee.com/guuest/images/raw/master/img/20211101174805.png" /></p>
+<img alt="" src="https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20211101174805.png" /></p>
 </li>
 </ol>
 <p>如果显示以上画面，那么我们成功就安装好了环境。</p>
@@ -2475,7 +2475,7 @@ where
 select src, sink
 </code></pre></div><br />
 最后执行结果如下<br />
-<img alt="" src="https://gitee.com/guuest/images/raw/master/img/20211103214319.png" /></p>
+<img alt="" src="https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20211103214319.png" /></p>
 <h3 id="官方标准库检测sql注入">官方标准库检测sql注入<a class="headerlink" href="#官方标准库检测sql注入" title="Permanent link">#</a></h3>
 <p>官方标准库中也存在sql注入的检测，位于<code>codeql-go/lib/src/Security/SqlInjection.ql</code>，我们来学习一下官方代码是怎么编写的<br />
 官方源码如下:<br />
@@ -2502,23 +2502,23 @@ select sink.getNode(), source, sink, &quot;This query depends on $@.&quot;, sour
   &quot;a user-provided value&quot;
 </code></pre></div><br />
 可以看到代码很简短，证明真实的实现并不在这里，我们按下Ctrl跟进SqlInjection::Configuration看看<br />
-<img alt="" src="https://gitee.com/guuest/images/raw/master/img/20211103204938.png" /><br />
+<img alt="" src="https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20211103204938.png" /><br />
 这里可以看到Configuration继承了<code>TaintTracking::Configuration</code>，这个是官方自带的污点追踪的配置，我们只要实现<code>isSource</code>谓词和<code>isSink</code>谓词即可，我们继续跟进<code>Source</code>类<br />
 可以看到<code>Source</code>类就是个继承了<code>DataFlow::Node</code>的抽象类，那么我们就要去找它的子类<br />
-<img alt="" src="https://gitee.com/guuest/images/raw/master/img/20211103205149.png" /><br />
+<img alt="" src="https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20211103205149.png" /><br />
 子类就在最下面，它又是"继承"于<code>UntrustedFlowSource</code><br />
-<img alt="" src="https://gitee.com/guuest/images/raw/master/img/20211103205244.png" /><br />
+<img alt="" src="https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20211103205244.png" /><br />
 继续跟进<code>UntrustedFlowSource</code>，可以看到这里有些比较抽象的代码，实际上这等价于<code>UntrustedFlowSource</code>又"继承"于<code>UntrustedFlowSource::Range</code><br />
 <code>UntrustedFlowSource::Range</code>就在下面，它又是一个继承了<code>DataFlow::Node</code>的抽象类，我们继续去找它的子类<br />
-<img alt="" src="https://gitee.com/guuest/images/raw/master/img/20211103205329.png" /><br />
+<img alt="" src="https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20211103205329.png" /><br />
 通过vscode搜索<code>extends UntrustedFlowSource::Range</code>，可以看到该类有很多子类，都是为了适配golang中比较出名的web框架(如Beego，Chi，Gin等)<br />
-<img alt="" src="https://gitee.com/guuest/images/raw/master/img/20211103205514.png" /><br />
+<img alt="" src="https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20211103205514.png" /><br />
 这里我们的代码是用Gin作为框架的，我们就以其为例，查看<code>Gin.qll</code>，里面有2个类继承了<code>extends UntrustedFlowSource::Range</code>，其中一个类的代码如下:<br />
-<img alt="" src="https://gitee.com/guuest/images/raw/master/img/20211103210118.png" /><br />
+<img alt="" src="https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20211103210118.png" /><br />
 最上面这一块的意思是去寻找一个方法调用，并且获取他的返回结果作为source<br />
 下面一块的意思是寻找类中的字段(Accepted或Params，是一个数组)，并且在其读取元素时获取他的值作为source</p>
 <p>另外一个类的代码如下:<br />
-<img alt="" src="https://gitee.com/guuest/images/raw/master/img/20211103210822.png" /><br />
+<img alt="" src="https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20211103210822.png" /><br />
 这段代码的意思是这些函数调用时获取其第一个参数作为source</p>
 <p>上面的代码可能有点复杂，我们稍微简化一下，可以得到以下代码<br />
 <div class="highlight"><pre><span></span><code>import go
@@ -2548,7 +2548,7 @@ select src
 这里如果对CodeQL不够熟悉可能会产生疑问，为什么Source的子类Node1的特征谓词(可以理解为其他语言中的构造函数)会对Source产生限制作用呢？其实这个就是CodeQL的特点，子类的特征谓词会限定父类。</p>
 <p>sink的分析和source同理，我们这里就不再分析了。可以看到其实CodeQL官方就是将很多常用的Web框架的source和sink都写了一遍，这样当我们使用这些Web框架编写代码时就可以使用CodeQL标准库来检测我们的代码是否存在漏洞了。<br />
 我们来运行下官方的标准库，可以得到相同的结果:<br />
-<img alt="" src="https://gitee.com/guuest/images/raw/master/img/20211103214011.png" /></p>
+<img alt="" src="https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20211103214011.png" /></p>
 
               
   
@@ -2580,7 +2580,7 @@ select src
       
     
     <a href="https://github.com/WAY29" target="_blank" rel="noopener" title="github.com" class="md-social__link">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
     </a>
   
     
@@ -2607,10 +2607,10 @@ select src
     <div class="md-dialog" data-md-component="dialog">
       <div class="md-dialog__inner md-typeset"></div>
     </div>
-    <script id="__config" type="application/json">{"base": "../../..", "features": ["header.autohide", "navigation.expand", "navigation.top", "toc.integrate", "tabs"], "translations": {"clipboard.copy": "\u590d\u5236", "clipboard.copied": "\u5df2\u590d\u5236", "search.config.lang": "ja", "search.config.pipeline": "trimmer, stemmer", "search.config.separator": "[\\uff0c\\u3002]+", "search.placeholder": "\u641c\u7d22", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.term.missing": "\u7f3a\u5c11", "select.version.title": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}, "search": "../../../assets/javascripts/workers/search.bd0b6b67.min.js"}</script>
+    <script id="__config" type="application/json">{"base": "../../..", "features": ["header.autohide", "navigation.expand", "navigation.top", "toc.integrate", "tabs"], "search": "../../../assets/javascripts/workers/search.5e67fbfe.min.js", "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.config.lang": "ja", "search.config.pipeline": "trimmer, stemmer", "search.config.separator": "[\\uff0c\\u3002]+", "search.placeholder": "\u641c\u7d22", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version.title": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}}</script>
     
     
-      <script src="../../../assets/javascripts/bundle.467223ff.min.js"></script>
+      <script src="../../../assets/javascripts/bundle.e87a5f81.min.js"></script>
       
         <script src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
       

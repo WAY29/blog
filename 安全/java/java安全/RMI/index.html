@@ -13,7 +13,7 @@
         <link rel="canonical" href="https://longlone.top/%E5%AE%89%E5%85%A8/java/java%E5%AE%89%E5%85%A8/RMI/">
       
       <link rel="icon" href="../../../../attachment/favicon.ico">
-      <meta name="generator" content="mkdocs-1.2.3, mkdocs-material-8.2.5">
+      <meta name="generator" content="mkdocs-1.3.0, mkdocs-material-8.2.7">
     
     
       
@@ -21,7 +21,7 @@
       
     
     
-      <link rel="stylesheet" href="../../../../assets/stylesheets/main.2d9f7617.min.css">
+      <link rel="stylesheet" href="../../../../assets/stylesheets/main.9d5733d3.min.css">
       
         
         <link rel="stylesheet" href="../../../../assets/stylesheets/palette.e6a45f82.min.css">
@@ -2307,7 +2307,7 @@
 <li>注册中心反序列化，弹出计算器</li>
 </ol>
 <p>其触发的反序列化位置在<code>sun.rmi.registry.RegistryImpl_Skel#dispatch</code>:<br />
-<img alt="" src="https://gitee.com/guuest/images/raw/master/img/20211118110403.png" /></p>
+<img alt="" src="https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20211118110403.png" /></p>
 <h3 id="注册中心攻击服务端">注册中心攻击服务端<a class="headerlink" href="#注册中心攻击服务端" title="Permanent link">#</a></h3>
 <p>参考<a href="https://mp.weixin.qq.com/s/Ww_IxNLXI0KWZYERGwu3bg">这篇文章</a></p>
 <p>根据上文我们可以看到我们的代码中使用了<code>registry.bind</code>，其实际上调用的原生的<code>RegistryImpl_Stub</code>，会触发<code>UnicastRef#invoke-&gt;StreamRemoteCall#executeCall</code>导致反序列化，也就是说当我们服务端攻击注册中心时注册中心也可能会对我们进行攻击。<br />
@@ -2466,9 +2466,9 @@ package top.longlone.RMIStudy;</li>
 <p>}<br />
 <code>``
 4. 运行上述代码，成功在客户端弹出计算器:
-    ![](https://gitee.com/guuest/images/raw/master/img/20211118112950.png)
+    ![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20211118112950.png)
 其触发反序列化的位置在</code>sun.rmi.registry.RegistryImpl_Stub#lookup`:<br />
-<img alt="" src="https://gitee.com/guuest/images/raw/master/img/20211118113332.png" /></p>
+<img alt="" src="https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20211118113332.png" /></p>
 <h3 id="客户端攻击注册中心">客户端攻击注册中心<a class="headerlink" href="#客户端攻击注册中心" title="Permanent link">#</a></h3>
 <p>这种攻击方式不太常见(因为注册中心一般不可能暴露在外网)，我们这里来模拟攻击一下:</p>
 <p>在了解这个攻击方式之前，我们同样需要去了解RMI协议，参考文章: <a href="https://xz.aliyun.com/t/8247">attack-rmi-registry-and-server-with-socket</a><br />
@@ -2480,11 +2480,11 @@ package top.longlone.RMIStudy;</li>
 </ol>
 <p>其原理是RMI框架采用DGC(Distributed Garbage Collection)分布式垃圾收集机制来管理远程对象的生命周期,可以通过与DGC通信的方式发送恶意payload让注册中心反序列化。</p>
 <p>其触发反序列化的位置在<code>sun.rmi.transport.DGCImpl_Skel#dispatch</code>:<br />
-<img alt="" src="https://gitee.com/guuest/images/raw/master/img/20211118114147.png" /></p>
+<img alt="" src="https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20211118114147.png" /></p>
 <h2 id="jep290">JEP290<a class="headerlink" href="#jep290" title="Permanent link">#</a></h2>
 <p>参考一些师傅的文章，在JDK8u121，JDK7u13，JDK6u141之后添加了一个新的安全机制JEP290，核心其实就是增加了一个 <code>ObjectInputFilter</code> 接口，可以将 filter 设置给 <code>ObjectInputStream</code> 对象，在反序列化的时候触发 filter 的检测机制。<br />
 这个过滤的白名单我们最终可以在<code>RegistryImpl#registryFilter</code> 方法中看到:<br />
-<img alt="" src="https://gitee.com/guuest/images/raw/master/img/20211119182902.png" /></p>
+<img alt="" src="https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20211119182902.png" /></p>
 <p>白名单的内容如下:<br />
 <div class="highlight"><pre><span></span><code>String / Number / Remote / Proxy / UnicastRef / RMIClientSocketFactory / RMIServerSocketFactory /  ActivationID / UID
 </code></pre></div><br />
@@ -2540,19 +2540,19 @@ package top.longlone.RMIStudy;</li>
 </code></pre></div><br />
 调试过程如下:<br />
 用ysoserial启动JRMPClient，然后调试RMIRegistry，在<code>RemoteObject#readObject</code>方法中下断点，最后再运行vuln触发断点。<br />
-<img alt="" src="https://gitee.com/guuest/images/raw/master/img/20211119192153.png" /><br />
+<img alt="" src="https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20211119192153.png" /><br />
 跟进readExternal方法:<br />
-<img alt="" src="https://gitee.com/guuest/images/raw/master/img/20211119192454.png" /><br />
+<img alt="" src="https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20211119192454.png" /><br />
 在这个方法中会读出序列化流中的 host 和端口信息，然后重新封装成一个 LiveRef 对象，将其存储到当前的 ConnectionInputStream 上，调用 saveRef 方法:<br />
-<img alt="" src="https://gitee.com/guuest/images/raw/master/img/20211119192545.png" /><br />
+<img alt="" src="https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20211119192545.png" /><br />
 一直跟进到RegistryImpl_Skel的oldDispatch方法:<br />
-<img alt="" src="https://gitee.com/guuest/images/raw/master/img/20211119192746.png" /><br />
+<img alt="" src="https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20211119192746.png" /><br />
 在服务端触发了反序列化之后，来到 <code>StreamRemoteCall#releaseInputStream</code> 方法中，在这里会调用 <code>ConnectionInputStream#registerRefs</code> 方法:<br />
-<img alt="" src="https://gitee.com/guuest/images/raw/master/img/20211119193033.png" /><br />
+<img alt="" src="https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20211119193033.png" /><br />
 这里又会调用DGCClient的registerRefs方法:<br />
-<img alt="" src="https://gitee.com/guuest/images/raw/master/img/20211119193137.png" /><br />
+<img alt="" src="https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20211119193137.png" /><br />
 最终由 DGCClient 向恶意的 JRMP 注册中心发起 lookup 连接:<br />
-<img alt="" src="https://gitee.com/guuest/images/raw/master/img/20211119193200.png" /><br />
+<img alt="" src="https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20211119193200.png" /><br />
 这里的攻击方法看起来与上面的<strong>注册中心攻击客户端</strong>有点类似，但是这里用的不是直接反序列化而是通过往注册中心rebind恶意对象触发反序列化造成的，其最终目的都是为了<strong>让服务端变为JRMP客户端向我们恶意的JRMPRegistry发起JRMP请求</strong>。</p>
 <h2 id="总结">总结<a class="headerlink" href="#总结" title="Permanent link">#</a></h2>
 <p>所以 Bypass JEP290 的关键在于：<strong>通过反序列化让服务端变为JRMP客户端向我们恶意的JRMPRegistry发起 JRMP 请求。</strong></p>
@@ -2595,7 +2595,7 @@ package top.longlone.RMIStudy;</li>
       
     
     <a href="https://github.com/WAY29" target="_blank" rel="noopener" title="github.com" class="md-social__link">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
     </a>
   
     
@@ -2622,10 +2622,10 @@ package top.longlone.RMIStudy;</li>
     <div class="md-dialog" data-md-component="dialog">
       <div class="md-dialog__inner md-typeset"></div>
     </div>
-    <script id="__config" type="application/json">{"base": "../../../..", "features": ["header.autohide", "navigation.expand", "navigation.top", "toc.integrate", "tabs"], "translations": {"clipboard.copy": "\u590d\u5236", "clipboard.copied": "\u5df2\u590d\u5236", "search.config.lang": "ja", "search.config.pipeline": "trimmer, stemmer", "search.config.separator": "[\\uff0c\\u3002]+", "search.placeholder": "\u641c\u7d22", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.term.missing": "\u7f3a\u5c11", "select.version.title": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}, "search": "../../../../assets/javascripts/workers/search.bd0b6b67.min.js"}</script>
+    <script id="__config" type="application/json">{"base": "../../../..", "features": ["header.autohide", "navigation.expand", "navigation.top", "toc.integrate", "tabs"], "search": "../../../../assets/javascripts/workers/search.5e67fbfe.min.js", "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.config.lang": "ja", "search.config.pipeline": "trimmer, stemmer", "search.config.separator": "[\\uff0c\\u3002]+", "search.placeholder": "\u641c\u7d22", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version.title": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}}</script>
     
     
-      <script src="../../../../assets/javascripts/bundle.467223ff.min.js"></script>
+      <script src="../../../../assets/javascripts/bundle.e87a5f81.min.js"></script>
       
         <script src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
       

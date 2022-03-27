@@ -13,7 +13,7 @@
         <link rel="canonical" href="https://longlone.top/%E5%AE%89%E5%85%A8/java/java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E7%AF%87%E4%B9%8BJDK8u20/">
       
       <link rel="icon" href="../../../../attachment/favicon.ico">
-      <meta name="generator" content="mkdocs-1.2.3, mkdocs-material-8.2.5">
+      <meta name="generator" content="mkdocs-1.3.0, mkdocs-material-8.2.7">
     
     
       
@@ -21,7 +21,7 @@
       
     
     
-      <link rel="stylesheet" href="../../../../assets/stylesheets/main.2d9f7617.min.css">
+      <link rel="stylesheet" href="../../../../assets/stylesheets/main.9d5733d3.min.css">
       
         
         <link rel="stylesheet" href="../../../../assets/stylesheets/palette.e6a45f82.min.css">
@@ -2192,7 +2192,7 @@
 <h1 id="反序列化篇之jdk8u20">反序列化篇之JDK8u20<a class="headerlink" href="#反序列化篇之jdk8u20" title="Permanent link">#</a></h1>
 <h2 id="书接上文">书接上文<a class="headerlink" href="#书接上文" title="Permanent link">#</a></h2>
 <p>在JDK7u21中修复JDK7u21链的方式是判断<code>AnnotationInvocationHandler</code>的<code>type</code>属性是否为注解类，如果不是的话则抛出一个异常。<br />
-<img alt="" src="https://gitee.com/guuest/images/raw/master/img/20211130194851.png" /><br />
+<img alt="" src="https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20211130194851.png" /><br />
 这里我们需要注意的是在抛出异常之前，已经执行了<code>var1.defaultReadObject()</code>还原了<code>AnnotationInvocationHandler</code>对象，但是由于后续抛出异常，导致我们整个反序列化逻辑断开，程序终止运行，那么我们是否可能使程序在抛出异常之后也能够继续执行呢？</p>
 <h2 id="try-catch嵌套">try-catch嵌套<a class="headerlink" href="#try-catch嵌套" title="Permanent link">#</a></h2>
 <p>假设存在以下代码，思考一下最终的运行结果是什么？<br />
@@ -2511,7 +2511,7 @@ readHandle方法代码如下:<br />
 - 参考文章在<a href="https://xz.aliyun.com/t/8277">以一种更简单的方式构造JRE8u20 Gadget</a><br />
 - 完整源码在<a href="https://github.com/feihong-cs/jre8u20_gadget">feihong-cs/jre8u20_gadget</a><br />
 这里没有利用成员抛弃机制，而是利用到了LinkedHashSet反序列化时会一一反序列化map中对象的机制，先将<code>BeanContextSupport</code>放在最前面，让其产生非法的<code>AnnotationInvocationHandler</code>对象的newHandle，后续再正常地执行JDK7u21，整个链的构造逻辑大概如下:<br />
-<img alt="" src="https://gitee.com/guuest/images/raw/master/img/20211202092756.png" /></p>
+<img alt="" src="https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20211202092756.png" /></p>
 <blockquote>
 <p>在进行序列化的时候，向序列化流中写入了<code>4</code>个对象，但是通过修改序列化中的一些特殊的<code>byte</code>，构造了一个我们想要的序列化流。在反序列化的时候，<code>LinkedHashSet</code>读到的<code>size</code>为<code>3</code>,在反序列化第一个对象<code>BeanContextSupport</code>的时候，会进入到<code>BeanContextSupport</code>的<code>readChildren</code>逻辑，成功将<code>AnnotationInvocationHander</code>进行了还原（虽然<code>AnnotationInvocationHander</code>在反序列化的时候会抛出异常，但是<code>BeanContextSupport</code>捕捉了异常）。随后<code>LinkedHashSet</code>在反序列化第二个和三个元素的时候，会发生哈希碰撞，从而导致<code>RCE</code>。</p>
 </blockquote>
@@ -2883,21 +2883,21 @@ for(int i = 0; i &lt; bytes.length; i++){
 </code></pre></div></p>
 <p>这里将<code>AnnotationInvocationHandler</code>的<code>classDescFlags</code>添加了<code>SC_WRITE_METHOD</code>这个标志，这是为什么呢？</p>
 <p>我们在<code>BeanContextSupport#readChildren</code>处打下断点，查看调用栈:</p>
-<p><img alt="" src="https://gitee.com/guuest/images/raw/master/img/20211206091632.png" /><br />
+<p><img alt="" src="https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20211206091632.png" /><br />
 这里有一个<code>readSerialData</code>，跟进代码:<br />
-<img alt="" src="https://gitee.com/guuest/images/raw/master/img/20211206091642.png" /><br />
+<img alt="" src="https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20211206091642.png" /><br />
 现在代码走到了<code>slotDesc.invokeReadObject</code>处，而由于我们反序列化产生并捕捉了异常，这个函数中后续的代码将不再执行，即后续不会再设置<code>defaultDataEnd =</code> <code>_false_``;</code>，那么这个defaultDataEnd是用来做什么的呢？<br />
-<img alt="" src="https://gitee.com/guuest/images/raw/master/img/20211206091653.png" /><br />
+<img alt="" src="https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20211206091653.png" /><br />
 当成员块结束但没有TC_ENDBLOCKDATA时其会被设置为True。<br />
 当我们把上面那段修改标志的代码注释后再进行调试:<br />
-<img alt="" src="https://gitee.com/guuest/images/raw/master/img/20211206091712.png" /><br />
+<img alt="" src="https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20211206091712.png" /><br />
 其会设置<code>defaultDataEnd=True</code>，由于异常，正常情况下后续设置<code>defaultDataEnd=False</code>的代码被跳过了。我们看看后续<code>ois.readInt()</code>，一直跟进到<code>DataInputStream#readInt</code>中:<br />
-<img alt="" src="https://gitee.com/guuest/images/raw/master/img/20211206091736.png" /><br />
+<img alt="" src="https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20211206091736.png" /><br />
 继续跟进<code>in.read()</code>:<br />
-<img alt="" src="https://gitee.com/guuest/images/raw/master/img/20211206091746.png" /><br />
+<img alt="" src="https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20211206091746.png" /><br />
 跟进<code>refill()</code>:<br />
-<img alt="" src="https://gitee.com/guuest/images/raw/master/img/20211206091755.png" /><br />
-<img alt="" src="https://gitee.com/guuest/images/raw/master/img/20211206091800.png" /><br />
+<img alt="" src="https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20211206091755.png" /><br />
+<img alt="" src="https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20211206091800.png" /><br />
 可以看到这里返回了-1，一直回溯过去，导致4个<code>in.read()</code>都会返回-1，抛出<code>EOFException</code>。</p>
 <p>这里使用的解决方法是将<code>AnnotationInvocationHandler</code>的<code>classDescFlags</code>添加了<code>SC_WRITE_METHOD</code>标志，这样就不会进入if判断中，一开始就不会将<code>defaultDataEnd=True</code>，也就解决了这个问题，使得<code>ois.readInt()</code>能够有机会读取到Int。</p>
 <h3 id="困惑2">困惑2<a class="headerlink" href="#困惑2" title="Permanent link">#</a></h3>
@@ -3045,7 +3045,7 @@ TC_ENDBLOCKDATA - 0x78
       
     
     <a href="https://github.com/WAY29" target="_blank" rel="noopener" title="github.com" class="md-social__link">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
     </a>
   
     
@@ -3072,10 +3072,10 @@ TC_ENDBLOCKDATA - 0x78
     <div class="md-dialog" data-md-component="dialog">
       <div class="md-dialog__inner md-typeset"></div>
     </div>
-    <script id="__config" type="application/json">{"base": "../../../..", "features": ["header.autohide", "navigation.expand", "navigation.top", "toc.integrate", "tabs"], "translations": {"clipboard.copy": "\u590d\u5236", "clipboard.copied": "\u5df2\u590d\u5236", "search.config.lang": "ja", "search.config.pipeline": "trimmer, stemmer", "search.config.separator": "[\\uff0c\\u3002]+", "search.placeholder": "\u641c\u7d22", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.term.missing": "\u7f3a\u5c11", "select.version.title": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}, "search": "../../../../assets/javascripts/workers/search.bd0b6b67.min.js"}</script>
+    <script id="__config" type="application/json">{"base": "../../../..", "features": ["header.autohide", "navigation.expand", "navigation.top", "toc.integrate", "tabs"], "search": "../../../../assets/javascripts/workers/search.5e67fbfe.min.js", "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.config.lang": "ja", "search.config.pipeline": "trimmer, stemmer", "search.config.separator": "[\\uff0c\\u3002]+", "search.placeholder": "\u641c\u7d22", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version.title": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}}</script>
     
     
-      <script src="../../../../assets/javascripts/bundle.467223ff.min.js"></script>
+      <script src="../../../../assets/javascripts/bundle.e87a5f81.min.js"></script>
       
         <script src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
       

@@ -13,7 +13,7 @@
         <link rel="canonical" href="https://longlone.top/%E5%AE%89%E5%85%A8/java/java%E5%AE%89%E5%85%A8/%E5%86%85%E5%AD%98%E9%A9%AC/Tomcat-Filter%E5%9E%8B/">
       
       <link rel="icon" href="../../../../../attachment/favicon.ico">
-      <meta name="generator" content="mkdocs-1.2.3, mkdocs-material-8.2.5">
+      <meta name="generator" content="mkdocs-1.3.0, mkdocs-material-8.2.7">
     
     
       
@@ -21,7 +21,7 @@
       
     
     
-      <link rel="stylesheet" href="../../../../../assets/stylesheets/main.2d9f7617.min.css">
+      <link rel="stylesheet" href="../../../../../assets/stylesheets/main.9d5733d3.min.css">
       
         
         <link rel="stylesheet" href="../../../../../assets/stylesheets/palette.e6a45f82.min.css">
@@ -2117,7 +2117,7 @@
 </ul>
 <h2 id="tomcat-filter">Tomcat-Filter<a class="headerlink" href="#tomcat-filter" title="Permanent link">#</a></h2>
 <p>filter顾名思义就是过滤器的意思，在tomca中我们可以通过自定义过滤器来做到对用户的一些请求进行拦截修改等操作:<br />
-<img alt="" src="https://gitee.com/guuest/images/raw/master/img/20220216173834.png" /><br />
+<img alt="" src="https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20220216173834.png" /><br />
 我们的请求会在经过Servlet之前先经过filter，那么如果我们动态创建一个filter并将其放在最前面，并在这个filter中放入恶意代码，当我们访问Servlet的时候就能成功执行我们的恶意代码，这也是所谓的内存webshell(因为filter是动态创建的，没有文件落地)，那么要如何动态地创建一个filter呢？</p>
 <h2 id="filter流程分析">Filter流程分析<a class="headerlink" href="#filter流程分析" title="Permanent link">#</a></h2>
 <p>我们先来了解一下在Tomcat中与Filter密切相关的几个类:<br />
@@ -2165,40 +2165,40 @@
   <span class="nt">&lt;/filter-mapping&gt;</span>
 </code></pre></div><br />
 接下来在<code>doFilter()</code>方法打下断点，运行tomcat服务器并访问:<br />
-<img alt="" src="https://gitee.com/guuest/images/raw/master/img/20220217104758.png" /><br />
+<img alt="" src="https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20220217104758.png" /><br />
 查看调用栈，跟进<code>StandardWrapperVavle.invoke()</code>方法:<br />
-<img alt="" src="https://gitee.com/guuest/images/raw/master/img/20220217104858.png" /><br />
+<img alt="" src="https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20220217104858.png" /><br />
 发现他是根据filterChain来去做filter的，根据搜索找到filterChain的定义位置:<br />
-<img alt="" src="https://gitee.com/guuest/images/raw/master/img/20220217104949.png" /><br />
+<img alt="" src="https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20220217104949.png" /><br />
 重新下断点到这个位置，跟进<code>ApplicationFilterFactory.createFilterChain()</code>方法，分析该方法，发现其先会会调用 <code>getParent()</code> 方法获取<code>StandardContext</code>，再获取filterMaps:<br />
-<img alt="" src="https://gitee.com/guuest/images/raw/master/img/20220217105248.png" /><br />
+<img alt="" src="https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20220217105248.png" /><br />
 filterMaps中的 filterMap 主要存放了过滤器的名字以及作用的 url:<br />
-<img alt="" src="https://gitee.com/guuest/images/raw/master/img/20220217105332.png" /><br />
+<img alt="" src="https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20220217105332.png" /><br />
 接下来会遍历filterMaps 中的 filterMap，如果发现符合当前请求 url 与 filterMap 中的 urlPattern 匹配且通过filterName能找到对应的filterConfig，则会将其加入filterChain:<br />
-<img alt="" src="https://gitee.com/guuest/images/raw/master/img/20220217105551.png" /><br />
+<img alt="" src="https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20220217105551.png" /><br />
 查看filterConfig的结构，里面主要包含了filter名，filter和filterDef:<br />
-<img alt="" src="https://gitee.com/guuest/images/raw/master/img/20220217105911.png" /><br />
+<img alt="" src="https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20220217105911.png" /><br />
 至此filterChain组装完毕，重新回到 StandardContextValue 中，后面会调用 <code>filterChain.doFilter()</code> 方法:<br />
-<img alt="" src="https://gitee.com/guuest/images/raw/master/img/20220217110138.png" /><br />
+<img alt="" src="https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20220217110138.png" /><br />
 跟进 <code>filterChain.doFilter()</code> 方法，其会调用<code>internalDoFilter()</code>方法:<br />
-<img alt="" src="https://gitee.com/guuest/images/raw/master/img/20220217110558.png" /><br />
+<img alt="" src="https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20220217110558.png" /><br />
 会从filters中依次拿到filter和filterConfig，最终调用<code>filter.doFilter()</code>:<br />
-<img alt="" src="https://gitee.com/guuest/images/raw/master/img/20220217110841.png" /></p>
+<img alt="" src="https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20220217110841.png" /></p>
 <p>引用一张经典图片来描述filter的工作原理:<br />
-<img alt="" src="https://gitee.com/guuest/images/raw/master/img/20220216175207.png" /></p>
+<img alt="" src="https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20220216175207.png" /></p>
 <h2 id="内存马实现流程分析">内存马实现流程分析<a class="headerlink" href="#内存马实现流程分析" title="Permanent link">#</a></h2>
 <p>根据上面的调试，我们发现最关键的就是<code>StandardContext.findFilterMaps()</code>和<code>StandardContext.findFilterConfig()</code>，我们可以来看看这2个方法的实现，可以看到都是直接从StandardContext中取到对应的属性，那么我们只要往这2个属性里面插入对应的filterMap和filterConfig即可实现动态添加filter的目的:<br />
-<img alt="" src="https://gitee.com/guuest/images/raw/master/img/20220217112015.png" /><br />
-<img alt="" src="https://gitee.com/guuest/images/raw/master/img/20220217112027.png" /></p>
+<img alt="" src="https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20220217112015.png" /><br />
+<img alt="" src="https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20220217112027.png" /></p>
 <p>实际上StandardContext也有一些方法可以帮助我们添加属性。首先我们来看filtermaps，StandardContext直接提供了对应的添加方法(Before是将filter放在首位，正是我们需要的)，这里再往filterMaps添加之前会有一个校验filtermap是否合法的操作，跟进<code>validateFilterMap()</code>:<br />
-<img alt="" src="https://gitee.com/guuest/images/raw/master/img/20220217112920.png" /><br />
+<img alt="" src="https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20220217112920.png" /><br />
 可以看到这里有一个坑点，它会根据filterName去寻找对应的filterDef，如果没找到的话会直接抛出异常，也就是说我们还需要往filterDefs里添加filterDef。<br />
-<img alt="" src="https://gitee.com/guuest/images/raw/master/img/20220217112417.png" /></p>
+<img alt="" src="https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20220217112417.png" /></p>
 <p>那么我们接下来再看filterDefs，StandardContext直接提供了对应的添加方法:<br />
-<img alt="" src="https://gitee.com/guuest/images/raw/master/img/20220217112602.png" /></p>
+<img alt="" src="https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20220217112602.png" /></p>
 <p>最后我们再来看filterConfigs，根据命名规则搜索<code>addFilterConfig</code>，发现并没有这个方法，所以我们考虑要通过反射的方法手动获取属性并添加:<br />
-<img alt="" src="https://gitee.com/guuest/images/raw/master/img/20220217112715.png" /><br />
-<img alt="" src="https://gitee.com/guuest/images/raw/master/img/20220217112750.png" /></p>
+<img alt="" src="https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20220217112715.png" /><br />
+<img alt="" src="https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20220217112750.png" /></p>
 <p>最后总结下Filter型内存马(即动态创建filter)的步骤:<br />
 1. 获取StandardContext<br />
 2. 继承并编写一个恶意filter<br />
@@ -2332,7 +2332,7 @@ filterMaps中的 filterMap 主要存放了过滤器的名字以及作用的 url:
       
     
     <a href="https://github.com/WAY29" target="_blank" rel="noopener" title="github.com" class="md-social__link">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
     </a>
   
     
@@ -2359,10 +2359,10 @@ filterMaps中的 filterMap 主要存放了过滤器的名字以及作用的 url:
     <div class="md-dialog" data-md-component="dialog">
       <div class="md-dialog__inner md-typeset"></div>
     </div>
-    <script id="__config" type="application/json">{"base": "../../../../..", "features": ["header.autohide", "navigation.expand", "navigation.top", "toc.integrate", "tabs"], "translations": {"clipboard.copy": "\u590d\u5236", "clipboard.copied": "\u5df2\u590d\u5236", "search.config.lang": "ja", "search.config.pipeline": "trimmer, stemmer", "search.config.separator": "[\\uff0c\\u3002]+", "search.placeholder": "\u641c\u7d22", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.term.missing": "\u7f3a\u5c11", "select.version.title": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}, "search": "../../../../../assets/javascripts/workers/search.bd0b6b67.min.js"}</script>
+    <script id="__config" type="application/json">{"base": "../../../../..", "features": ["header.autohide", "navigation.expand", "navigation.top", "toc.integrate", "tabs"], "search": "../../../../../assets/javascripts/workers/search.5e67fbfe.min.js", "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.config.lang": "ja", "search.config.pipeline": "trimmer, stemmer", "search.config.separator": "[\\uff0c\\u3002]+", "search.placeholder": "\u641c\u7d22", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version.title": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}}</script>
     
     
-      <script src="../../../../../assets/javascripts/bundle.467223ff.min.js"></script>
+      <script src="../../../../../assets/javascripts/bundle.e87a5f81.min.js"></script>
       
         <script src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
       
