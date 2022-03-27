@@ -36,7 +36,7 @@ CLASSPATH，但CLASSPATH是本地路径，而codebase通常是远程URL，比如
 - client.policy
 
 目录结构和代码如下:
-![](https://gitee.com/guuest/images/raw/master/img/20210913155401.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20210913155401.png)
 
 ```java
 package top.longlone.attackRMI;
@@ -137,8 +137,8 @@ public class RMIServer {
 `D:\Coding\java\maven_study\src\main\java>java -Djava.rmi.server.hostname=192.168.123.150 -Djava.rmi.server.useCodebaseOnly=false -Djava.security.policy=top/longlone/attackRMI/client.policy top.longlone.attackRMI.RMIServer`
 
 可以看见确实请求了`/top/longlone/RMIClient$1.class`，那么我们只要在远程去部署一个恶意的class文件就能让他执行任意代码了
-![](https://gitee.com/guuest/images/raw/master/img/20210913160901.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20210913160901.png)
 
 
 这里和pdf有些不一样的地方: pdf里抛出了一个magic value不正确的错误，但我这里抛出了一个ClassNotFound错误
-![](https://gitee.com/guuest/images/raw/master/img/20210913161020.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20210913161020.png)

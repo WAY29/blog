@@ -26,26 +26,26 @@ Tomcat由四大容器组成，分别是Engine、Host、Context、Wrapper。这�
 > 
 > Wrapper（包装器）：代表一个 Servlet，它负责管理一个 Servlet，包括的 Servlet 的装载、初始化、执行以及资源回收。Wrapper 是最底层的容器，它没有子容器了，所以调用它的 addChild 将会报错。 
 
-![](https://gitee.com/guuest/images/raw/master/img/20220217164552.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20220217164552.png)
 
 其中webapps文件夹即是我们的Host，webapps中的文件夹(如examples/ROOT)代表一个Context，每个Context内包含Wrapper，Wrapper 则负责管理容器内的 Servlet。
 
 实际上，在Tomcat7之后的版本，StandardContext中提供了动态注册Servlet的方法，但是并未实现:
-![](https://gitee.com/guuest/images/raw/master/img/20220217164912.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20220217164912.png)
 
 所以我们需要自己去实现动态添加Servlet的功能，在此之前我们需要了解Servlet的生命周期(主要关注初始化和装载)。
 
 ## Servlet初始化流程分析
 在`org.apache.catalina.core.StandardWrapper#setServletClass()`处下断点调试，回溯到上一层的`ContextConfig.configureConetxt()`:
-![](https://gitee.com/guuest/images/raw/master/img/20220217165809.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20220217165809.png)
 在这里我们可以很清楚地看到Wrapper的初始化流程，首先调用创建了wrapper，然后调用set方法配置wrapper相关的属性，我们可以参考web.xml中需要配置的属性来推测wrapper的关键属性(即图中红框)，需要留意的一个特殊属性是load-on-startup属性，它是一个启动优先级，后续再分析:
-![](https://gitee.com/guuest/images/raw/master/img/20220217170042.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20220217170042.png)
 接着继续配置wrapper的servletClass:
-![](https://gitee.com/guuest/images/raw/master/img/20220217170428.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20220217170428.png)
 配置完成之后会将wrapper放入StandardContext的child里:
-![](https://gitee.com/guuest/images/raw/master/img/20220217170635.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20220217170635.png)
 接着会遍历web.xml中servlet-mapping的servlet-name和对应的url-pattern，调用`StandardContext.addServletMappingDecoded()`添加servlet对应的映射:
-![](https://gitee.com/guuest/images/raw/master/img/20220217170953.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20220217170953.png)
 
 总结一下，Servlet的初始化一共有几个步骤:
 1. 通过 context.createWapper() 创建 Wapper 对象
@@ -57,11 +57,11 @@ Tomcat由四大容器组成，分别是Engine、Host、Context、Wrapper。这�
 
 ## Servlet装载流程分析
 在` org.apache.catalina.core.StandardWapper#loadServlet()`处下断点调试，回溯到`StandardContext.startInternal()`方法:
-![](https://gitee.com/guuest/images/raw/master/img/20220217171608.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20220217171608.png)
 可以看到，是在加载完Listener和Filter之后，才装载Servlet:
-![](https://gitee.com/guuest/images/raw/master/img/20220217171746.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20220217171746.png)
 这里调用了`findChildren()`方法从StandardContext中拿到所有的child并传到`loadOnStartUp()`方法处理，跟到`loadOnstartup()`，可以根据代码和注释了解到这个方法会将所有load-on-startup属性大于0的wrapper加载(反之则不会)，这也是为什么上文我们提到需要关注这个属性的原因:
-![](https://gitee.com/guuest/images/raw/master/img/20220217172024.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20220217172024.png)
 根据搜索，我们了解到load-on-startup属性的作用:
 > load-on-startup 这个元素的含义是在服务器启动的时候就加载这个servlet(实例化并调用init()方法). 这个元素中的可选内容必须为一个整数,表明了这个servlet被加载的先后顺序. 当是一个负数时或者没有指定时，则表示服务器在该servlet被调用时才加载。
 

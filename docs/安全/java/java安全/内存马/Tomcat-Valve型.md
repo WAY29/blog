@@ -13,7 +13,7 @@ tags:
 
 ## 引子
 实际上在我们调试Tomcat-Filter型内存马的时候，我们查看调用栈会发现一些有趣的东西:
-![](https://gitee.com/guuest/images/raw/master/img/20220218104259.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20220218104259.png)
 
 我们会发现这里存在一堆的invoke方法的调用，那么这些Valve究竟是什么呢？
 
@@ -23,7 +23,7 @@ tags:
 > 
 > Pipeline 中会有一个最基础的 Valve（basic），它始终位于末端（最后执行），封装了具体的请求处理和输出响应的过程。Pipeline 提供了 `addValve` 方法，可以添加新 Valve 在 basic 之前，并按照添加顺序执行。
 
-![](https://gitee.com/guuest/images/raw/master/img/20220218104446.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20220218104446.png)
 
 > Tomcat 每个层级的容器（Engine、Host、Context、Wrapper），都有基础的 Valve 实现（StandardEngineValve、StandardHostValve、StandardContextValve、StandardWrapperValve），他们同时维护了一个 Pipeline 实例（StandardPipeline），也就是说，我们可以在任何层级的容器上针对请求处理进行扩展。这四个 Valve 的基础实现都继承了 ValveBase。这个类帮我们实现了生命接口及MBean 接口，使我们只需专注阀门的逻辑处理即可。
 
@@ -92,7 +92,7 @@ public class EvilServlet extends HttpServlet {
 }
 ```
 在`System.out.println("111");`下断点调试,可以看到恶意Valve注入成功，AuthenticatorBase紧跟着的就是我们的EvilValve:
-![](https://gitee.com/guuest/images/raw/master/img/20220218110100.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20220218110100.png)
 
 jsp版本:
 ```

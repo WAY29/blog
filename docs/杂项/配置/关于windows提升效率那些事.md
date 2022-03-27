@@ -149,8 +149,8 @@ DesktopAlt10=Numpad0
 ### 使用技巧
 1. 修改启动快捷键，我个人是喜欢设置为Alt+\`这个键位
 2. 安装**快捷命令**这个插件，然后就能愉快地去实现许多功能，例如搭配我编写的[工具](https://github.com/WAY29/ptg)快速根据模板生成payload，并且会自动复制到剪切板里，例如反弹shell的payload,例如：
-![](https://gitee.com/guuest/images/raw/master/img/20210622161151.png)
-![](https://gitee.com/guuest/images/raw/master/img/20210622161312.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20210622161151.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20210622161312.png)
 更多的功能可以自己去研究（
 3. 设置全局快捷键，例如我设置Ctrl + Alt + T快速打开windows terminal，Ctrl + Alt + B快速打开Burpsuite
 4. 超级面板，看着用，有时候还挺方便的，比如我写了个快捷命令，将选中的文件快速丢到wsl里

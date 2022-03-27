@@ -13,7 +13,7 @@ tags:
 
 ## Tomcat-Filter
 filter顾名思义就是过滤器的意思，在tomca中我们可以通过自定义过滤器来做到对用户的一些请求进行拦截修改等操作:
-![](https://gitee.com/guuest/images/raw/master/img/20220216173834.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20220216173834.png)
 我们的请求会在经过Servlet之前先经过filter，那么如果我们动态创建一个filter并将其放在最前面，并在这个filter中放入恶意代码，当我们访问Servlet的时候就能成功执行我们的恶意代码，这也是所谓的内存webshell(因为filter是动态创建的，没有文件落地)，那么要如何动态地创建一个filter呢？
 
 ## Filter流程分析
@@ -65,47 +65,47 @@ public class DemoFilter implements Filter {
   </filter-mapping>
 ```
 接下来在`doFilter()`方法打下断点，运行tomcat服务器并访问:
-![](https://gitee.com/guuest/images/raw/master/img/20220217104758.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20220217104758.png)
 查看调用栈，跟进`StandardWrapperVavle.invoke()`方法:
-![](https://gitee.com/guuest/images/raw/master/img/20220217104858.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20220217104858.png)
 发现他是根据filterChain来去做filter的，根据搜索找到filterChain的定义位置:
-![](https://gitee.com/guuest/images/raw/master/img/20220217104949.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20220217104949.png)
 重新下断点到这个位置，跟进`ApplicationFilterFactory.createFilterChain()`方法，分析该方法，发现其先会会调用 `getParent()` 方法获取`StandardContext`，再获取filterMaps:
-![](https://gitee.com/guuest/images/raw/master/img/20220217105248.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20220217105248.png)
 filterMaps中的 filterMap 主要存放了过滤器的名字以及作用的 url:
-![](https://gitee.com/guuest/images/raw/master/img/20220217105332.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20220217105332.png)
 接下来会遍历filterMaps 中的 filterMap，如果发现符合当前请求 url 与 filterMap 中的 urlPattern 匹配且通过filterName能找到对应的filterConfig，则会将其加入filterChain:
-![](https://gitee.com/guuest/images/raw/master/img/20220217105551.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20220217105551.png)
 查看filterConfig的结构，里面主要包含了filter名，filter和filterDef:
-![](https://gitee.com/guuest/images/raw/master/img/20220217105911.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20220217105911.png)
 至此filterChain组装完毕，重新回到 StandardContextValue 中，后面会调用 `filterChain.doFilter()` 方法:
-![](https://gitee.com/guuest/images/raw/master/img/20220217110138.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20220217110138.png)
 跟进 `filterChain.doFilter()` 方法，其会调用`internalDoFilter()`方法:
-![](https://gitee.com/guuest/images/raw/master/img/20220217110558.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20220217110558.png)
 会从filters中依次拿到filter和filterConfig，最终调用`filter.doFilter()`:
-![](https://gitee.com/guuest/images/raw/master/img/20220217110841.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20220217110841.png)
 
 引用一张经典图片来描述filter的工作原理:
-![](https://gitee.com/guuest/images/raw/master/img/20220216175207.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20220216175207.png)
 
 
 
 ## 内存马实现流程分析
 根据上面的调试，我们发现最关键的就是`StandardContext.findFilterMaps()`和`StandardContext.findFilterConfig()`，我们可以来看看这2个方法的实现，可以看到都是直接从StandardContext中取到对应的属性，那么我们只要往这2个属性里面插入对应的filterMap和filterConfig即可实现动态添加filter的目的:
-![](https://gitee.com/guuest/images/raw/master/img/20220217112015.png)
-![](https://gitee.com/guuest/images/raw/master/img/20220217112027.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20220217112015.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20220217112027.png)
 
 实际上StandardContext也有一些方法可以帮助我们添加属性。首先我们来看filtermaps，StandardContext直接提供了对应的添加方法(Before是将filter放在首位，正是我们需要的)，这里再往filterMaps添加之前会有一个校验filtermap是否合法的操作，跟进`validateFilterMap()`:
-![](https://gitee.com/guuest/images/raw/master/img/20220217112920.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20220217112920.png)
 可以看到这里有一个坑点，它会根据filterName去寻找对应的filterDef，如果没找到的话会直接抛出异常，也就是说我们还需要往filterDefs里添加filterDef。
-![](https://gitee.com/guuest/images/raw/master/img/20220217112417.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20220217112417.png)
 
 那么我们接下来再看filterDefs，StandardContext直接提供了对应的添加方法:
-![](https://gitee.com/guuest/images/raw/master/img/20220217112602.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20220217112602.png)
 
 最后我们再来看filterConfigs，根据命名规则搜索`addFilterConfig`，发现并没有这个方法，所以我们考虑要通过反射的方法手动获取属性并添加:
-![](https://gitee.com/guuest/images/raw/master/img/20220217112715.png)
-![](https://gitee.com/guuest/images/raw/master/img/20220217112750.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20220217112715.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20220217112750.png)
 
 最后总结下Filter型内存马(即动态创建filter)的步骤:
 1. 获取StandardContext

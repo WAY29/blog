@@ -103,7 +103,7 @@ ctx.lookup(name);
 -   CORBA
 -   IOR
 这里引用一张经典图片，以更好地说明jdk版本与攻击向量的选择:
-![](https://gitee.com/guuest/images/raw/master/img/20220215122812.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20220215122812.png)
 
 
 #### JNDI Reference+RMI攻击
@@ -327,9 +327,9 @@ public class LDAPServer {
 ##### 前置介绍
 LDAP Server除了使用JNDI Reference进行利用之外，还支持直接返回一个对象的序列化数据。如果Java对象的 javaSerializedData 属性值不为空，则客户端的 obj.decodeObject() 方法就会对这个字段的内容进行反序列化。分析如下:
 当客户端从服务器中获取到对象，进行解析时，`com.sun.jndi.ldap.Obj.decodeObject()`:
-![](https://gitee.com/guuest/images/raw/master/img/20220214164257.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20220214164257.png)
 此时如果javaSerializedData不为空则进入第一个分支，先根据codebase判断使用哪个ClassLoader，这对于本地反序列化来说没有影响，接着跟进`deserializeObject()`:
-![](https://gitee.com/guuest/images/raw/master/img/20220214164513.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20220214164513.png)
 这里直接将我们传入的javaSerializedData反序列化。
 
 
@@ -653,4 +653,4 @@ public class RMILocalFactoryServer {
 
 #### 总结
 根据目标不同的jdk版本选择不同的攻击方式。
-![](https://gitee.com/guuest/images/raw/master/img/20220215122812.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20220215122812.png)

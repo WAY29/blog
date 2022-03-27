@@ -7,12 +7,12 @@ tags:
 ---
 # AOP
 AOP是Aspect Oriented Programming，即面向切面编程。AOP是一种新的编程方式，它和OOP不同，OOP把系统看作多个对象的交互，AOP把系统分解为不同的关注点，或者称之为切面（Aspect）。
-![](https://gitee.com/guuest/images/raw/master/img/20210730143011.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20210730143011.png)
 
 ## SpringAOP
 在SpringAOP中，通过Advice定义横切逻辑，Spring支持5种类型的Advice:
-![](https://gitee.com/guuest/images/raw/master/img/20210730143136.png)
-![](https://gitee.com/guuest/images/raw/master/img/20210730152452.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20210730143136.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20210730152452.png)
 
 ### 导入依赖
 要在Spring中使用AOP织入，需要导入以下依赖

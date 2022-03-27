@@ -1,7 +1,7 @@
 # Intermediate Representation(中间语言)
 
 ## Compilers and Static Analyzers
-![](https://gitee.com/guuest/images/raw/master/img/20220119223655.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20220119223655.png)
 
 1. Source Code -> Lexical Analysis(词法分析) -> Tokens
 2. Tokens -> Syntax Analysis(语法分析) -> AST  
@@ -9,7 +9,7 @@
 4. Decorated AST -> Translator(翻译) -> IR
 5. IR -> Static Analysis(静态分析) -> Code Generator -> Machine Code
 ## AST vs. IR
-![](https://gitee.com/guuest/images/raw/master/img/20220119225105.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20220119225105.png)
 
 ### AST
 - high-level and closed to grammar structure (高级并更接近于语法结构)
@@ -24,9 +24,9 @@
 - usually considered as the basis for static analysis (通常用于静态分析的基础)
 
 ## IR: Three-Address Code (3AC)
-![](https://gitee.com/guuest/images/raw/master/img/20220119225257.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20220119225257.png)
 
-![](https://gitee.com/guuest/images/raw/master/img/20220120130244.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20220120130244.png)
 
 ### 特征
 1. 在右侧最多有一个操作符
@@ -39,11 +39,11 @@ Soot是最流行的java静态代码分析工具，它的IR是Jimple(typed 3AC)
 
 
 ## Static Single Assignment (SSA)
-![](https://gitee.com/guuest/images/raw/master/img/20220120131323.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20220120131323.png)
 All assignments in SSA are to variables with distinct names(在SSA中的所有赋值都指向一个新的名字)
 
 ### Every variable has exactly one definition(每个变量都有且仅有一个确切的定义?)
-![](https://gitee.com/guuest/images/raw/master/img/20220120131647.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20220120131647.png)
 当有条件语句时例外，需要引入phi-function这个标记用于合并多个节点的值
 
 ### Why SSA
@@ -54,7 +54,7 @@ All assignments in SSA are to variables with distinct names(在SSA中的所有�
 - May introduce inefficiency problem when translating to machine code (due to copy operations) (可能会在翻译成机器码时导致效率低下的问题(由于复制操作) )
 
 ## Basic Blocks (BB)
-![](https://gitee.com/guuest/images/raw/master/img/20220120145651.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20220120145651.png)
 Basic blocks (BB) are maximal sequences of consecutive three-address instructions with the properties that: (基础块 (BB) 是三地址码(3AC)的连续最大序列，它具有以下的性质)
 - It can be entered only at the beginning, i.e., the first instruction in the block (有且只有一个入口，是块的第一个3AC)
 - It can be exited only at the end, i.e., the last instruction in the block (有且只有一个出口，是块的最后一个AC)
@@ -67,15 +67,15 @@ Basic blocks (BB) are maximal sequences of consecutive three-address instruction
 5. 去重之后找到所有的leader，从一个leader到下一个leader之前即为一个BB
 
 ## Control Flow Graphs (CFG)
-![](https://gitee.com/guuest/images/raw/master/img/20220120195140.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20220120195140.png)
 
 - The nodes of CFG are basic blocks(CFG的最小节点是BB)
 - There is an edge from block A to block B if and only if(从块A到块B的跳转方式只有if)
     - There is a conditional or unconditional jump from the end of A to the beginning of B(从块A到块B的跳转方式只有有条件的或无条件的jump)
     - B immediately follows A in the original order of instructions and A does not end in an unconditional jump(块B按照顺序紧跟在块A之后且A不是以一个无条件的跳转作为结尾)
 
-![](https://gitee.com/guuest/images/raw/master/img/20220120195503.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20220120195503.png)
 我们称块A为块B的前趋，块B为块A的后继
 
 **最终目的: 将一段3AC转为CFG**
-![](https://gitee.com/guuest/images/raw/master/img/20220120195537.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20220120195537.png)

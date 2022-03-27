@@ -95,7 +95,7 @@ public class HelloServer {
 3. 注册中心反序列化，弹出计算器
 
 其触发的反序列化位置在`sun.rmi.registry.RegistryImpl_Skel#dispatch`:
-![](https://gitee.com/guuest/images/raw/master/img/20211118110403.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20211118110403.png)
 
 
 ### 注册中心攻击服务端
@@ -263,9 +263,9 @@ public class vuln {
 }
  ```
 4. 运行上述代码，成功在客户端弹出计算器:
-    ![](https://gitee.com/guuest/images/raw/master/img/20211118112950.png)
+    ![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20211118112950.png)
 其触发反序列化的位置在`sun.rmi.registry.RegistryImpl_Stub#lookup`:
-![](https://gitee.com/guuest/images/raw/master/img/20211118113332.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20211118113332.png)
 
 ### 客户端攻击注册中心
 这种攻击方式不太常见(因为注册中心一般不可能暴露在外网)，我们这里来模拟攻击一下:
@@ -280,7 +280,7 @@ public class vuln {
 其原理是RMI框架采用DGC(Distributed Garbage Collection)分布式垃圾收集机制来管理远程对象的生命周期,可以通过与DGC通信的方式发送恶意payload让注册中心反序列化。
 
 其触发反序列化的位置在`sun.rmi.transport.DGCImpl_Skel#dispatch`:
-![](https://gitee.com/guuest/images/raw/master/img/20211118114147.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20211118114147.png)
 
 
 
@@ -289,7 +289,7 @@ public class vuln {
 ## JEP290
 参考一些师傅的文章，在JDK8u121，JDK7u13，JDK6u141之后添加了一个新的安全机制JEP290，核心其实就是增加了一个 `ObjectInputFilter` 接口，可以将 filter 设置给 `ObjectInputStream` 对象，在反序列化的时候触发 filter 的检测机制。
 这个过滤的白名单我们最终可以在`RegistryImpl#registryFilter` 方法中看到:
-![](https://gitee.com/guuest/images/raw/master/img/20211119182902.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20211119182902.png)
 
 白名单的内容如下:
 ```
@@ -353,19 +353,19 @@ public class vuln {
 ```
 调试过程如下:
 用ysoserial启动JRMPClient，然后调试RMIRegistry，在`RemoteObject#readObject`方法中下断点，最后再运行vuln触发断点。
-![](https://gitee.com/guuest/images/raw/master/img/20211119192153.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20211119192153.png)
 跟进readExternal方法:
-![](https://gitee.com/guuest/images/raw/master/img/20211119192454.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20211119192454.png)
 在这个方法中会读出序列化流中的 host 和端口信息，然后重新封装成一个 LiveRef 对象，将其存储到当前的 ConnectionInputStream 上，调用 saveRef 方法:
-![](https://gitee.com/guuest/images/raw/master/img/20211119192545.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20211119192545.png)
 一直跟进到RegistryImpl_Skel的oldDispatch方法:
-![](https://gitee.com/guuest/images/raw/master/img/20211119192746.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20211119192746.png)
 在服务端触发了反序列化之后，来到 `StreamRemoteCall#releaseInputStream` 方法中，在这里会调用 `ConnectionInputStream#registerRefs` 方法:
-![](https://gitee.com/guuest/images/raw/master/img/20211119193033.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20211119193033.png)
 这里又会调用DGCClient的registerRefs方法:
-![](https://gitee.com/guuest/images/raw/master/img/20211119193137.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20211119193137.png)
 最终由 DGCClient 向恶意的 JRMP 注册中心发起 lookup 连接:
-![](https://gitee.com/guuest/images/raw/master/img/20211119193200.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20211119193200.png)
 这里的攻击方法看起来与上面的**注册中心攻击客户端**有点类似，但是这里用的不是直接反序列化而是通过往注册中心rebind恶意对象触发反序列化造成的，其最终目的都是为了**让服务端变为JRMP客户端向我们恶意的JRMPRegistry发起JRMP请求**。
 ## 总结
 所以 Bypass JEP290 的关键在于：**通过反序列化让服务端变为JRMP客户端向我们恶意的JRMPRegistry发起 JRMP 请求。**

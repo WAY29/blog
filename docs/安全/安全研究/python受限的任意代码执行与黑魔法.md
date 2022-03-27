@@ -1,20 +1,6 @@
 # python受限的任意代码执行与黑魔法
 ## 起因
-在NCTF/NJUPTCTF 2021中有一道misc题: 
-```python
-我们可爱的Hex酱又有了一个强大的功能，可以去执行多行语句惹~
-但是为了防止有些居心叵测的人，我们专门把括号，单双引号，都过滤掉，噢对不准色色，所以也不准出现h哟~
-
-Ubuntu Python3.6.9
-
-快去找Hex酱(QQ:2821876761)私聊吧
-附件：
-
-https://nctf.slight-wind.com/misc/hex/runner.py
-https://attachment.h4ck.fun:9000/misc/hex/runner.py
-```
-
-其中附件内容如下:
+在NCTF/NJUPTCTF 2021中有一道misc题，其中附件内容如下:
 ```python
 import sys
 from base64 import b64decode
@@ -127,7 +113,7 @@ print(c["qwe"])  # qwe111
 
 ### 失败的尝试: 覆盖自带类的__getitem__
 我的第一个想法是覆盖python自带类的`__getitem__`方法，例如list或者dict，但是经过测试之后发现这是行不通的:
-![](https://gitee.com/guuest/images/raw/master/img/20220104104649.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20220104104649.png)
 
 所以我们的目的就是要找到一个类能够覆盖其`__getitem__`并且能获取到这个**类的实例**，这里的重点是获取到类的实例，因为我们就算可以定义一个自定义的类，也无法获取这个类的实例，因为**获取类的实例也需要小括号**
 
@@ -135,7 +121,7 @@ print(c["qwe"])  # qwe111
 我们尝试从python标准库中找到一个符合我们标准的库，python的标准库参考[这里](https://docs.python.org/zh-cn/3/library/index.html)
 
 在一番寻找后，我们将目光投向`reprlib`这个库，它完美符合了我们的要求!
-![](https://gitee.com/guuest/images/raw/master/img/20220104110102.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20220104110102.png)
 一个简单的示例如下:
 ```python
 import reprlib
@@ -232,7 +218,7 @@ exec(code)
 这个exp实际上利用到了perl的环境变量注入，这里不对perl做过多的深入研究，大概原理是在perl运行时会使用到`PERL5OPT`这个环境变量，这个环境变量可以指定`-M`选项导入模块，同时在这之后可以注入一段perl代码，利用这个最终实现任意代码执行。
 
 我们重点关注BROWSER环境变量和`antigravity`这个模块。`antigravity`这个模块实际上是在python添加的一个圣诞节彩蛋，我们可以在[这里](https://hg.python.org/cpython/file/tip/Lib/antigravity.py)看到它的源码:
-![](https://gitee.com/guuest/images/raw/master/img/20220321172430.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20220321172430.png)
 
 这里唯一值得注意的是其在被导入时会调用`webbrowser.open()`方法打开一个网站，我们在cpython中看看其[代码](https://github.com/python/cpython/blob/main/Lib/webbrowser.py)的实现，重点关注以下几个函数:
 

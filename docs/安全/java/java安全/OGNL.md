@@ -95,7 +95,7 @@ String str = "(\u006eew java.lang.ProcessBuilder(new java.lang.String[]{"calc"})
 Ognl.getValue(str, null);
 ```
 那么假如存在一个正则表达式`\\u\d{4}`，将对应的unicode先解析了一遍，再进行黑名单，还有方法绕过吗？实际上这里又存在一个trick，即`\uxxxx`中的u是可以写一个或多个的，具体原因在于`ognl.JavaCharStream#readChar`方法中:
-![](https://gitee.com/guuest/images/raw/master/img/20220311111220.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20220311111220.png)
 所以上述OGNL表达式可以改写为:
 ```java
 String str = "(\uuuuuuuuuuuuuuuu006eew java.lang.ProcessBuilder(new java.lang.String[]{"calc"})).start()";
@@ -140,7 +140,7 @@ public class UserProvider {
 所以这里是存在OGNL注入的，但是假如我们尝试使用`${@java.lang.Runtime@getRuntime().exec("calc")}`这个payload进行注入时，会发现命令并没有被成功执行，这是为什么呢？
 
 答案藏在`org.apache.ibatis.ognl.OgnlRuntime#invokeMethod`方法中，这里存在着一个黑名单机制:
-![](https://gitee.com/guuest/images/raw/master/img/20220311105937.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20220311105937.png)
 当_useStricterInvocation为true时，黑名单中的类(或继承自黑名单中的类)将不能调用方法，而_useStricterInvocation这个值默认是为true。
 
 所以这时候我们就需要一些绕过方法进行绕过了，上面也提到了这些payload:

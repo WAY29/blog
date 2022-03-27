@@ -6,7 +6,7 @@ tags:
 ---
 # Filter
 可以理解为中间件，开发者可以对web服务器管理的所有web资源：例如JSP，Servlet，静态图片文件或静态HTML文件进行拦截，从而实现一些特殊功能。
-![](https://gitee.com/guuest/images/raw/master/img/20210823141157.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20210823141157.png)
 
 ## 示例代码
 一个简单的通过设置请求头来解决中文显示乱码的过滤器

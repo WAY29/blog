@@ -10,7 +10,7 @@ tags:
 
 ## 书接上文
 在JDK7u21中修复JDK7u21链的方式是判断`AnnotationInvocationHandler`的`type`属性是否为注解类，如果不是的话则抛出一个异常。
-![](https://gitee.com/guuest/images/raw/master/img/20211130194851.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20211130194851.png)
 这里我们需要注意的是在抛出异常之前，已经执行了`var1.defaultReadObject()`还原了`AnnotationInvocationHandler`对象，但是由于后续抛出异常，导致我们整个反序列化逻辑断开，程序终止运行，那么我们是否可能使程序在抛出异常之后也能够继续执行呢？
 
 ## try-catch嵌套
@@ -341,7 +341,7 @@ new Object[]{
 - 参考文章在[以一种更简单的方式构造JRE8u20 Gadget](https://xz.aliyun.com/t/8277)
 - 完整源码在[feihong-cs/jre8u20_gadget](https://github.com/feihong-cs/jre8u20_gadget)
 这里没有利用成员抛弃机制，而是利用到了LinkedHashSet反序列化时会一一反序列化map中对象的机制，先将`BeanContextSupport`放在最前面，让其产生非法的`AnnotationInvocationHandler`对象的newHandle，后续再正常地执行JDK7u21，整个链的构造逻辑大概如下:
-![](https://gitee.com/guuest/images/raw/master/img/20211202092756.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20211202092756.png)
 > 在进行序列化的时候，向序列化流中写入了`4`个对象，但是通过修改序列化中的一些特殊的`byte`，构造了一个我们想要的序列化流。在反序列化的时候，`LinkedHashSet`读到的`size`为`3`,在反序列化第一个对象`BeanContextSupport`的时候，会进入到`BeanContextSupport`的`readChildren`逻辑，成功将`AnnotationInvocationHander`进行了还原（虽然`AnnotationInvocationHander`在反序列化的时候会抛出异常，但是`BeanContextSupport`捕捉了异常）。随后`LinkedHashSet`在反序列化第二个和三个元素的时候，会发生哈希碰撞，从而导致`RCE`。
 
 ```java
@@ -722,21 +722,21 @@ for(int i = 0; i < bytes.length; i++){
 
 我们在`BeanContextSupport#readChildren`处打下断点，查看调用栈:
 
-![](https://gitee.com/guuest/images/raw/master/img/20211206091632.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20211206091632.png)
 这里有一个`readSerialData`，跟进代码:
-![](https://gitee.com/guuest/images/raw/master/img/20211206091642.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20211206091642.png)
 现在代码走到了`slotDesc.invokeReadObject`处，而由于我们反序列化产生并捕捉了异常，这个函数中后续的代码将不再执行，即后续不会再设置`defaultDataEnd =` `_false_``;`，那么这个defaultDataEnd是用来做什么的呢？
-![](https://gitee.com/guuest/images/raw/master/img/20211206091653.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20211206091653.png)
 当成员块结束但没有TC_ENDBLOCKDATA时其会被设置为True。
 当我们把上面那段修改标志的代码注释后再进行调试:
-![](https://gitee.com/guuest/images/raw/master/img/20211206091712.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20211206091712.png)
 其会设置`defaultDataEnd=True`，由于异常，正常情况下后续设置`defaultDataEnd=False`的代码被跳过了。我们看看后续`ois.readInt()`，一直跟进到`DataInputStream#readInt`中:
-![](https://gitee.com/guuest/images/raw/master/img/20211206091736.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20211206091736.png)
 继续跟进`in.read()`:
-![](https://gitee.com/guuest/images/raw/master/img/20211206091746.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20211206091746.png)
 跟进`refill()`:
-![](https://gitee.com/guuest/images/raw/master/img/20211206091755.png)
-![](https://gitee.com/guuest/images/raw/master/img/20211206091800.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20211206091755.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20211206091800.png)
 可以看到这里返回了-1，一直回溯过去，导致4个`in.read()`都会返回-1，抛出`EOFException`。
 
 这里使用的解决方法是将`AnnotationInvocationHandler`的`classDescFlags`添加了`SC_WRITE_METHOD`标志，这样就不会进入if判断中，一开始就不会将`defaultDataEnd=True`，也就解决了这个问题，使得`ois.readInt()`能够有机会读取到Int。

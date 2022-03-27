@@ -16,18 +16,18 @@ tags:
 可以使用[Spring Initializr](https://start.spring.io/)页面进行创建，或者直接使用idea创建。这里直接使用idea。
 
 首先点击新建项目:
-![](https://gitee.com/guuest/images/raw/master/img/20220222105914.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20220222105914.png)
 
 按照如图所示配置，这里选用java8，Maven进行依赖管理。
-![](https://gitee.com/guuest/images/raw/master/img/20220222105953.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20220222105953.png)
 
 选择需要的依赖，这里选择Spring Web，SpringBoot版本选择默认的2.6.3
-![](https://gitee.com/guuest/images/raw/master/img/20220222110325.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20220222110325.png)
 
 点击FINISH，即可创建项目，需要等待一段时间idea解析maven依赖。
 
 创建好后的项目结构如图所示(controller文件夹是我后续添加的，一开始是没有的)
-![](https://gitee.com/guuest/images/raw/master/img/20220222110527.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20220222110527.png)
 如上图所示，Spring Boot的基础结构共三个文件夹(具体路径根据用户生成项目时填写的Group和ArtiFact有所差异）:
 -   `src/main/java`下的程序入口：`SpringBootStudyApplication`
 -   `src/main/resources`下的配置文件：`application.properties`
@@ -69,11 +69,11 @@ logging.level.org.springframework.web.servlet.mvc.method.annotation.RequestMappi
 
 ## 运行
 运行SpringbootStudyApplication.main()方法，启动springboot，有以下信息就证明controller被成功加载了:
-![](https://gitee.com/guuest/images/raw/master/img/20220222124501.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20220222124501.png)
 
 
 尝试访问http://127.0.0.1:8080/hello:
-![](https://gitee.com/guuest/images/raw/master/img/20220222124604.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20220222124604.png)
 
 ## 编写测试
 需要给pom.xml添加junit依赖:

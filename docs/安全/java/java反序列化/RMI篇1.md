@@ -82,6 +82,6 @@ public class RMIClient {
 
 > 首先客户端连接Registry，并在其中寻找Name是Hello的对象，这个对应数据流中的Call消息；然后Registry返回一个序列化的数据，这个就是找到的Name=Hello的对象，这个对应数据流中的ReturnData消息；客户端反序列化该对象，发现该对象是一个远程对象，地址在192.168.135.142:33769，于是再与这个地址建立TCP连接。在这个新的连接中，才执行真正远程方法调用，也就是hello()。
 
-![](https://gitee.com/guuest/images/raw/master/img/20210908163138.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20210908163138.png)
 
 > RMI Registry就像一个网关，他自己是不会执行远程方法的，但RMI Server可以在上面注册一个Name到对象的绑定关系；RMI Client通过Name向RMI Registry查询，得到这个绑定关系，然后再连接RMI Server；最后，远程方法实际上在RMI Server上调用。

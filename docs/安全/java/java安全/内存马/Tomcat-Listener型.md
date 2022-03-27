@@ -42,17 +42,17 @@ public class DemoListener implements ServletRequestListener {
 ```
 
 然后我们在这个Listener的class部分和`requestInitialized()`下断点:
-![](https://gitee.com/guuest/images/raw/master/img/20220217143012.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20220217143012.png)
 开启调试触发断点，根据堆栈回溯找到`StandardContext.listenerStart()`方法，可以看到它先调用`findApplicationListeners()`获取Listener的名字，然后实例化:
-![](https://gitee.com/guuest/images/raw/master/img/20220217143453.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20220217143453.png)
 接着他会遍历results中的Listener，根据不同的类型放入不同的数组，我们这里的ServletRequestListener放入eventListeners数组中:
-![](https://gitee.com/guuest/images/raw/master/img/20220217143730.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20220217143730.png)
 接下来的操作是通过调用`getApplicationEventListeners()`获取applicationEventListenersList中的值，然后再设置applicationEventListenersList，可以理解为applicationEventListenersList加上刚刚实例化的eventListeners:
-![](https://gitee.com/guuest/images/raw/master/img/20220217144043.png)
-![](https://gitee.com/guuest/images/raw/master/img/20220217144123.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20220217144043.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20220217144123.png)
 
 接下来看第二个断点，根据调用堆栈我们找到了`fireRequestInitEvent()`方法，它会调用`getApplicationEventListeners()`并调用其中所有的`ServletRequestListener.requestInitialized()`:
-![](https://gitee.com/guuest/images/raw/master/img/20220217144559.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20220217144559.png)
 
 
 ## 内存马实现流程分析

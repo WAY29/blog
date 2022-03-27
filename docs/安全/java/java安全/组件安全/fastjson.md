@@ -144,7 +144,7 @@ User{id=123, name='Tom', t1=null}
 }
 ```
 完整的调用链如下:
-![](https://gitee.com/guuest/images/raw/master/img/20220210160606.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20220210160606.png)
 > `toJSON()`方法会将目标类中所有getter方法记录下来，然后通过反射去调用了所有的getter方法
 
 ### 第二个问题
@@ -460,16 +460,16 @@ if (h1 == -5808493101479473382L) {
 ```
 可以看到这个payload中使用到了2次@type，并且在第一个@type中指定了类型为`java.lang.Class`这个看起来比较特殊的类，并且存在val字段为`com.sun.rowset.JdbcRowSetImpl`，第二段中则是我们的原始payload。
 我们通过调试来理解这个payload，当fastjson在处理第一个@type时，会在`this.deserializers.findClass(typeName)`找到Class这个类，然后这个类会被返回，在上层经过一些赋值，最终会使用MiscCodec这个deserializer来对这个类进行解析:
-![](https://gitee.com/guuest/images/raw/master/img/20220211141552.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20220211141552.png)
 跟进这个方法，这里也可以看到它会从val中拿到值，并赋值给objVal:
-![](https://gitee.com/guuest/images/raw/master/img/20220211142238.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20220211142238.png)
 
 后面又将objVal的值赋给strVal:
-![](https://gitee.com/guuest/images/raw/master/img/20220211142341.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20220211142341.png)
 判断clazz的类型，这里是Class.class，最后会根据strVal里的值加载类:
-![](https://gitee.com/guuest/images/raw/master/img/20220211142606.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20220211142606.png)
 同时我们可以看到使用`TypeUtils.loadClass()`时默认是将类缓存的，这样我们就将我们的恶意类放入了缓存。
-![](https://gitee.com/guuest/images/raw/master/img/20220211142702.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20220211142702.png)
 到第二个@type时，由于缓存已经存在这个恶意类，所以会直接返回，而不会走黑名单，所以我们的payload就能够绕过之前的安全机制。
 
 这里有一些注意事项，由于不同版本的`ParserConfig.checkAutoType()`解析存在差异，因此:
@@ -477,7 +477,7 @@ if (h1 == -5808493101479473382L) {
 -   1.2.33-1.2.47：无论是否开启AutoTypeSupport，都能成功利用
 
 这里存在的差异主要是由于在1.2.33-1.2.47中黑名单会判断类是否已经在缓存中，如果已经在缓存里则不会进行拦截:
-![](https://gitee.com/guuest/images/raw/master/img/20220211143108.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20220211143108.png)
 而在旧版本中则不存在这个判断，因此在1.2.25-1.2.32时，如果开启了autotypesupport，则会直接被黑名单拦截。
 
 
@@ -485,22 +485,22 @@ if (h1 == -5808493101479473382L) {
 
 #### 1.2.48-1.2.67
 这版本的fastjson主要是继续添加黑名单，同时`TypeUtils.loadClass()`方法默认不启用缓存:
-![](https://gitee.com/guuest/images/raw/master/img/20220211143808.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20220211143808.png)
 
-![](https://gitee.com/guuest/images/raw/master/img/20220211143818.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20220211143818.png)
 
 
 ##### <=1.2.67 expectclass bypass
 上面的绕过方式都行不通了，我们还有什么方法可以加载恶意类吗？实际上在`TypeUtils.checkAutoType()`还存在着一个加载类的语句:
-![](https://gitee.com/guuest/images/raw/master/img/20220211151916.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20220211151916.png)
 这里的条件`autotypesupport || jsonType || expectClassFlag`，这里autotypesupport不管开关都影响不大，因为我们没办法绕过前面的黑名单检测，我们重点关注`expectClassFlag`这个选项，其在这里被赋值:
-![](https://gitee.com/guuest/images/raw/master/img/20220211152313.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20220211152313.png)
 这里需要满足以下几个条件`expectClassFlag`才为true:
 1. expectClass存在
 2. expectClass不在黑名单里
 
 我们可以看到expectClass是调用该函数时传入的，在整个fastjson中寻找checkAutoType的调用且expectClass不为空的，在`JavaBeanDeserializer.deserialize()`方法中找到我们的目标:
-![](https://gitee.com/guuest/images/raw/master/img/20220211153326.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20220211153326.png)
 这里的分析由于有点复杂，参考了其他师傅的文章，想要进入到这个位置，需要两个@type，第二个需要实现 AutoCloseable 接口，也就是最终payload类似于:
 ```json
 1.  `{"@type":"java.lang.AutoCloseable","@type":"com.example.json.evil.Evil","cmd":"calc"}`
@@ -803,4 +803,4 @@ a
 ```
 
 ## 其他注意事项
-![](https://gitee.com/guuest/images/raw/master/img/1.jpg)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/1.jpg)

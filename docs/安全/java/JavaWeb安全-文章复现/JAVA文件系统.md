@@ -7,10 +7,10 @@ tags:
 ---
 # JAVA文件系统
 JAVA SE内置了两类文件系统:：`java.io`和`java.nio`，`java.nio`的实现是`sun.nio`
-![](https://gitee.com/guuest/images/raw/master/img/20210707110121.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20210707110121.png)
 ## JAVA IO 文件系统
 Java抽象出了一个文件系统的对象:`java.io.FileSystem`，不同的操作系统有不一样的文件系统,例如`Windows`和`Unix`就是两种不一样的文件系统： `java.io.UnixFileSystem`、`java.io.WinNTFileSystem`
-![](https://gitee.com/guuest/images/raw/master/img/20210707110434.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20210707110434.png)
 `java.io.FileSystem`是一个抽象类，它抽象了对文件的操作，不同操作系统版本的JDK会实现其抽象的方法从而也就实现了跨平台的文件的访问操作。
 
 需要注意的点有：

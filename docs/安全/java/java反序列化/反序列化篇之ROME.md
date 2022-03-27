@@ -23,18 +23,18 @@ HashMap<K,V>.readObject(ObjectInputStream)
 了解一个反序列化链，主要是关注其的source，sink以及关键转折点，这条链的source是HashMap，sink是`TemplatesImpl.getOutputProperties()`造成的新类初始化从而执行新类static中的恶意代码，而关键转折点主要是`pReadMethod.invoke(_obj,NO_PARAMS)`，也是ROME这个依赖我们最后利用到的点。
 
 但是很显然这道题目没办法直接用这条链打通，原因是因为这个链base64之后太长了，单纯执行一个whoami的长度长达4380:
-![](https://gitee.com/guuest/images/raw/master/img/20220307102820.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20220307102820.png)
 
 为了缩减payload长度，这里参考了一下[终极Java反序列化Payload缩小技术](https://xz.aliyun.com/t/10824)，但最终发现了如果不修改链的话是没办法达到题目要求的长度的，所以我们这里需要去挖掘一条新链:
 
 ## 新链1(符合题目要求)
 首先我们要了解一下为什么上文的payload如此长，实际上根据调用链我们不难发现ObjectBean是罪魁祸首，其在实例化时会实例化三个bean，这能不大吗:
-![](https://gitee.com/guuest/images/raw/master/img/20220307103409.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20220307103409.png)
 
 但是ObjectBean实际上是上文链的核心关键: `ObjectBean.hashCode() => ObjectBean._equalsBean.beanHashCode() => ObjectBean._toStringBean.toString()`。如果我们想要抛弃ObjectBean的话，我们没办法通过`HashMap`触发`ToStringBean.toString()`。
 
 上面我们分析到ROME链的关键转折点是`pReadMethod.invoke(_obj,NO_PARAMS)`这段代码，我们可以通过IDEA去搜索一下，可以发现不止ToStringBean存在这个利用点，其他Bean也存在:
-![](https://gitee.com/guuest/images/raw/master/img/20220307103228.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20220307103228.png)
 
 根据截图我们可以看到`EqualsBean`也存在这个关键代码，可以看到当调用`EqualsBean.equals()`时最终会调用到`EqualsBean.beanEquals()`，触发我们的关键代码:
 ```java
@@ -88,7 +88,7 @@ public boolean beanEquals(Object obj) {
 ```
 
 如果我们有过调试和构造CC7链的经验的话，我们很容易想到我们可以使用Hashtable来作为source，触发equals方法:
-![](https://gitee.com/guuest/images/raw/master/img/20220307105120.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20220307105120.png)
 
 接下来就是根据CC7和ROME链进行改造，最终得到如下的payload(扩展于[EmYiQing/ShortPayload](https://github.com/EmYiQing/ShortPayload)):
 ```java
@@ -131,9 +131,9 @@ public class ROME extends Payload {
 }
 ```
 让我们来实际测试一下长度:
-![](https://gitee.com/guuest/images/raw/master/img/20220307105342.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20220307105342.png)
 最终base64之后的payload长度只有1452，完美符合我们的预期:
-![](https://gitee.com/guuest/images/raw/master/img/20220307105459.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20220307105459.png)
 ### 利用链
 ```
 Hashtable.readObject()
@@ -202,7 +202,7 @@ public class ROME {
 }
 ```
 但是当我们运行程序时很遗憾地发现长度还是超出了1956:
-![](https://gitee.com/guuest/images/raw/master/img/20220307113636.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20220307113636.png)
 
 新链2长度很大的原因是因为 `JdbcRowSetImpl` 这个类的对象太大了，方法巨多，本来优化的思路是用ASM把没用的属性和方法全部扬了，但是这个类的类加载器是 `BootStrap` ，位于双亲委派的最顶层，所以修改过后的字节码没办法再次加载。
 
@@ -252,7 +252,7 @@ public class ROME_JNDI {
 ```
 最后长度为：
 ![](https://syclover.feishu.cn/space/api/box/stream/download/asynccode/?code=MTYzOTBiOWY0ZGJhZmIxZTc4MTk3NGNhZmUzMzI5NTJfd2V6RFdKQmhJd3RVeGRFcWJmN1BSRTIxeUp2RTlOOUlfVG9rZW46Ym94Y25ZUE1tVVdYY3hQNDUxNXJwOEpEWkVjXzE2NDY4ODcyMDU6MTY0Njg5MDgwNV9WNA)
-![](https://gitee.com/guuest/images/raw/master/img/20220321143222.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20220321143222.png)
 
 ## 二次反序列化绕过方式
 有时候我们会遇到一些其他的反序列化方式，例如Hessian(2)，如果使用这种序列化/反序列化的话，我们的链可能会出现问题，原因是我们的Sink不能再使用TemplatesImpl类，原因是: 这种反序列化不会触发`TemplatesImpl.readObject()`方法，导致反序列化出来的`TemplatesImpl._tfactory`属性为空(这个属性存在transient关键字修饰，无法序列化)，这样导致我们最后没办法利用`TemplatesImpl#defineTransletClasses`方法去实现任意java代码执行。
@@ -260,7 +260,7 @@ public class ROME_JNDI {
 在这种情况下实际上我们就只剩下JNDI这一条路，但加入目标不出网/JDK版本过高的话，JNDI是不好用的，还有其他方法吗？
 
 答案是二次反序列化，我们知道EqualsBean/ToStringBean这几个类最终会触发某个类的所有getter，那么假如存在一个类其getter方法又会使用java原生反序列化，而且其反序列化内容我们可以控制的话，我们就可以进行绕过了，这个类正是`java.security.SignedObject`:
-![](https://gitee.com/guuest/images/raw/master/img/20220321144705.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20220321144705.png)
 
 那么我们去找下这个类的用法，其构造方法的第一个参数会被序列化然后存放到`SignedObject.content`中:
 ```java

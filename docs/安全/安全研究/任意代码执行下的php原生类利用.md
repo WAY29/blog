@@ -15,12 +15,12 @@ zend_version, func_num_args, func_get_arg, func_get_args, strcmp, strncmp, strca
  利用版本: `(PHP 5, PHP 7)` 
  
  我们知道可以使用xxe来读取文件，那么我们是否可以通过手动构造一个xxe漏洞来读取文件呢？答案是肯定的，我们来看下官方文档:
- ![](https://gitee.com/guuest/images/raw/master/img/20211123105014.png)
-![](https://gitee.com/guuest/images/raw/master/img/20211123105031.png)
+ ![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20211123105014.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20211123105031.png)
 可以看到当我们设置第三个参数为true时，可以从远程加载xml文档，那么第二个参数该如何设置呢？我们查看php的预定义常量
-![](https://gitee.com/guuest/images/raw/master/img/20211123105130.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20211123105130.png)
 可以看到这里存在警告，当我们设置第二个参数为`LIBXML_NOENT`时，可能会导致xxe攻击，这正是我们想要的。手动输出下该值，为2，所以我们也可以设置该参数为2:
-![](https://gitee.com/guuest/images/raw/master/img/20211123105331.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20211123105331.png)
 
 ### 读文件poc
 evil.xml

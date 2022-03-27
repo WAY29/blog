@@ -49,7 +49,7 @@ out = pageContext.getOut();
 _jspx_out = out;
 ```
 4. 以上对象可以在jsp页面中直接使用
-![](https://gitee.com/guuest/images/raw/master/img/20210810104423.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20210810104423.png)
 
 ## JSP基础语法
 

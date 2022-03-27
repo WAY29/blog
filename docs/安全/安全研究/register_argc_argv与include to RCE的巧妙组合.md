@@ -21,14 +21,14 @@ tags:
 
 首先了解到这个参数默认是On的:
 
-![](https://gitee.com/guuest/images/raw/master/img/20210605082433.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20210605082433.png)
 
 
 但是经过后来测试发现但凡配置了php.ini的php里都会显示声明该参数为Off,那么这个参数是用来做什么的呢?
 
-![](https://gitee.com/guuest/images/raw/master/img/20210605082507.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20210605082507.png)
 
-![](https://gitee.com/guuest/images/raw/master/img/20210605082516.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20210605082516.png)
 
 
 这里介绍了register_argc_argv的作用,当这个参数开启的时候,php会注册argc和argv这个全局变量,并且通过第二个图可知我们可以从$_SERVER['argv'] 中获取到这些值.
@@ -46,12 +46,12 @@ tags:
 
 网页端中:
 
-![](https://gitee.com/guuest/images/raw/master/img/20210605082551.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20210605082551.png)
 
 
 命令行模式下:
 
-![](https://gitee.com/guuest/images/raw/master/img/20210605082610.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20210605082610.png)
 
 
 而在register_argc_argv关闭的情况下,$_SERVER['argv']不会拿到任何取值
@@ -139,30 +139,30 @@ Pear 是 PHP 扩展与应用库（the PHP Extension and Application Repository�
 我们先来看看如何通过pear命令来实现任意文件下载:
 
 1. 在目录下创建一个tmp.php
-    ![](https://gitee.com/guuest/images/raw/master/img/20210605082631.png)
+    ![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20210605082631.png)
 2. 使用python一句话开启http服务器:` python -m SimpleHTTPServer 8080`
 
 3. 通过执行`pear`命令获取帮助,发现存在download选项,尝试执行`pear download http://127.0.0.1:8080/tmp.php`,可以看到已经成功在当前目录下载了tmp.php:
-    ![](https://gitee.com/guuest/images/raw/master/img/20210605082702.png)
+    ![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20210605082702.png)
 4. 有没有办法控制下载目录?答案是使用install -R而非download,尝试执行`pear install -R /var/www/html http://127.0.0.1:8080/tmp.php `
 
-    ![](https://gitee.com/guuest/images/raw/master/img/20210605082751.png)
+    ![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20210605082751.png)
 
 
 5. 成功下载到web目录下并能够访问
-    ![](https://gitee.com/guuest/images/raw/master/img/20210605082843.png)
+    ![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20210605082843.png)
 
 
 ### 如何控制$_SERVER['argv']
 
 如何往$_SERVER['argv']传入2个或以上的参数?测试一下:
 
-![](https://gitee.com/guuest/images/raw/master/img/20210605082904.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20210605082904.png)
 
 
 并不能通过&作为$_SERVER['argv']的分割,通过查阅资料和阅读源码:
 
-![](https://gitee.com/guuest/images/raw/master/img/20210605082919.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20210605082919.png)
 
 main/php_variables.c  
 
@@ -204,7 +204,7 @@ main/php_variables.c
 
 可以知道argv通过query_string取值,并通过+作为分割符,尝试一下:
 
-![](https://gitee.com/guuest/images/raw/master/img/20210605082954.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20210605082954.png)
 
 ## 回到题目
 

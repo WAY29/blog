@@ -14,7 +14,7 @@ tags:
 [spring中文文档](https://www.docs4dev.com/docs/zh/spring-framework/5.1.3.RELEASE/reference)
 
 Spring是一个轻量级**IOC(控制反转**)和**AOP(面向切面编程)**的框架
-![](https://gitee.com/guuest/images/raw/master/img/20210715100024.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20210715100024.png)
 
 ## 学习路线
 Spring->SpringMVC->SpringBoot,SpringCloud

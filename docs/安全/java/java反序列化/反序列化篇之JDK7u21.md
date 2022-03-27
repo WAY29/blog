@@ -328,6 +328,6 @@ HashSet.put()
 
 ## 不完全的修复
 看看官方的修复方案: 在`sun.reflect.annotation.AnnotationInvocationHandler`类的`readObject`函数中，原本有一个对`this.type`的检查，在其不是`AnnotationType`的情况下，会抛出一个异常。但是，捕获到异常后没有做任何事情，只是将这个函数返回了，这样并不影响整个反序列化的执行过程。在新版中，将这个返回改为了抛出一个异常，会导致整个序列化的过程终止。
-![](https://gitee.com/guuest/images/raw/master/img/20211130194851.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20211130194851.png)
 
 这个修复方式看起来击中要害，实际上仍然存在问题，这也导致后面的另一条原生利用链JDK8u20。

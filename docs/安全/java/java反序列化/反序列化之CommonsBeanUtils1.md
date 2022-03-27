@@ -152,14 +152,14 @@ public class CB1 {
 
 ### 解决第二个坑点
 我们来看看我们这条链究竟是哪里用到了commons-collections的依赖:
-![](https://gitee.com/guuest/images/raw/master/img/20211116190140.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20211116190140.png)
 当我们没有提供comparator时，他会使用commons-collections的Comparator。为了解决这个问题，我们需要寻找一个新的Comparator，它要满足以下条件:
 -   实现`java.util.Comparator`接口
 -   实现`java.io.Serializable`接口
 -   Java、shiro或commons-beanutils自带，且兼容性强
 
 结合参考文章，我们找到了CaseInsensitiveComparator这个类，同时我们可以很简单地通过`String.CASE_INSENSITIVE_ORDER`拿到上下文中的`CaseInsensitiveComparator`对象:
-![](https://gitee.com/guuest/images/raw/master/img/20211116190403.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20211116190403.png)
 将链稍作修改，修改BeanComparator的实例化参数，即可成功在shiro中执行任意代码:
 ```java
 package top.longlone;

@@ -131,9 +131,9 @@ public class RedirectServlet extends HttpServlet {
 ```
 #### 重定向和转发的区别
 重定向
-![](https://gitee.com/guuest/images/raw/master/img/20210806164813.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20210806164813.png)
 转发
-![](https://gitee.com/guuest/images/raw/master/img/20210806164831.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20210806164831.png)
 
 
 1. 转发是在服务器端完成的，重定向是在客户端发生的。

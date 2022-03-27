@@ -173,11 +173,11 @@ PriorityQueue.readObject()
 
 ### 另外一个版本的poc
 另外一个版本的poc的终点不再是我们熟悉的`ChainedTransformer`那一套回调造成的命令执行，而是可以造成任意java代码执行的`TemplatesImpl`:
-![](https://gitee.com/guuest/images/raw/master/img/20211107182759.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20211107182759.png)
 跟进`getTransletInstance`:
-![](https://gitee.com/guuest/images/raw/master/img/20211107182830.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20211107182830.png)
 再跟进`defineTransletClasses`:
-![](https://gitee.com/guuest/images/raw/master/img/20211107182941.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20211107182941.png)
 
 这里通过loader.defineClass将bytecodes还原为Class，接着在外面又调用了`_class[_transletIndex].newInstance`方法实例化还原的Class，所以我们可以构造一个恶意类字节码，其具有恶意的static语句块，导致任意java代码执行。也就是说，我们可以通过`TemplatesImpl.newTransformer`方法来执行恶意类的static语句块。
 

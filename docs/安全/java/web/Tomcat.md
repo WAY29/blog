@@ -46,23 +46,23 @@ web目录默认在webapps下，ROOT是默认的网站根目录下的内容，其
 
 ## IDEA中使用Tomcat
 ### 创建web项目
-![](https://gitee.com/guuest/images/raw/master/img/20210802161557.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20210802161557.png)
 
 ### 配置Tomcat
 点击右上角的ADD CONFIGURATION添加配置
-![](https://gitee.com/guuest/images/raw/master/img/20210802154815.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20210802154815.png)
 
 点击左上角的加号并选择Tomcat Server - Local
-![](https://gitee.com/guuest/images/raw/master/img/20210802154945.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20210802154945.png)
 
 然后可以对Tomcat进行一些配置
-![](https://gitee.com/guuest/images/raw/master/img/20210802155205.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20210802155205.png)
 
 还要再Deployment中添加artifacts，这里Application Context是一个路径映射，默认为/，即访问`http://127.0.0.1:8080/`，如果设置为其他内容如/test，则访问`http://127.0.0.1:8080/test`
-![](https://gitee.com/guuest/images/raw/master/img/20210802161634.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20210802161634.png)
 
 配置完之后整个项目结构大概是这样
-![](https://gitee.com/guuest/images/raw/master/img/20210802162143.png)
+![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20210802162143.png)
 
 最后点击右上角的绿色运行箭头即可
 
