@@ -352,7 +352,7 @@ public class vuln {
 }
 ```
 调试过程如下:
-用ysoserial启动JRMPClient，然后调试RMIRegistry，在`RemoteObject#readObject`方法中下断点，最后再运行vuln触发断点。
+用ysoserial启动JRMPListener，然后调试RMIRegistry，在`RemoteObject#readObject`方法中下断点，最后再运行vuln触发断点。
 ![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20211119192153.png)
 跟进readExternal方法:
 ![](https://tuchuang-1300339532.cos.ap-chengdu.myqcloud.com/img/20211119192454.png)
